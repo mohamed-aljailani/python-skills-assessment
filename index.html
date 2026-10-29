@@ -1,96 +1,253 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Skills Assessment</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول | Python Skills Assessment</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <style>
+    * { box-sizing: border-box; }
 
-        body {
-            margin: 0;
-            font-family: Tahoma, Arial, sans-serif;
-            background: linear-gradient(135deg, #0f172a, #1e3a5f);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Tahoma, Arial, sans-serif;
+      background: linear-gradient(135deg, #07152e, #123b68);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #17233b;
+    }
 
-        .card {
-            background: white;
-            padding: 45px 30px;
-            border-radius: 22px;
-            text-align: center;
-            width: 100%;
-            max-width: 550px;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.2);
-        }
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: white;
+      padding: 38px 32px;
+      border-radius: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
 
-        h1 {
-            color: #142b4b;
-            font-size: 30px;
-        }
+    .logo {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 18px;
+      border-radius: 20px;
+      background: #102b50;
+      color: #ffd45c;
+      display: grid;
+      place-items: center;
+      font-size: 29px;
+      font-weight: bold;
+    }
 
-        p {
-            color: #475569;
-            font-size: 18px;
-            line-height: 1.9;
-        }
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 25px;
+      color: #102b50;
+    }
 
-        .badge {
-            display: inline-block;
-            background: #e0f2fe;
-            color: #075985;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: bold;
-        }
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      font-size: 14px;
+      line-height: 1.9;
+      margin: 12px 0 30px;
+    }
 
-        .courses {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 25px;
-        }
+    label {
+      display: block;
+      margin: 18px 0 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
 
-        .course {
-            background: #f1f5f9;
-            padding: 12px 20px;
-            border-radius: 12px;
-            color: #1e293b;
-            font-weight: bold;
-        }
-    </style>
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d6dce6;
+      border-radius: 11px;
+      font-size: 15px;
+      outline: none;
+      direction: ltr;
+      text-align: left;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 15px;
+      border: 0;
+      border-radius: 11px;
+      background: #163e70;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover { background: #22538d; }
+    button:disabled { opacity: .6; cursor: wait; }
+
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.8;
+      min-height: 24px;
+    }
+
+    .footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="card">
-        <div class="badge">Python Skills Academy</div>
+  <main class="card">
+    <div class="logo">Py</div>
 
-        <h1>🐍 تقييم مهارات البرمجة بلغة Python</h1>
+    <h1>Python Skills Assessment</h1>
 
-        <p>
-            مرحبًا بك في منصة تقييم المهارات البرمجية.
-            <br>
-            نعمل على تجهيز تجربة تعليمية تساعد الطلاب
-            على اكتشاف مستوياتهم وتطوير مهاراتهم.
-        </p>
+    <p class="subtitle">
+      منصة تقييم مهارات البرمجة بلغة Python
+      <br>
+      سجّل الدخول للوصول إلى حسابك
+    </p>
 
-        <div class="courses">
-            <div class="course">TECH107</div>
-            <div class="course">TECH108</div>
-            <div class="course">TECH221</div>
-        </div>
+    <form id="loginForm">
+      <label for="email">البريد الإلكتروني</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="example@email.com"
+        autocomplete="username"
+        required
+      >
 
-        <p>🚀 المنصة قيد التطوير</p>
+      <label for="password">كلمة المرور</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="أدخل كلمة المرور"
+        autocomplete="current-password"
+        required
+      >
+
+      <button id="loginButton" type="submit">
+        تسجيل الدخول
+      </button>
+    </form>
+
+    <div id="message" class="message" role="status"></div>
+
+    <div class="footer">
+      © 2026 Python Skills Assessment
     </div>
+  </main>
+
+  <script>
+    const SUPABASE_URL =
+      "https://gmxjwgacpygorqwyfeoo.supabase.co";
+
+    // سنضع المفتاح العام هنا في الخطوة التالية.
+    const SUPABASE_KEY = "PASTE_PUBLISHABLE_KEY_HERE";
+
+    const form = document.getElementById("loginForm");
+    const button = document.getElementById("loginButton");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (SUPABASE_KEY === "PASTE_PUBLISHABLE_KEY_HERE") {
+        message.textContent = "لم يتم إعداد مفتاح الاتصال بعد.";
+        return;
+      }
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      button.disabled = true;
+      message.style.color = "#475569";
+      message.textContent = "جارٍ تسجيل الدخول...";
+
+      try {
+        const response = await fetch(
+          SUPABASE_URL + "/auth/v1/token?grant_type=password",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": SUPABASE_KEY
+            },
+            body: JSON.stringify({ email, password })
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.access_token) {
+          message.style.color = "#dc2626";
+          message.textContent =
+            "تعذر تسجيل الدخول. تأكد من البريد الإلكتروني وكلمة المرور.";
+          return;
+        }
+
+        // التحقق من صلاحية المدير
+        const check = await fetch(
+          SUPABASE_URL + "/functions/v1/create-student-account",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": SUPABASE_KEY,
+              "Authorization": "Bearer " + data.access_token
+            },
+            body: JSON.stringify({})
+          }
+        );
+
+        if (!check.ok) {
+          message.style.color = "#dc2626";
+          message.textContent =
+            "تم تسجيل الدخول، لكن تعذر التحقق من صلاحيات الحساب.";
+          return;
+        }
+
+        // حفظ جلسة المدير مؤقتًا في هذا التبويب فقط
+        sessionStorage.setItem(
+          "python_skills_access_token",
+          data.access_token
+        );
+
+        message.style.color = "#16a34a";
+        message.textContent =
+          "تم تسجيل الدخول بنجاح! جارٍ فتح لوحة التحكم...";
+
+        window.location.href = "dashboard.html";
+
+      } catch (error) {
+        message.style.color = "#dc2626";
+        message.textContent =
+          "حدث خطأ في الاتصال بالخادم. حاول مرة أخرى.";
+      } finally {
+        button.disabled = false;
+        document.getElementById("password").value = "";
+      }
+    });
+  </script>
 
 </body>
 </html>
