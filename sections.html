@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>إدارة الشعب الدراسية | Python Skills Assessment</title>
+
+<style>
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+
+body{
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#f3f6fb;
+  color:#172b49;
+}
+
+header{
+  background:#102b50;
+  color:white;
+  padding:22px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+header h1{margin:0;font-size:22px}
+header p{color:#bed0e7;font-size:13px;margin:8px 0 0}
+
+.back{
+  color:#102b50;
+  background:#ffd45c;
+  text-decoration:none;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+main{
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+.box{
+  background:white;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:22px;
+  box-shadow:0 5px 22px #102b500d;
+}
+
+h2{margin:0 0 20px;font-size:20px}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  font-size:14px;
+  margin-bottom:8px;
+}
+
+input,select{
+  width:100%;
+  padding:13px;
+  border:1px solid #d5deeb;
+  border-radius:10px;
+  font-size:15px;
+  background:white;
+  color:#172b49;
+}
+
+input:focus,select:focus{
+  outline:2px solid #b4cdf7;
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:13px 19px;
+  font-weight:bold;
+  cursor:pointer;
+  font-family:inherit;
+}
+
+button:disabled{opacity:.55;cursor:wait}
+
+.primary{background:#163e70;color:white}
+.secondary{background:#e8eef7;color:#163e70}
+.danger{background:#fee8e8;color:#a51d1d}
+
+.form-actions{
+  display:flex;
+  gap:10px;
+  margin-top:22px;
+  flex-wrap:wrap;
+}
+
+.notice{
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:20px;
+  line-height:1.8;
+}
+
+.success{background:#e5f7eb;color:#166534}
+.error{background:#fff0f0;color:#a51d1d}
+.info{background:#eaf2ff;color:#214b83}
+
+.stats{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+
+.stat{
+  background:white;
+  border-radius:14px;
+  padding:20px 25px;
+  flex:1;
+  min-width:180px;
+}
+
+.stat span{color:#72829a;font-size:13px}
+
+.stat strong{
+  display:block;
+  font-size:27px;
+  margin-top:8px;
+  color:#102b50;
+}
+
+.toolbar{
+  display:flex;
+  gap:12px;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.toolbar input{max-width:350px}
+
+.table-wrap{overflow-x:auto}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:750px;
+}
+
+th,td{
+  text-align:right;
+  padding:15px 12px;
+  border-bottom:1px solid #e8edf5;
+  font-size:14px;
+}
+
+th{background:#f4f7fc;color:#536581}
+td{vertical-align:middle}
+
+.row-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.row-actions button{
+  padding:8px 10px;
+  font-size:12px;
+}
+
+.empty{
+  text-align:center;
+  color:#77859b;
+  padding:30px;
+}
+
+footer{
+  text-align:center;
+  color:#8b98a9;
+  font-size:12px;
+  padding:25px;
+}
+
+@media(max-width:750px){
+  .grid{grid-template-columns:1fr}
+  header h1{font-size:18px}
+  .box{padding:18px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>🏫 إدارة الشعب الدراسية</h1>
+    <p>Python Skills Assessment — لوحة تحكم المدير</p>
+  </div>
+
+  <a class="back" href="dashboard.html">
+    ← العودة للوحة التحكم
+  </a>
+</header>
+
+<div
+  id="loading"
+  class="notice info"
+  style="max-width:650px;margin:40px auto;text-align:center"
+>
+  جارٍ التحقق من صلاحية المدير...
+</div>
+
+<main id="mainContent" hidden>
+
+  <div class="stats">
+    <div class="stat">
+      <span>إجمالي الشعب</span>
+      <strong id="totalSections">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>شعب تقن 107</span>
+      <strong id="tech107Count">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>شعب تقن 108</span>
+      <strong id="tech108Count">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>شعب تقن 221</span>
+      <strong id="tech221Count">0</strong>
+    </div>
+  </div>
+
+  <div id="message" class="notice info" role="status" hidden></div>
+
+  <section class="box">
+
+    <h2 id="formTitle">➕ إضافة شعبة دراسية</h2>
+
+    <form id="sectionForm">
+
+      <div class="grid">
+
+        <div>
+          <label for="sectionName">اسم الشعبة</label>
+          <input
+            id="sectionName"
+            type="text"
+            maxlength="100"
+            placeholder="مثال: موحد 3-ب"
+            required
+          >
+        </div>
+
+        <div>
+          <label for="gradeLevel">الصف الدراسي</label>
+          <select id="gradeLevel" required>
+            <option value="">اختر الصف</option>
+            <option value="الأول الثانوي">الأول الثانوي</option>
+            <option value="الثاني الثانوي">الثاني الثانوي</option>
+            <option value="الثالث الثانوي">الثالث الثانوي</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="courseCode">المقرر الدراسي</label>
+          <select id="courseCode" required>
+            <option value="">اختر المقرر</option>
+            <option value="TECH107">تقن 107</option>
+            <option value="TECH108">تقن 108</option>
+            <option value="TECH221">تقن 221</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+
+        <button class="primary" id="saveButton" type="submit">
+          💾 حفظ الشعبة
+        </button>
+
+        <button
+          class="secondary"
+          id="cancelButton"
+          type="button"
+          hidden
+        >
+          إلغاء التعديل
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <section class="box">
+
+    <div class="toolbar">
+
+      <h2>📋 قائمة الشعب الدراسية</h2>
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="🔎 ابحث عن شعبة أو مقرر..."
+      >
+
+      <button class="secondary" id="refreshButton">
+        🔄 تحديث القائمة
+      </button>
+
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+        <thead>
+          <tr>
+            <th>اسم الشعبة</th>
+            <th>الصف الدراسي</th>
+            <th>المقرر</th>
+            <th>تاريخ الإضافة</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+
+        <tbody id="sectionsBody"></tbody>
+      </table>
+
+    </div>
+
+    <p id="emptyMessage" class="empty">
+      جارٍ تحميل الشعب الدراسية...
+    </p>
+
+  </section>
+
+</main>
+
+<footer>© 2026 Python Skills Assessment</footer>
+
+<script>
+"use strict";
+
+const SUPABASE_URL =
+  "https://gmxjwgacpygorqwyfeoo.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_4sB0pFunm7YFIPN-sGODVg_3vnSvTQp";
+
+const TOKEN_NAME = "python_skills_access_token";
+
+let sections = [];
+let editingId = null;
+
+const $ = id => document.getElementById(id);
+
+function getToken() {
+  return sessionStorage.getItem(TOKEN_NAME);
+}
+
+function goToLogin() {
+  sessionStorage.removeItem(TOKEN_NAME);
+  window.location.replace("index.html");
+}
+
+function showMessage(text, type = "info") {
+  const box = $("message");
+  box.textContent = text;
+  box.className = "notice " + type;
+  box.hidden = false;
+}
+
+function clearMessage() {
+  $("message").hidden = true;
+}
+
+function friendlyError(error) {
+  if (error.status === 401) {
+    return "انتهت جلسة تسجيل الدخول. سجّل الدخول مجددًا.";
+  }
+
+  if (error.status === 403) {
+    return "ليست لديك صلاحية لتنفيذ هذه العملية.";
+  }
+
+  if (error.status === 404) {
+    return "تعذر الوصول إلى جدول الشعب عبر API.";
+  }
+
+  if (error.code === "23505") {
+    return "هذه الشعبة مسجلة مسبقًا لنفس الصف والمقرر.";
+  }
+
+  if (error.code === "23503") {
+    return "لا يمكن حذف هذه الشعبة لأنها مرتبطة بطلاب.";
+  }
+
+  if (error.code === "42501") {
+    return "رفضت قاعدة البيانات العملية بسبب الصلاحيات.";
+  }
+
+  return "تعذر تنفيذ العملية: " + error.message;
+}
+
+async function apiRequest(path, options = {}) {
+  const token = getToken();
+
+  if (!token) {
+    goToLogin();
+    throw new Error("لا توجد جلسة تسجيل دخول.");
+  }
+
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/" + path,
+    {
+      method: options.method || "GET",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      },
+      body: options.body
+        ? JSON.stringify(options.body)
+        : undefined
+    }
+  );
+
+  if (!response.ok) {
+    let detail = {};
+
+    try {
+      detail = await response.json();
+    } catch {}
+
+    const error = new Error(
+      detail.message ||
+      detail.error ||
+      "HTTP " + response.status
+    );
+
+    error.status = response.status;
+    error.code = detail.code;
+
+    throw error;
+  }
+
+  if (response.status === 204) {
+    return null;
+  }
+
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function verifyAdmin() {
+  const token = getToken();
+
+  if (!token) {
+    goToLogin();
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL +
+      "/functions/v1/create-student-account",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({})
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("فشل التحقق من صلاحية المدير.");
+    }
+
+    $("loading").hidden = true;
+    $("mainContent").hidden = false;
+
+    await loadSections();
+
+  } catch (error) {
+    $("loading").textContent =
+      "تعذر التحقق من صلاحية المدير. يرجى تسجيل الدخول مجددًا.";
+  }
+}
+
+async function loadSections() {
+  $("emptyMessage").hidden = false;
+  $("emptyMessage").textContent =
+    "جارٍ تحميل الشعب الدراسية...";
+
+  try {
+    const data = await apiRequest(
+      "class_sections?" +
+      "select=id,section_name,grade_level,course_code,created_at" +
+      "&order=created_at.desc&limit=1000"
+    );
+
+    sections = Array.isArray(data) ? data : [];
+
+    updateStats();
+    renderSections();
+
+  } catch (error) {
+    sections = [];
+    updateStats();
+
+    $("sectionsBody").replaceChildren();
+
+    $("emptyMessage").hidden = false;
+    $("emptyMessage").textContent =
+      "تعذر تحميل الشعب الدراسية.";
+
+    showMessage(friendlyError(error), "error");
+  }
+}
+
+function updateStats() {
+  $("totalSections").textContent = sections.length;
+
+  $("tech107Count").textContent =
+    sections.filter(s => s.course_code === "TECH107").length;
+
+  $("tech108Count").textContent =
+    sections.filter(s => s.course_code === "TECH108").length;
+
+  $("tech221Count").textContent =
+    sections.filter(s => s.course_code === "TECH221").length;
+}
+
+function renderSections() {
+  const query = $("searchInput").value
+    .trim()
+    .toLocaleLowerCase();
+
+  const filtered = sections.filter(section => {
+    const searchable = [
+      section.section_name,
+      section.grade_level,
+      section.course_code
+    ].join(" ").toLocaleLowerCase();
+
+    return searchable.includes(query);
+  });
+
+  $("sectionsBody").replaceChildren();
+
+  $("emptyMessage").hidden = filtered.length > 0;
+
+  if (!filtered.length) {
+    $("emptyMessage").textContent =
+      sections.length
+        ? "لا توجد نتائج مطابقة للبحث."
+        : "لا توجد شعب دراسية مسجلة حتى الآن.";
+    return;
+  }
+
+  for (const section of filtered) {
+    const tr = document.createElement("tr");
+
+    const values = [
+      section.section_name,
+      section.grade_level,
+      section.course_code,
+      section.created_at
+        ? new Date(section.created_at).toLocaleDateString("ar-BH")
+        : "—"
+    ];
+
+    for (const value of values) {
+      const td = document.createElement("td");
+      td.textContent = value || "—";
+      tr.appendChild(td);
+    }
+
+    const actionsCell = document.createElement("td");
+    const actions = document.createElement("div");
+    actions.className = "row-actions";
+
+    const editButton = document.createElement("button");
+    editButton.className = "secondary";
+    editButton.type = "button";
+    editButton.textContent = "✏️ تعديل";
+
+    editButton.addEventListener(
+      "click",
+      () => editSection(section.id)
+    );
+
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "danger";
+    deleteButton.type = "button";
+    deleteButton.textContent = "🗑️ حذف";
+
+    deleteButton.addEventListener(
+      "click",
+      () => deleteSection(section.id)
+    );
+
+    actions.append(editButton, deleteButton);
+    actionsCell.appendChild(actions);
+    tr.appendChild(actionsCell);
+
+    $("sectionsBody").appendChild(tr);
+  }
+}
+
+function resetForm() {
+  editingId = null;
+
+  $("sectionForm").reset();
+  $("formTitle").textContent = "➕ إضافة شعبة دراسية";
+  $("saveButton").textContent = "💾 حفظ الشعبة";
+  $("cancelButton").hidden = true;
+}
+
+function editSection(id) {
+  const section = sections.find(s => s.id === id);
+
+  if (!section) return;
+
+  editingId = id;
+
+  $("sectionName").value = section.section_name;
+  $("gradeLevel").value = section.grade_level;
+  $("courseCode").value = section.course_code;
+
+  $("formTitle").textContent =
+    "✏️ تعديل الشعبة: " + section.section_name;
+
+  $("saveButton").textContent = "💾 حفظ التعديلات";
+  $("cancelButton").hidden = false;
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  $("sectionName").focus();
+}
+
+async function saveSection(event) {
+  event.preventDefault();
+  clearMessage();
+
+  const sectionName = $("sectionName").value.trim();
+  const gradeLevel = $("gradeLevel").value;
+  const courseCode = $("courseCode").value;
+
+  if (sectionName.length < 2) {
+    showMessage(
+      "يرجى إدخال اسم شعبة صحيح.",
+      "error"
+    );
+    return;
+  }
+
+  const payload = {
+    section_name: sectionName,
+    grade_level: gradeLevel,
+    course_code: courseCode
+  };
+
+  $("saveButton").disabled = true;
+
+  try {
+    if (editingId) {
+      await apiRequest(
+        "class_sections?id=eq." +
+        encodeURIComponent(editingId),
+        {
+          method: "PATCH",
+          body: payload
+        }
+      );
+
+      showMessage(
+        "تم تعديل بيانات الشعبة بنجاح.",
+        "success"
+      );
+
+    } else {
+      await apiRequest("class_sections", {
+        method: "POST",
+        body: payload
+      });
+
+      showMessage(
+        "تمت إضافة الشعبة بنجاح.",
+        "success"
+      );
+    }
+
+    resetForm();
+    await loadSections();
+
+  } catch (error) {
+    showMessage(friendlyError(error), "error");
+
+  } finally {
+    $("saveButton").disabled = false;
+  }
+}
+
+async function deleteSection(id) {
+  const section = sections.find(s => s.id === id);
+
+  if (!section) return;
+
+  const confirmed = confirm(
+    "هل أنت متأكد من حذف الشعبة؟\n\n" +
+    section.section_name +
+    "\n\nلا يمكن حذف الشعبة إذا كانت مرتبطة بطلاب."
+  );
+
+  if (!confirmed) return;
+
+  try {
+    await apiRequest(
+      "class_sections?id=eq." +
+      encodeURIComponent(id),
+      { method: "DELETE" }
+    );
+
+    showMessage(
+      "تم حذف الشعبة بنجاح.",
+      "success"
+    );
+
+    await loadSections();
+
+  } catch (error) {
+    showMessage(friendlyError(error), "error");
+  }
+}
+
+$("sectionForm").addEventListener("submit", saveSection);
+$("cancelButton").addEventListener("click", resetForm);
+$("refreshButton").addEventListener("click", loadSections);
+$("searchInput").addEventListener("input", renderSections);
+
+verifyAdmin();
+</script>
+
+</body>
+</html>
