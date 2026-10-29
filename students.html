@@ -4,619 +4,70 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>إدارة الطلاب | Python Skills Assessment</title>
-
 <style>
-*{box-sizing:border-box}
-[hidden]{display:none!important}
+*{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f3f6fb;color:#172b49}
-header{background:#102b50;color:white;padding:22px 5%;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
-header h1{margin:0;font-size:22px}
-header p{color:#bed0e7;font-size:13px;margin:8px 0 0}
-.back{color:#102b50;background:#ffd45c;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:bold}
-main{max-width:1250px;margin:30px auto;padding:0 20px}
-.box{background:white;border-radius:18px;padding:25px;margin-bottom:22px;box-shadow:0 5px 22px #102b500d}
-h2{margin:0 0 20px;font-size:20px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-label{display:block;font-weight:bold;font-size:14px;margin-bottom:8px}
-input,select{width:100%;padding:13px;border:1px solid #d5deeb;border-radius:10px;font-size:15px;background:white;color:#172b49}
-input:focus,select:focus{outline:2px solid #b4cdf7}
-button{border:0;border-radius:10px;padding:13px 19px;font-weight:bold;cursor:pointer;font-family:inherit}
-.primary{background:#163e70;color:white}
-.secondary{background:#e8eef7;color:#163e70}
-.danger{background:#fee8e8;color:#a51d1d}
-button:disabled{opacity:.55;cursor:wait}
-.form-actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
-.notice{padding:14px;border-radius:10px;margin-bottom:20px;line-height:1.8}
-.success{background:#e5f7eb;color:#166534}
-.error{background:#fff0f0;color:#a51d1d}
-.info{background:#eaf2ff;color:#214b83}
-.toolbar{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap}
-.toolbar input{max-width:350px}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:850px}
-th,td{text-align:right;padding:15px 12px;border-bottom:1px solid #e8edf5;font-size:14px}
-th{background:#f4f7fc;color:#536581}
-td{vertical-align:middle}
-.badge{display:inline-block;border-radius:30px;padding:6px 11px;font-size:12px;background:#fff3d7;color:#805a00}
-.badge.approved{background:#e4f7ea;color:#17623a}
-.badge.rejected{background:#fde8e8;color:#a51d1d}
-.badge.suspended{background:#e8eaf0;color:#4b5563}
-.row-actions{display:flex;gap:6px;flex-wrap:wrap}
-.row-actions button{padding:8px 10px;font-size:12px}
-.empty{text-align:center;color:#77859b;padding:30px}
-.stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
-.stat{background:white;border-radius:14px;padding:20px 25px;flex:1;min-width:180px}
-.stat span{color:#72829a;font-size:13px}
-.stat strong{display:block;font-size:27px;margin-top:8px;color:#102b50}
-footer{text-align:center;color:#8b98a9;font-size:12px;padding:25px}
-@media(max-width:700px){
-.grid{grid-template-columns:1fr}
-header h1{font-size:18px}
-.box{padding:18px}
-}
+header{background:#102b50;color:#fff;padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{margin:0;font-size:23px}header p{font-size:13px;color:#c4d4e8;margin:8px 0 0}
+.back{background:#ffd45c;color:#102b50;padding:12px 17px;border-radius:10px;text-decoration:none;font-weight:bold}
+main{max-width:1250px;margin:28px auto;padding:0 18px}.box{background:#fff;border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 5px 22px #102b500d}
+h2{font-size:20px;margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+label{display:block;font-size:14px;font-weight:bold;margin-bottom:8px}input,select{width:100%;border:1px solid #d5deeb;border-radius:10px;padding:12px;font-size:14px;background:#fff;color:#172b49}
+button{font:inherit;font-weight:bold;border:0;border-radius:10px;padding:11px 17px;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.primary{background:#163e70;color:#fff}.secondary{background:#e8eef7;color:#163e70}.danger{background:#fee8e8;color:#a51d1d}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}.stat{background:#fff;border-radius:14px;padding:18px}.stat span{color:#73829a;font-size:13px}.stat strong{display:block;font-size:27px;margin-top:7px}
+.notice{padding:14px;border-radius:10px;margin-bottom:18px;line-height:1.7}.info{background:#eaf2ff;color:#214b83}.success{background:#e5f7eb;color:#166534}.error{background:#fff0f0;color:#a51d1d}
+.filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1040px}th,td{text-align:right;padding:13px 10px;border-bottom:1px solid #e8edf5;font-size:13px}th{background:#f4f7fc;color:#536581}.row-actions{display:flex;gap:6px}.row-actions button{padding:8px 10px;font-size:12px}.badge{display:inline-block;border-radius:20px;padding:5px 10px;background:#fff3d7;color:#805a00}.badge.approved{background:#e4f7ea;color:#17623a}.badge.rejected{background:#fde8e8;color:#a51d1d}.badge.suspended{background:#e8eaf0;color:#4b5563}.empty{text-align:center;color:#77859b;padding:24px}footer{text-align:center;color:#8b98a9;padding:22px;font-size:12px}
+@media(max-width:760px){.grid,.filters,.stats{grid-template-columns:1fr}.box{padding:17px}}
 </style>
 </head>
-
 <body>
-
-<header>
-  <div>
-    <h1>👨‍🎓 إدارة الطلاب</h1>
-    <p>Python Skills Assessment — لوحة تحكم المدير</p>
-  </div>
-  <a class="back" href="dashboard.html">← العودة للوحة التحكم</a>
-</header>
-
+<header><div><h1>👨‍🎓 إدارة الطلاب</h1><p>Python Skills Assessment — لوحة تحكم المدير</p></div><a class="back" href="dashboard.html">← العودة للوحة التحكم</a></header>
+<div id="loading" class="notice info" style="max-width:650px;margin:35px auto;text-align:center">جارٍ التحقق من صلاحية المدير...</div>
 <main id="mainContent" hidden>
-
-  <div class="stats">
-    <div class="stat">
-      <span>إجمالي الطلاب</span>
-      <strong id="totalStudents">0</strong>
-    </div>
-    <div class="stat">
-      <span>الطلاب المعتمدون</span>
-      <strong id="approvedStudents">0</strong>
-    </div>
-    <div class="stat">
-      <span>بانتظار الموافقة</span>
-      <strong id="pendingStudents">0</strong>
-    </div>
-  </div>
-
-  <div id="message" class="notice info" role="status" hidden></div>
-
-  <section class="box">
-    <h2 id="formTitle">➕ إضافة طالب جديد</h2>
-
-    <form id="studentForm">
-
-      <div class="grid">
-
-        <div>
-          <label for="fullName">اسم الطالب الكامل</label>
-          <input
-            id="fullName"
-            type="text"
-            maxlength="150"
-            placeholder="أدخل اسم الطالب"
-            required
-          >
-        </div>
-
-        <div>
-          <label for="gradeLevel">الصف الدراسي</label>
-          <select id="gradeLevel" required>
-            <option value="">اختر الصف الدراسي</option>
-            <option value="الأول الثانوي">الأول الثانوي</option>
-            <option value="الثاني الثانوي">الثاني الثانوي</option>
-            <option value="الثالث الثانوي">الثالث الثانوي</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="courseCode">المقرر الدراسي</label>
-          <select id="courseCode" required>
-            <option value="">اختر المقرر</option>
-            <option value="TECH107">تقن 107 — Python</option>
-            <option value="TECH108">تقن 108 — Python</option>
-            <option value="TECH221">تقن 221 — Python للرياضيات</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="registrationStatus">حالة التسجيل</label>
-          <select id="registrationStatus" required>
-            <option value="pending">بانتظار الموافقة</option>
-            <option value="approved">معتمد</option>
-            <option value="rejected">مرفوض</option>
-            <option value="suspended">موقوف</option>
-          </select>
-        </div>
-
-      </div>
-
-      <div class="form-actions">
-        <button class="primary" id="saveButton" type="submit">
-          💾 حفظ الطالب
-        </button>
-
-        <button
-          class="secondary"
-          id="cancelButton"
-          type="button"
-          hidden
-        >
-          إلغاء التعديل
-        </button>
-      </div>
-
-    </form>
-  </section>
-
-  <section class="box">
-
-    <div class="toolbar">
-      <h2>📋 قائمة الطلاب</h2>
-
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="🔎 ابحث بالاسم أو رقم الطالب..."
-      >
-
-      <button class="secondary" id="refreshButton">
-        🔄 تحديث القائمة
-      </button>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>رقم الطالب</th>
-            <th>الاسم</th>
-            <th>الصف</th>
-            <th>المقرر</th>
-            <th>الحالة</th>
-            <th>تاريخ الإضافة</th>
-            <th>الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody id="studentsBody"></tbody>
-      </table>
-    </div>
-
-    <p class="empty" id="emptyMessage">
-      جارٍ تحميل بيانات الطلاب...
-    </p>
-
-  </section>
-
-</main>
-
-<div id="loading" class="notice info"
-     style="max-width:600px;margin:40px auto;text-align:center">
-  جارٍ التحقق من صلاحية المدير وتحميل البيانات...
-</div>
-
-<footer>© 2026 Python Skills Assessment</footer>
-
+<div class="stats"><div class="stat"><span>إجمالي الطلاب المعروضين</span><strong id="totalCount">0</strong></div><div class="stat"><span>الطلاب المعتمدون</span><strong id="approvedCount">0</strong></div><div class="stat"><span>الشعب المسجلة</span><strong id="sectionsCount">0</strong></div></div>
+<div id="message" class="notice info" role="status" hidden></div>
+<section class="box"><h2 id="formTitle">➕ إضافة طالب جديد</h2><form id="studentForm"><div class="grid">
+<div><label for="fullName">اسم الطالب الكامل</label><input id="fullName" maxlength="150" required></div>
+<div><label for="academicNumber">الرقم الأكاديمي (اختياري للإضافة اليدوية)</label><input id="academicNumber" maxlength="40" inputmode="numeric" placeholder="مثال: 202600048"></div>
+<div><label for="sectionSelect">الشعبة الدراسية</label><select id="sectionSelect" required><option value="">اختر الشعبة</option></select></div>
+<div><label for="registrationStatus">حالة التسجيل</label><select id="registrationStatus"><option value="approved">معتمد</option><option value="pending">بانتظار الموافقة</option><option value="suspended">موقوف</option><option value="rejected">مرفوض</option></select></div>
+</div><p class="notice info" style="margin:18px 0 0">يُحدَّد الصف الدراسي والمقرر تلقائيًا من الشعبة المختارة. لإضافة شعبة جديدة استخدم صفحة إدارة الشعب.</p>
+<div class="actions"><button class="primary" id="saveButton" type="submit">💾 حفظ الطالب</button><button class="secondary" id="cancelButton" type="button" hidden>إلغاء التعديل</button><a class="back" href="sections.html">🏫 إدارة الشعب</a><a class="back" href="import-students.html">📥 استيراد Excel</a></div></form></section>
+<section class="box"><h2>📋 قائمة الطلاب</h2><div class="filters"><div><label for="filterSection">تصفية حسب الشعبة</label><select id="filterSection"><option value="all">جميع الشعب</option></select></div><div><label for="searchInput">البحث</label><input id="searchInput" type="search" placeholder="الاسم أو الرقم الأكاديمي أو رقم المنصة"></div><div><label>&nbsp;</label><button class="secondary" id="refreshButton" type="button">🔄 تحديث البيانات</button></div></div>
+<div class="table-wrap"><table><thead><tr><th>رقم المنصة</th><th>الرقم الأكاديمي</th><th>اسم الطالب</th><th>الشعبة</th><th>الصف</th><th>المقرر</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="studentsBody"></tbody></table></div><p class="empty" id="emptyMessage">جارٍ تحميل الطلاب...</p></section>
+</main><footer>© 2026 Python Skills Assessment</footer>
 <script>
 "use strict";
-
-const SUPABASE_URL =
-  "https://gmxjwgacpygorqwyfeoo.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_4sB0pFunm7YFIPN-sGODVg_3vnSvTQp";
-
-const TOKEN_NAME = "python_skills_access_token";
-
-let students = [];
-let editingId = null;
-
-const $ = id => document.getElementById(id);
-
-function showMessage(text, type = "info") {
-  const box = $("message");
-  box.textContent = text;
-  box.className = "notice " + type;
-  box.hidden = false;
+const URL_BASE="https://gmxjwgacpygorqwyfeoo.supabase.co";
+const KEY="sb_publishable_4sB0pFunm7YFIPN-sGODVg_3vnSvTQp";
+const TOKEN_NAME="python_skills_access_token";
+const $=id=>document.getElementById(id);
+let students=[],sections=[],editingId=null,loadingData=false;
+function token(){return sessionStorage.getItem(TOKEN_NAME)}
+function login(){sessionStorage.removeItem(TOKEN_NAME);location.replace("index.html")}
+function message(value,type="info"){$("message").textContent=value;$("message").className="notice "+type;$("message").hidden=false}
+function errorText(e){if(e.status===401)return "انتهت جلسة الدخول. سجّل الدخول مجددًا.";if(e.status===403||e.code==="42501")return "رفضت قاعدة البيانات العملية بسبب الصلاحيات.";if(e.code==="23505")return "الرقم الأكاديمي مسجل مسبقًا.";if(e.code==="23503")return "لا يمكن حذف الطالب لوجود بيانات مرتبطة به.";return e.message||"حدث خطأ غير معروف"}
+async function request(path,opts={}){
+ const t=token();if(!t){login();throw Error("لا توجد جلسة دخول")}
+ const res=await fetch(URL_BASE+"/rest/v1/"+path,{method:opts.method||"GET",headers:{apikey:KEY,Authorization:"Bearer "+t,"Content-Type":"application/json",...(opts.headers||{})},body:opts.body===undefined?undefined:JSON.stringify(opts.body)});
+ if(!res.ok){let d={};try{d=await res.json()}catch{};const e=Error(d.message||"HTTP "+res.status);e.status=res.status;e.code=d.code;throw e}
+ if(res.status===204)return null;const body=await res.text();return body?JSON.parse(body):null;
 }
-
-function clearMessage() {
-  $("message").hidden = true;
-}
-
-function getToken() {
-  return sessionStorage.getItem(TOKEN_NAME);
-}
-
-function goToLogin() {
-  sessionStorage.removeItem(TOKEN_NAME);
-  window.location.replace("index.html");
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function statusLabel(status) {
-  const labels = {
-    pending: "بانتظار الموافقة",
-    approved: "معتمد",
-    rejected: "مرفوض",
-    suspended: "موقوف"
-  };
-  return labels[status] || status;
-}
-
-function friendlyError(error) {
-  const message = String(error.message || error);
-
-  if (error.status === 401) {
-    return "انتهت جلسة تسجيل الدخول. سجّل الدخول مجددًا.";
-  }
-
-  if (error.status === 403) {
-    return "لا توجد صلاحية لتنفيذ العملية، أو أن الوصول عبر API مقيّد.";
-  }
-
-  if (error.status === 404) {
-    return "تعذر الوصول إلى جدول الطلاب عبر API. راجع إعدادات Data API.";
-  }
-
-  if (message.includes("42501")) {
-    return "قاعدة البيانات رفضت العملية بسبب الصلاحيات.";
-  }
-
-  return "تعذر تنفيذ العملية: " + message;
-}
-
-async function apiRequest(path, options = {}) {
-  const token = getToken();
-
-  if (!token) {
-    goToLogin();
-    throw new Error("لا توجد جلسة تسجيل دخول.");
-  }
-
-  const response = await fetch(
-    SUPABASE_URL + "/rest/v1/" + path,
-    {
-      method: options.method || "GET",
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + token,
-        "Content-Type": "application/json",
-        ...(options.headers || {})
-      },
-      body: options.body
-        ? JSON.stringify(options.body)
-        : undefined
-    }
-  );
-
-  if (!response.ok) {
-    let detail = {};
-
-    try {
-      detail = await response.json();
-    } catch {}
-
-    const error = new Error(
-      detail.message ||
-      detail.error ||
-      "HTTP " + response.status
-    );
-
-    error.status = response.status;
-    error.code = detail.code;
-
-    throw error;
-  }
-
-  if (response.status === 204) {
-    return null;
-  }
-
-  const text = await response.text();
-
-  return text ? JSON.parse(text) : null;
-}
-
-async function verifyAdmin() {
-  const token = getToken();
-
-  if (!token) {
-    goToLogin();
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      SUPABASE_URL +
-      "/functions/v1/create-student-account",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({})
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("فشل التحقق من صلاحية المدير.");
-    }
-
-    $("loading").hidden = true;
-    $("mainContent").hidden = false;
-
-    await loadStudents();
-
-  } catch (error) {
-    $("loading").textContent =
-      "تعذر التحقق من صلاحية المدير. يرجى تسجيل الدخول مجددًا.";
-
-    setTimeout(goToLogin, 2000);
-  }
-}
-
-async function loadStudents() {
-  $("emptyMessage").hidden = false;
-  $("emptyMessage").textContent = "جارٍ تحميل الطلاب...";
-
-  try {
-    const data = await apiRequest(
-      "students?select=id,student_number,full_name," +
-      "grade_level,course_code,registration_status," +
-      "created_at,approved_at" +
-      "&order=created_at.desc&limit=1000"
-    );
-
-    students = Array.isArray(data) ? data : [];
-
-    updateStats();
-    renderStudents();
-
-  } catch (error) {
-    students = [];
-    updateStats();
-    $("studentsBody").replaceChildren();
-
-    $("emptyMessage").hidden = false;
-    $("emptyMessage").textContent =
-      "تعذر تحميل بيانات الطلاب.";
-
-    showMessage(friendlyError(error), "error");
-  }
-}
-
-function updateStats() {
-  $("totalStudents").textContent = students.length;
-
-  $("approvedStudents").textContent =
-    students.filter(
-      student => student.registration_status === "approved"
-    ).length;
-
-  $("pendingStudents").textContent =
-    students.filter(
-      student => student.registration_status === "pending"
-    ).length;
-}
-
-function renderStudents() {
-  const query = $("searchInput").value
-    .trim()
-    .toLocaleLowerCase();
-
-  const filtered = students.filter(student => {
-    const name = (student.full_name || "")
-      .toLocaleLowerCase();
-
-    const number = (student.student_number || "")
-      .toLocaleLowerCase();
-
-    return name.includes(query) || number.includes(query);
-  });
-
-  $("studentsBody").replaceChildren();
-
-  $("emptyMessage").hidden = filtered.length > 0;
-
-  if (!filtered.length) {
-    $("emptyMessage").textContent =
-      students.length
-        ? "لا توجد نتائج مطابقة للبحث."
-        : "لا يوجد طلاب مسجلون حتى الآن.";
-    return;
-  }
-
-  for (const student of filtered) {
-    const tr = document.createElement("tr");
-
-    const date = student.created_at
-      ? new Date(student.created_at).toLocaleDateString("ar-BH")
-      : "—";
-
-    tr.innerHTML = `
-      <td>${escapeHtml(student.student_number)}</td>
-      <td>${escapeHtml(student.full_name)}</td>
-      <td>${escapeHtml(student.grade_level)}</td>
-      <td>${escapeHtml(student.course_code)}</td>
-      <td>
-        <span class="badge ${escapeHtml(student.registration_status)}">
-          ${escapeHtml(statusLabel(student.registration_status))}
-        </span>
-      </td>
-      <td>${escapeHtml(date)}</td>
-      <td>
-        <div class="row-actions">
-          <button class="secondary edit-button" type="button">
-            ✏️ تعديل
-          </button>
-          <button class="danger delete-button" type="button">
-            🗑️ حذف
-          </button>
-        </div>
-      </td>
-    `;
-
-    tr.querySelector(".edit-button")
-      .addEventListener("click", () => editStudent(student.id));
-
-    tr.querySelector(".delete-button")
-      .addEventListener("click", () => deleteStudent(student.id));
-
-    $("studentsBody").appendChild(tr);
-  }
-}
-
-function resetForm() {
-  editingId = null;
-  $("studentForm").reset();
-  $("formTitle").textContent = "➕ إضافة طالب جديد";
-  $("saveButton").textContent = "💾 حفظ الطالب";
-  $("cancelButton").hidden = true;
-}
-
-function editStudent(id) {
-  const student = students.find(item => item.id === id);
-
-  if (!student) return;
-
-  editingId = id;
-
-  $("fullName").value = student.full_name;
-  $("gradeLevel").value = student.grade_level;
-  $("courseCode").value = student.course_code;
-  $("registrationStatus").value = student.registration_status;
-
-  $("formTitle").textContent =
-    "✏️ تعديل بيانات الطالب: " + student.full_name;
-
-  $("saveButton").textContent = "💾 حفظ التعديلات";
-  $("cancelButton").hidden = false;
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  $("fullName").focus();
-}
-
-async function saveStudent(event) {
-  event.preventDefault();
-  clearMessage();
-
-  const fullName = $("fullName").value.trim();
-  const gradeLevel = $("gradeLevel").value;
-  const courseCode = $("courseCode").value;
-  const registrationStatus = $("registrationStatus").value;
-
-  if (fullName.length < 3) {
-    showMessage(
-      "يرجى إدخال اسم الطالب كاملًا (3 أحرف على الأقل).",
-      "error"
-    );
-    return;
-  }
-
-  const payload = {
-    full_name: fullName,
-    grade_level: gradeLevel,
-    course_code: courseCode,
-    registration_status: registrationStatus
-  };
-
-  $("saveButton").disabled = true;
-
-  try {
-    if (editingId) {
-      const original = students.find(
-        student => student.id === editingId
-      );
-
-      payload.approved_at =
-        registrationStatus === "approved"
-          ? (original?.approved_at || new Date().toISOString())
-          : null;
-
-      await apiRequest(
-        "students?id=eq." + encodeURIComponent(editingId),
-        {
-          method: "PATCH",
-          body: payload
-        }
-      );
-
-      showMessage("تم تعديل بيانات الطالب بنجاح.", "success");
-
-    } else {
-      if (registrationStatus === "approved") {
-        payload.approved_at = new Date().toISOString();
-      }
-
-      await apiRequest("students", {
-        method: "POST",
-        body: payload
-      });
-
-      showMessage("تمت إضافة الطالب بنجاح.", "success");
-    }
-
-    resetForm();
-    await loadStudents();
-
-  } catch (error) {
-    showMessage(friendlyError(error), "error");
-
-  } finally {
-    $("saveButton").disabled = false;
-  }
-}
-
-async function deleteStudent(id) {
-  const student = students.find(item => item.id === id);
-
-  if (!student) return;
-
-  const confirmed = confirm(
-    "هل أنت متأكد من حذف الطالب؟\n\n" +
-    student.full_name +
-    "\n\nقد يؤدي الحذف إلى فقدان بيانات مرتبطة بالطالب."
-  );
-
-  if (!confirmed) return;
-
-  try {
-    await apiRequest(
-      "students?id=eq." + encodeURIComponent(id),
-      { method: "DELETE" }
-    );
-
-    showMessage("تم حذف سجل الطالب.", "success");
-    await loadStudents();
-
-  } catch (error) {
-    showMessage(friendlyError(error), "error");
-  }
-}
-
-$("studentForm").addEventListener("submit", saveStudent);
-$("cancelButton").addEventListener("click", resetForm);
-$("refreshButton").addEventListener("click", loadStudents);
-$("searchInput").addEventListener("input", renderStudents);
-
-verifyAdmin();
+async function verify(){if(!token()){login();return}try{const r=await fetch(URL_BASE+"/functions/v1/create-student-account",{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+token(),"Content-Type":"application/json"},body:"{}"});if(!r.ok)throw Error("غير مصرح");$("loading").hidden=true;$("mainContent").hidden=false;await reload()}catch(e){$("loading").textContent="تعذر التحقق من صلاحية المدير. يرجى تسجيل الدخول مجددًا."}}
+function sectionLabel(s){return s.section_name+" — "+s.course_code+" — "+s.grade_level}
+function fillSections(){const currentForm=$("sectionSelect").value,currentFilter=$("filterSection").value;$("sectionSelect").replaceChildren(new Option("اختر الشعبة",""));$("filterSection").replaceChildren(new Option("جميع الشعب","all"));for(const s of sections){$("sectionSelect").add(new Option(sectionLabel(s),s.id));$("filterSection").add(new Option(sectionLabel(s),s.id))}if(sections.some(s=>s.id===currentForm))$("sectionSelect").value=currentForm;if(currentFilter==="unassigned"||sections.some(s=>s.id===currentFilter))$("filterSection").value=currentFilter;$("filterSection").add(new Option("بدون شعبة","unassigned"));$("sectionsCount").textContent=sections.length}
+async function reload(){if(loadingData)return;loadingData=true;$("refreshButton").disabled=true;$("emptyMessage").hidden=false;$("emptyMessage").textContent="جارٍ تحميل البيانات...";try{
+ const [s,st]=await Promise.all([request("class_sections?select=id,section_name,grade_level,course_code&order=section_name.asc&limit=1000"),request("students?select=id,student_number,academic_number,full_name,grade_level,course_code,registration_status,approved_at,class_section_id&order=full_name.asc&limit=1000")]);sections=s||[];students=st||[];fillSections();render();
+ }catch(e){students=[];sections=[];$("studentsBody").replaceChildren();$("emptyMessage").hidden=false;$("emptyMessage").textContent="تعذر تحميل بيانات الطلاب";message(errorText(e),"error")}finally{loadingData=false;$("refreshButton").disabled=false}}
+function statusText(v){return ({approved:"معتمد",pending:"بانتظار الموافقة",suspended:"موقوف",rejected:"مرفوض"})[v]||v}
+function cell(tr,value){const td=document.createElement("td");td.textContent=value??"—";tr.append(td);return td}
+function render(){const section=$("filterSection").value,q=$("searchInput").value.trim().toLocaleLowerCase();const filtered=students.filter(s=>{if(section==="unassigned"&&s.class_section_id)return false;if(section!=="all"&&section!=="unassigned"&&s.class_section_id!==section)return false;return [s.full_name,s.academic_number,s.student_number].some(v=>String(v||"").toLocaleLowerCase().includes(q))});$("totalCount").textContent=filtered.length;$("approvedCount").textContent=filtered.filter(s=>s.registration_status==="approved").length;$("studentsBody").replaceChildren();$("emptyMessage").hidden=filtered.length>0;$("emptyMessage").textContent=students.length?"لا توجد نتائج مطابقة للبحث أو الشعبة.":"لا يوجد طلاب مسجلون حتى الآن.";for(const s of filtered){const tr=document.createElement("tr"),sec=sections.find(x=>x.id===s.class_section_id);cell(tr,s.student_number);cell(tr,s.academic_number);cell(tr,s.full_name);cell(tr,sec?sec.section_name:"غير محددة");cell(tr,s.grade_level);cell(tr,s.course_code);const status=cell(tr,statusText(s.registration_status));status.className="badge "+s.registration_status;const td=document.createElement("td"),actions=document.createElement("div");actions.className="row-actions";const edit=document.createElement("button");edit.type="button";edit.className="secondary";edit.textContent="✏️ تعديل";edit.addEventListener("click",()=>editStudent(s.id));const del=document.createElement("button");del.type="button";del.className="danger";del.textContent="🗑️ حذف";del.addEventListener("click",()=>deleteStudent(s.id));actions.append(edit,del);td.append(actions);tr.append(td);$("studentsBody").append(tr)}}
+function reset(){editingId=null;$("studentForm").reset();$("formTitle").textContent="➕ إضافة طالب جديد";$("saveButton").textContent="💾 حفظ الطالب";$("cancelButton").hidden=true}
+function editStudent(id){const s=students.find(x=>x.id===id);if(!s)return;editingId=id;$("fullName").value=s.full_name;$("academicNumber").value=s.academic_number||"";$("sectionSelect").value=s.class_section_id||"";$("registrationStatus").value=s.registration_status;$("formTitle").textContent="✏️ تعديل بيانات: "+s.full_name;$("saveButton").textContent="💾 حفظ التعديلات";$("cancelButton").hidden=false;scrollTo({top:0,behavior:"smooth"})}
+async function save(e){e.preventDefault();const name=$("fullName").value.trim(),num=$("academicNumber").value.trim(),section=sections.find(x=>x.id===$("sectionSelect").value),status=$("registrationStatus").value;if(name.length<3){message("أدخل اسم الطالب كاملًا.","error");return}if(num&&!/^[0-9]+$/.test(num)){message("الرقم الأكاديمي يجب أن يحتوي على أرقام فقط.","error");return}if(!section){message("اختر شعبة دراسية أولًا.","error");return}const old=students.find(x=>x.id===editingId);const payload={full_name:name,academic_number:num||null,class_section_id:section.id,class_section:section.section_name,grade_level:section.grade_level,course_code:section.course_code,registration_status:status,approved_at:status==="approved"?(old?.approved_at||new Date().toISOString()):null};$("saveButton").disabled=true;try{if(editingId){await request("students?id=eq."+encodeURIComponent(editingId),{method:"PATCH",body:payload});message("تم تعديل بيانات الطالب بنجاح.","success")}else{await request("students",{method:"POST",body:payload});message("تمت إضافة الطالب بنجاح.","success")}reset();await reload()}catch(err){message(errorText(err),"error")}finally{$("saveButton").disabled=false}}
+async function deleteStudent(id){const s=students.find(x=>x.id===id);if(!s||!confirm("هل تريد حذف سجل الطالب نهائيًا؟\n"+s.full_name+"\nقد تكون له بيانات مرتبطة."))return;try{await request("students?id=eq."+encodeURIComponent(id),{method:"DELETE"});message("تم حذف سجل الطالب.","success");await reload()}catch(e){message(errorText(e),"error")}}
+$("studentForm").addEventListener("submit",save);$("cancelButton").addEventListener("click",reset);$("refreshButton").addEventListener("click",reload);$("filterSection").addEventListener("change",render);$("searchInput").addEventListener("input",render);verify();
 </script>
-
 </body>
 </html>
