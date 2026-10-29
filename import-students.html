@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استيراد الطلاب | Python Skills Assessment</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#f3f6fb;
+  color:#172b49
+}
+header{
+  background:#102b50;
+  color:white;
+  padding:22px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap
+}
+header h1{margin:0;font-size:22px}
+header p{font-size:13px;color:#bed0e7}
+.back{
+  background:#ffd45c;
+  color:#102b50;
+  padding:12px 18px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:bold
+}
+main{max-width:1200px;margin:30px auto;padding:0 20px}
+.box{
+  background:white;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:22px;
+  box-shadow:0 5px 22px #102b500d
+}
+h2{margin:0 0 20px;font-size:20px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px
+}
+label{display:block;font-weight:bold;margin-bottom:8px}
+input,select{
+  width:100%;
+  padding:13px;
+  border:1px solid #d5deeb;
+  border-radius:10px;
+  background:white;
+  font-size:15px
+}
+button{
+  border:0;
+  border-radius:10px;
+  padding:13px 20px;
+  font-weight:bold;
+  cursor:pointer;
+  font-family:inherit
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:#163e70;color:white}
+.secondary{background:#e8eef7;color:#163e70}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.notice{
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:20px;
+  line-height:1.8
+}
+.info{background:#eaf2ff;color:#214b83}
+.success{background:#e5f7eb;color:#166534}
+.error{background:#fff0f0;color:#a51d1d}
+.warning{background:#fff4d8;color:#775400}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin:20px 0
+}
+.stat{
+  background:#f4f7fc;
+  border-radius:12px;
+  padding:18px;
+  text-align:center
+}
+.stat strong{display:block;font-size:27px;color:#163e70}
+.stat span{font-size:13px;color:#72829a}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{
+  text-align:right;
+  padding:13px;
+  border-bottom:1px solid #e8edf5;
+  font-size:14px
+}
+th{background:#f4f7fc}
+.valid{color:#166534;font-weight:bold}
+.invalid{color:#a51d1d;font-weight:bold}
+progress{width:100%;height:20px}
+footer{text-align:center;padding:25px;color:#8b98a9;font-size:12px}
+@media(max-width:750px){
+  .grid,.stats{grid-template-columns:1fr}
+  .box{padding:18px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>📥 استيراد الطلاب من Excel</h1>
+    <p>Python Skills Assessment — لوحة تحكم المدير</p>
+  </div>
+  <a class="back" href="dashboard.html">
+    ← العودة للوحة التحكم
+  </a>
+</header>
+
+<div id="loading" class="notice info"
+style="max-width:650px;margin:40px auto;text-align:center">
+جارٍ التحقق من صلاحية المدير...
+</div>
+
+<main id="mainContent" hidden>
+
+  <div id="message" class="notice info" hidden></div>
+
+  <section class="box">
+    <h2>📚 بيانات الشعبة</h2>
+
+    <div class="grid">
+      <div>
+        <label for="gradeLevel">الصف الدراسي</label>
+        <select id="gradeLevel">
+          <option value="">اختر الصف</option>
+          <option value="الأول الثانوي">الأول الثانوي</option>
+          <option value="الثاني الثانوي">الثاني الثانوي</option>
+          <option value="الثالث الثانوي">الثالث الثانوي</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="courseCode">المقرر الدراسي</label>
+        <select id="courseCode">
+          <option value="">اختر المقرر</option>
+          <option value="TECH107">تقن 107</option>
+          <option value="TECH108">تقن 108</option>
+          <option value="TECH221">تقن 221</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="sectionName">اسم الشعبة</label>
+        <input id="sectionName"
+          placeholder="مثال: موحد 3-ب"
+          maxlength="100">
+      </div>
+    </div>
+  </section>
+
+  <section class="box">
+    <h2>📁 رفع ملف Excel</h2>
+
+    <p>
+      اختر ملف الشعبة بصيغة XLSX.
+      سيقرأ النظام الرقم الأكاديمي من العمود B
+      واسم الطالب من العمود C.
+    </p>
+
+    <input type="file" id="excelFile" accept=".xlsx,.xls">
+
+    <div class="actions">
+      <button class="primary" id="previewButton">
+        🔍 قراءة الملف ومعاينة الطلاب
+      </button>
+      <button class="secondary" id="clearButton">
+        🧹 مسح المعاينة
+      </button>
+    </div>
+  </section>
+
+  <section class="box" id="previewSection" hidden>
+    <h2>👨‍🎓 معاينة بيانات الطلاب</h2>
+
+    <div class="stats">
+      <div class="stat">
+        <strong id="totalCount">0</strong>
+        <span>السجلات المقروءة</span>
+      </div>
+      <div class="stat">
+        <strong id="validCount">0</strong>
+        <span>السجلات الصالحة</span>
+      </div>
+      <div class="stat">
+        <strong id="invalidCount">0</strong>
+        <span>السجلات التي تحتاج مراجعة</span>
+      </div>
+    </div>
+
+    <div id="previewWarning" class="notice warning" hidden></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>صف Excel</th>
+            <th>الرقم الأكاديمي</th>
+            <th>اسم الطالب</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="previewBody"></tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button class="primary" id="importButton" disabled>
+        ✅ تأكيد استيراد الطلاب
+      </button>
+    </div>
+  </section>
+
+  <section class="box" id="resultSection" hidden>
+    <h2>📊 تقرير الاستيراد</h2>
+
+    <div class="stats">
+      <div class="stat">
+        <strong id="addedCount">0</strong>
+        <span>تمت إضافتهم</span>
+      </div>
+      <div class="stat">
+        <strong id="skippedCount">0</strong>
+        <span>تم تجاوزهم</span>
+      </div>
+      <div class="stat">
+        <strong id="failedCount">0</strong>
+        <span>فشلت إضافتهم</span>
+      </div>
+    </div>
+
+    <div id="resultDetails" class="notice info"></div>
+
+    <progress id="importProgress" max="100" value="0"></progress>
+  </section>
+
+</main>
+
+<footer>© 2026 Python Skills Assessment</footer>
+
+<script>
+"use strict";
+
+const SUPABASE_URL =
+  "https://gmxjwgacpygorqwyfeoo.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_4sB0pFunm7YFIPN-sGODVg_3vnSvTQp";
+
+const TOKEN_NAME = "python_skills_access_token";
+
+const $ = id => document.getElementById(id);
+
+let previewStudents = [];
+let isImporting = false;
+let importCompleted = false;
+let previewSettings = null;
+
+function getToken() {
+  return sessionStorage.getItem(TOKEN_NAME);
+}
+
+function goToLogin() {
+  sessionStorage.removeItem(TOKEN_NAME);
+  location.replace("index.html");
+}
+
+function showMessage(text, type = "info") {
+  const box = $("message");
+  box.textContent = text;
+  box.className = "notice " + type;
+  box.hidden = false;
+}
+
+function describeError(error) {
+  if (error.status === 401) {
+    return "انتهت جلسة تسجيل الدخول.";
+  }
+  if (error.status === 403 || error.code === "42501") {
+    return "رفضت قاعدة البيانات العملية بسبب الصلاحيات.";
+  }
+  if (error.code === "23505") {
+    return "السجل موجود مسبقًا.";
+  }
+  return error.message || "حدث خطأ غير معروف.";
+}
+
+async function apiRequest(path, options = {}) {
+  const token = getToken();
+
+  if (!token) {
+    goToLogin();
+    throw new Error("لا توجد جلسة تسجيل دخول.");
+  }
+
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/" + path,
+    {
+      method: options.method || "GET",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      },
+      body: options.body === undefined
+        ? undefined
+        : JSON.stringify(options.body)
+    }
+  );
+
+  if (!response.ok) {
+    let details = {};
+    try {
+      details = await response.json();
+    } catch {}
+
+    const error = new Error(
+      details.message || "HTTP " + response.status
+    );
+    error.status = response.status;
+    error.code = details.code;
+    throw error;
+  }
+
+  if (response.status === 204) return null;
+
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function verifyAdmin() {
+  const token = getToken();
+
+  if (!token) {
+    goToLogin();
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL + "/functions/v1/create-student-account",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + token
+        },
+        body: JSON.stringify({})
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("فشل التحقق من صلاحية المدير.");
+    }
+
+    $("loading").hidden = true;
+    $("mainContent").hidden = false;
+
+  } catch {
+    $("loading").textContent =
+      "تعذر التحقق من صلاحية المدير. سجّل الدخول مجددًا.";
+  }
+}
+
+function currentSettings() {
+  return {
+    grade: $("gradeLevel").value,
+    course: $("courseCode").value,
+    section: $("sectionName").value.trim()
+  };
+}
+
+function settingsMatch() {
+  const current = currentSettings();
+
+  return previewSettings &&
+    current.grade === previewSettings.grade &&
+    current.course === previewSettings.course &&
+    current.section === previewSettings.section;
+}
+
+function invalidatePreview() {
+  if (isImporting) return;
+
+  previewStudents = [];
+  previewSettings = null;
+  importCompleted = false;
+  $("previewSection").hidden = true;
+  $("resultSection").hidden = true;
+  $("importButton").disabled = true;
+}
+
+function setBusy(busy) {
+  isImporting = busy;
+
+  for (const id of [
+    "gradeLevel", "courseCode", "sectionName",
+    "excelFile", "previewButton", "clearButton"
+  ]) {
+    $(id).disabled = busy;
+  }
+
+  $("importButton").disabled = busy || importCompleted;
+}
+
+function academicNumber(value) {
+  if (value === null || value === undefined) return "";
+  return String(value).trim();
+}
+
+function addCell(row, value) {
+  const td = document.createElement("td");
+  td.textContent = value;
+  row.appendChild(td);
+  return td;
+}
+
+function renderPreview() {
+  $("previewBody").replaceChildren();
+
+  let valid = 0;
+  let invalid = 0;
+
+  for (const student of previewStudents) {
+    const tr = document.createElement("tr");
+
+    addCell(tr, student.excelRow);
+    addCell(tr, student.academic_number);
+    addCell(tr, student.full_name);
+
+    const status = addCell(
+      tr,
+      student.valid ? "صالح" : student.reason
+    );
+
+    status.className = student.valid ? "valid" : "invalid";
+
+    if (student.valid) valid++;
+    else invalid++;
+
+    $("previewBody").appendChild(tr);
+  }
+
+  $("totalCount").textContent = previewStudents.length;
+  $("validCount").textContent = valid;
+  $("invalidCount").textContent = invalid;
+
+  $("previewWarning").hidden = invalid === 0;
+
+  if (invalid > 0) {
+    $("previewWarning").textContent =
+      "توجد سجلات غير صالحة. لن يتم استيرادها. " +
+      "راجع الأسماء والأرقام الأكاديمية في الملف.";
+  }
+
+  $("importButton").disabled = valid === 0;
+  $("previewSection").hidden = false;
+}
+
+async function previewFile() {
+  invalidatePreview();
+  $("message").hidden = true;
+
+  const settings = currentSettings();
+  const file = $("excelFile").files[0];
+
+  if (!settings.grade || !settings.course || !settings.section) {
+    showMessage(
+      "يرجى اختيار الصف والمقرر وكتابة اسم الشعبة.",
+      "error"
+    );
+    return;
+  }
+
+  if (settings.section.length < 2) {
+    showMessage("اسم الشعبة قصير جدًا.", "error");
+    return;
+  }
+
+  if (!file) {
+    showMessage("يرجى اختيار ملف Excel أولًا.", "error");
+    return;
+  }
+
+  if (!/\.(xlsx|xls)$/i.test(file.name)) {
+    showMessage("الملف يجب أن يكون بصيغة Excel.", "error");
+    return;
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    showMessage("حجم الملف أكبر من 10 ميغابايت.", "error");
+    return;
+  }
+
+  if (typeof XLSX === "undefined") {
+    showMessage(
+      "تعذر تحميل مكتبة قراءة Excel. تحقق من اتصال الإنترنت.",
+      "error"
+    );
+    return;
+  }
+
+  try {
+    const buffer = await file.arrayBuffer();
+
+    const workbook = XLSX.read(buffer, {
+      type: "array",
+      cellDates: false
+    });
+
+    const sheetName = workbook.SheetNames.find(
+      name => name.trim() === "تقنية المعلومات والاتصال"
+    );
+
+    if (!sheetName) {
+      showMessage(
+        "لم أجد ورقة «تقنية المعلومات والاتصال» في الملف. " +
+        "يرجى استخدام قالب الرصد المعتمد.",
+        "error"
+      );
+      return;
+    }
+
+    const sheet = workbook.Sheets[sheetName];
+
+    const headingB = sheet["B1"]?.v;
+    const headingC = sheet["C1"]?.v;
+
+    if (
+      String(headingB || "").trim() !== "الرقم الأكاديمي" ||
+      String(headingC || "").trim() !== "اسم الطالب"
+    ) {
+      showMessage(
+        "عناوين الأعمدة لا تطابق القالب المعتمد. " +
+        "تأكد من وجود الرقم الأكاديمي في B1 واسم الطالب في C1.",
+        "error"
+      );
+      return;
+    }
+
+    const range = XLSX.utils.decode_range(sheet["!ref"] || "A1");
+
+    const seen = new Set();
+    const parsed = [];
+
+    for (let r = 3; r <= range.e.r; r++) {
+      const bAddress = "B" + (r + 1);
+      const cAddress = "C" + (r + 1);
+
+      const numberCell = sheet[bAddress];
+      const nameCell = sheet[cAddress];
+
+      // نستخدم النص المعروض للمحافظة على الأصفار البادئة
+      // إذا كانت محفوظة بتنسيق ظاهر في Excel.
+      const number = academicNumber(
+        numberCell?.w ?? numberCell?.v
+      );
+
+      const name = String(
+        nameCell?.w ?? nameCell?.v ?? ""
+      ).trim();
+
+      if (!number && !name) continue;
+
+      let reason = "";
+
+      if (!number) {
+        reason = "الرقم الأكاديمي مفقود";
+      } else if (!/^[0-9]+$/.test(number)) {
+        reason = "الرقم الأكاديمي يجب أن يتكون من أرقام";
+      } else if (!name || name.length < 3) {
+        reason = "اسم الطالب غير مكتمل";
+      } else if (seen.has(number)) {
+        reason = "رقم أكاديمي مكرر داخل الملف";
+      }
+
+      if (number) seen.add(number);
+
+      parsed.push({
+        excelRow: r + 1,
+        academic_number: number,
+        full_name: name,
+        valid: reason === "",
+        reason
+      });
+    }
+
+    if (!parsed.length) {
+      showMessage(
+        "لم أجد أسماء طلاب في العمودين B وC بدءًا من الصف 4.",
+        "error"
+      );
+      return;
+    }
+
+    previewStudents = parsed;
+    previewSettings = settings;
+
+    renderPreview();
+
+    showMessage(
+      "تمت قراءة الملف محليًا. راجع البيانات قبل تأكيد الاستيراد.",
+      "success"
+    );
+
+  } catch (error) {
+    showMessage(
+      "تعذر قراءة ملف Excel: " + error.message,
+      "error"
+    );
+  }
+}
+
+async function findOrCreateSection(settings) {
+  const filter = new URLSearchParams({
+    select: "id",
+    section_name: "eq." + settings.section,
+    grade_level: "eq." + settings.grade,
+    course_code: "eq." + settings.course,
+    limit: "1"
+  });
+
+  let existing = await apiRequest(
+    "class_sections?" + filter.toString()
+  );
+
+  if (existing.length) return existing[0].id;
+
+  try {
+    const created = await apiRequest("class_sections", {
+      method: "POST",
+      headers: {"Prefer": "return=representation"},
+      body: {
+        section_name: settings.section,
+        grade_level: settings.grade,
+        course_code: settings.course
+      }
+    });
+
+    if (created?.[0]?.id) return created[0].id;
+
+  } catch (error) {
+    if (error.code !== "23505") throw error;
+  }
+
+  // ربما أنشأ مستخدم آخر الشعبة في اللحظة نفسها.
+  existing = await apiRequest(
+    "class_sections?" + filter.toString()
+  );
+
+  if (existing.length) return existing[0].id;
+
+  throw new Error("تعذر إنشاء الشعبة أو العثور عليها.");
+}
+
+async function checkExistingStudent(number) {
+  const params = new URLSearchParams({
+    select: "id",
+    academic_number: "eq." + number,
+    limit: "1"
+  });
+
+  const result = await apiRequest(
+    "students?" + params.toString()
+  );
+
+  return result.length > 0;
+}
+
+async function importStudents() {
+  if (isImporting || importCompleted) return;
+
+  if (!settingsMatch()) {
+    showMessage(
+      "تغيرت بيانات الشعبة بعد المعاينة. أعد قراءة الملف.",
+      "error"
+    );
+    return;
+  }
+
+  const validStudents = previewStudents.filter(s => s.valid);
+
+  if (!validStudents.length) return;
+
+  const confirmed = confirm(
+    "سيتم استيراد " + validStudents.length +
+    " طالبًا صالحًا إلى الشعبة:\n" +
+    previewSettings.section +
+    "\n\nسيتم تجاوز الطلاب المسجلين مسبقًا.\n" +
+    "هل تريد المتابعة؟"
+  );
+
+  if (!confirmed) return;
+
+  setBusy(true);
+  $("message").hidden = true;
+  $("resultSection").hidden = false;
+  $("importProgress").value = 0;
+
+  let added = 0;
+  let skipped = 0;
+  let failed = 0;
+  const errors = [];
+
+  try {
+    const sectionId = await findOrCreateSection(previewSettings);
+
+    for (let i = 0; i < validStudents.length; i++) {
+      const student = validStudents[i];
+
+      try {
+        const exists = await checkExistingStudent(
+          student.academic_number
+        );
+
+        if (exists) {
+          skipped++;
+        } else {
+          await apiRequest("students", {
+            method: "POST",
+            body: {
+              full_name: student.full_name,
+              academic_number: student.academic_number,
+              grade_level: previewSettings.grade,
+              course_code: previewSettings.course,
+              class_section: previewSettings.section,
+              class_section_id: sectionId,
+              registration_status: "approved",
+              approved_at: new Date().toISOString()
+            }
+          });
+
+          added++;
+        }
+
+      } catch (error) {
+        if (error.code === "23505") {
+          skipped++;
+        } else {
+          failed++;
+          errors.push(
+            "صف " + student.excelRow +
+            ": " + describeError(error)
+          );
+        }
+      }
+
+      $("addedCount").textContent = added;
+      $("skippedCount").textContent = skipped;
+      $("failedCount").textContent = failed;
+
+      $("importProgress").value =
+        Math.round(((i + 1) / validStudents.length) * 100);
+
+      $("resultDetails").textContent =
+        "جارٍ معالجة الطالب " +
+        (i + 1) + " من " + validStudents.length;
+    }
+
+    const invalidCount =
+      previewStudents.length - validStudents.length;
+
+    $("resultDetails").textContent =
+      "اكتملت معالجة الملف.\n" +
+      "تمت إضافة: " + added +
+      " | موجودون مسبقًا: " + skipped +
+      " | أخطاء الحفظ: " + failed +
+      " | سجلات غير صالحة: " + invalidCount +
+      (errors.length
+        ? "\nتفاصيل الأخطاء:\n" + errors.slice(0, 15).join("\n")
+        : "");
+
+    $("resultDetails").style.whiteSpace = "pre-line";
+
+    importCompleted = true;
+
+    if (failed) {
+      showMessage(
+        "اكتمل الاستيراد جزئيًا. راجع التقرير قبل إعادة المحاولة.",
+        "warning"
+      );
+    } else {
+      showMessage(
+        "اكتمل الاستيراد. يمكنك مراجعة الطلاب في صفحة إدارة الطلاب.",
+        "success"
+      );
+    }
+
+  } catch (error) {
+    $("resultDetails").textContent =
+      "توقف الاستيراد: " + describeError(error);
+
+    showMessage(
+      "تعذر بدء الاستيراد: " + describeError(error),
+      "error"
+    );
+
+  } finally {
+    setBusy(false);
+    $("importButton").disabled = true;
+  }
+}
+
+$("previewButton").addEventListener("click", previewFile);
+$("importButton").addEventListener("click", importStudents);
+
+$("clearButton").addEventListener("click", () => {
+  invalidatePreview();
+  $("excelFile").value = "";
+  $("message").hidden = true;
+});
+
+for (const id of [
+  "gradeLevel", "courseCode", "sectionName", "excelFile"
+]) {
+  $(id).addEventListener("change", invalidatePreview);
+}
+
+verifyAdmin();
+</script>
+
+</body>
+</html>
