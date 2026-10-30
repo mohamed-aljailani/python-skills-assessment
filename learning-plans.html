@@ -10,6 +10,26 @@
 .followups-panel h3{margin-top:0}.followup-entry{background:white;border:1px solid #d9e1f0;border-radius:9px;padding:12px;margin:10px 0}
 .followup-entry p{white-space:pre-wrap;line-height:1.8;margin:7px 0}.followup-form{margin-top:14px;border-top:1px solid #d9e1f0;padding-top:12px}
 .followup-form textarea{min-height:75px}.followup-message{margin:10px 0;font-size:13px}
+
+/* التقرير التفصيلي متعدد الصفحات */
+@media print{
+  #printArea{padding:0!important;font:11pt Tahoma,Arial,sans-serif!important;line-height:1.65!important;color:#17233b!important}
+  #printArea .report-header{text-align:center;border-bottom:3px solid #1b2d53;padding-bottom:12px;margin-bottom:16px}
+  #printArea .report-header h1{margin:0;font-size:21pt}
+  #printArea .report-header p{margin:3px 0;font-size:10pt}
+  #printArea .report-section{margin:13px 0;break-inside:auto}
+  #printArea .report-section h2{font-size:13pt;color:#1b2d53;border-bottom:1px solid #d6aa44;margin:0 0 8px;padding:5px 0;break-after:avoid}
+  #printArea .report-box{border:1px solid #d7dfeb;border-radius:5px;padding:9px 11px;margin:8px 0;break-inside:avoid;page-break-inside:avoid}
+  #printArea .report-box p{margin:3px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+  #printArea .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+  #printArea .report-grid div{border-bottom:1px solid #e5eaf1;padding:5px 0;overflow-wrap:anywhere}
+  #printArea .report-muted{font-size:9pt;color:#59677c}
+  #printArea .report-break{break-before:page;page-break-before:always}
+  #printArea .report-followup{break-inside:avoid;page-break-inside:avoid}
+  #printArea .report-footer{border-top:1px solid #b6c1d2;padding-top:12px;margin-top:25px;break-inside:avoid}
+  #printArea .report-signature{display:flex;justify-content:space-between;gap:20px;margin-top:20px}
+  @page{size:A4;margin:15mm 13mm}
+}
 </style>
 </head>
 <body>
@@ -90,10 +110,99 @@ async function loadFollowups(plan,panel){
 async function loadPlans(){if(!currentStudent)return;show('plansCard');const list=$('plansList');list.textContent='جارٍ تحميل الخطط...';try{const data=await request(PLANS_ENDPOINT,{action:'list',student_id:currentStudent.id});list.replaceChildren();if(!data.plans.length){addText(list,'p','لا توجد خطط محفوظة لهذا الطالب.');return}for(const p of data.plans){const item=document.createElement('div');item.className='listitem';const top=document.createElement('div');top.className='row';const info=document.createElement('div');addText(info,'strong','خطة '+new Date(p.created_at).toLocaleDateString('ar-BH')+' — '+({draft:'مسودة',active:'نشطة',completed:'مكتملة'})[p.status]);addText(info,'p',(p.weaknesses||'لا توجد تفاصيل').slice(0,160),'muted');top.append(info);const edit=document.createElement('button');edit.textContent='عرض / تعديل';edit.className='secondary';edit.onclick=()=>{currentPlan=p;fillEditor(p);$('editorCard').scrollIntoView({behavior:'smooth'})};top.append(edit);item.append(top);
 const followBtn=document.createElement('button');followBtn.className='secondary';followBtn.textContent='📋 سجل المتابعات';const panel=document.createElement('div');panel.className='followups-panel hidden';followBtn.onclick=()=>{if(panel.classList.contains('hidden')){showPanel();}else{panel.classList.add('hidden');openFollowups.delete(p.id)}};
 function showPanel(){panel.classList.remove('hidden');openFollowups.add(p.id);loadFollowups(p,panel)}
-const actionRow=document.createElement('div');actionRow.className='actions';actionRow.append(followBtn);item.append(actionRow,panel);
+const actionRow=document.createElement('div');actionRow.className='actions';actionRow.append(followBtn);
+const detailedPrintBtn=document.createElement('button');
+detailedPrintBtn.className='secondary';detailedPrintBtn.textContent='📄 طباعة التقرير التفصيلي';
+detailedPrintBtn.addEventListener('click',()=>printDetailedReport(p,detailedPrintBtn));
+actionRow.append(detailedPrintBtn);item.append(actionRow,panel);
 if(p.status!=='completed'){const actions=document.createElement('div');actions.className='actions';const next=p.status==='draft'?'active':'completed';const btn=document.createElement('button');btn.className='secondary';btn.textContent=next==='active'?'✅ اعتماد الخطة':'🏁 إنهاء الخطة';btn.onclick=()=>setPlanStatus(p,next);actions.append(btn);if(p.status==='active'){const back=document.createElement('button');back.className='secondary';back.textContent='↩ إرجاع لمسودة';back.onclick=()=>setPlanStatus(p,'draft');actions.append(back)}item.append(actions)}list.append(item);if(openFollowups.has(p.id))showPanel()}}catch(e){list.textContent='تعذر تحميل الخطط: '+e.message}}
 async function setPlanStatus(p,status){if(busy)return;const message=status==='active'?'هل راجعت محتوى الخطة وتريد اعتمادها؟':status==='completed'?'هل اكتمل تنفيذ الخطة وتريد إغلاقها؟':'هل تريد إعادة الخطة إلى مسودة؟';if(!confirm(message))return;setBusy(true);try{await request(PLANS_ENDPOINT,{action:'set_status',plan_id:p.id,status});setStatus('تم تحديث حالة الخطة بنجاح.','ok');if(currentPlan?.id===p.id)currentPlan=null;await loadPlans()}catch(e){setStatus('تعذر تحديث الحالة: '+e.message,'error')}finally{setBusy(false)}}
 async function save(){if(!currentStudent||busy)return;const payload={};for(const [field,id] of Object.entries(fieldIds))payload[field]=$(id).value.trim();if(!payload.teaching_recommendations&&!payload.proposed_lessons){$('editorMessage').textContent='أدخل توصية تعليمية أو نشاطًا مقترحًا على الأقل.';return}setBusy(true);$('editorMessage').textContent='جارٍ الحفظ...';try{const data=await request(PLANS_ENDPOINT,{action:currentPlan?'update':'create',...(currentPlan?{plan_id:currentPlan.id}:{student_id:currentStudent.id,attempt_id:null}),...payload});currentPlan=data.plan;$('editorMessage').textContent='✅ '+(data.message||'تم الحفظ بنجاح');$('editorStatus').value=({draft:'مسودة',active:'نشطة',completed:'مكتملة'})[data.plan.status];setStatus('تم حفظ الخطة بنجاح.','ok');await loadPlans()}catch(e){$('editorMessage').textContent='❌ '+e.message}finally{setBusy(false)}}
+function reportSection(area,title,content){
+  const section=document.createElement('section');section.className='report-section';
+  addText(section,'h2',title);
+  const box=document.createElement('div');box.className='report-box';
+  addText(box,'p',content||'—');section.append(box);area.append(section);return section;
+}
+function reportLabel(parent,label,value){
+  const div=document.createElement('div');const strong=document.createElement('strong');
+  strong.textContent=label+' : ';div.append(strong,document.createTextNode(String(value??'—')));parent.append(div);
+}
+async function printDetailedReport(plan,button){
+  if(!verified||!currentStudent)return;
+  const previous=button.textContent;button.disabled=true;button.textContent='⏳ جارٍ إعداد التقرير...';
+  try{
+    // نجلب السجل من الخادم وقت الطباعة حتى لا نعتمد على حالة لوحة العرض.
+    const response=await request(PLANS_ENDPOINT,{action:'list_followups',plan_id:plan.id});
+    const followups=Array.isArray(response.followups)?response.followups:[];
+    const area=$('printArea');area.replaceChildren();
+    const header=document.createElement('div');header.className='report-header';
+    addText(header,'h1','Python Skills Academy');
+    addText(header,'p','تقرير تفصيلي للخطة العلاجية ومتابعة تنفيذها');
+    addText(header,'p','إعداد وإشراف: الأستاذ محمد الجيلاني');area.append(header);
+    const basic=document.createElement('section');basic.className='report-section';
+    addText(basic,'h2','أولًا: بيانات الطالب والخطة');
+    const grid=document.createElement('div');grid.className='report-grid';
+    const statusNames={draft:'مسودة',active:'نشطة',completed:'مكتملة'};
+    reportLabel(grid,'اسم الطالب',currentStudent.full_name);
+    reportLabel(grid,'رقم الطالب',currentStudent.student_number);
+    reportLabel(grid,'الرقم الأكاديمي',currentStudent.academic_number);
+    reportLabel(grid,'المرحلة / الصف',currentStudent.grade_level);
+    reportLabel(grid,'الشعبة',currentStudent.class_section);
+    reportLabel(grid,'المقرر',currentStudent.course_code);
+    reportLabel(grid,'حالة الخطة',statusNames[plan.status]||plan.status);
+    reportLabel(grid,'تاريخ إنشاء الخطة',plan.created_at?new Date(plan.created_at).toLocaleDateString('ar-BH'):'—');
+    basic.append(grid);area.append(basic);
+    const analysis=document.createElement('section');analysis.className='report-section';
+    addText(analysis,'h2','ثانيًا: نتائج تحليل المهارات');
+    if(currentAnalysis&&currentAnalysis.student?.id===currentStudent.id){
+      const sum=currentAnalysis.summary||{};
+      addText(analysis,'p','المحاولات المحللة: '+(currentAnalysis.attempts_analyzed??'—')+' | الأسئلة المختلفة: '+(sum.distinct_questions_answered??'—')+' | المهارات المقيمة: '+(sum.skills_assessed??'—'));
+      for(const skill of currentAnalysis.skills||[]){
+        const box=document.createElement('div');box.className='report-box';
+        addText(box,'strong',(skill.skill_name||'مهارة')+' — '+assessmentText(skill.assessment));
+        addText(box,'p','الأسئلة المختلفة: '+(skill.answered_questions??'—')+' | الصحيحة: '+(skill.correct_questions??'—')+' | الدقة: '+(skill.accuracy_percentage??'—')+'%');
+        analysis.append(box);
+      }
+      addText(analysis,'p','ملاحظة: المهارة التي لديها أقل من 3 أسئلة مختلفة تُعد أدلتها غير كافية. التحليل ليس حكمًا نهائيًا.','report-muted');
+      if(currentAnalysis.truncated)addText(analysis,'p','تنبيه: التحليل لا يشمل جميع المحاولات التاريخية.','report-muted');
+    }else addText(analysis,'p','لم تتوفر نتائج تحليل مهارات حديثة عند إعداد هذا التقرير.','report-muted');
+    area.append(analysis);
+    reportSection(area,'ثالثًا: نقاط القوة',plan.strengths);
+    reportSection(area,'رابعًا: المهارات التي تحتاج دعمًا أو تقييمًا إضافيًا',plan.weaknesses);
+    reportSection(area,'خامسًا: التوصيات التعليمية',plan.teaching_recommendations);
+    reportSection(area,'سادسًا: الدروس والأنشطة المقترحة',plan.proposed_lessons);
+    reportSection(area,'سابعًا: ملاحظات المعلم',plan.teacher_notes);
+    const followSection=document.createElement('section');followSection.className='report-section report-break';
+    addText(followSection,'h2','ثامنًا: سجل متابعات الخطة');
+    addText(followSection,'p','عدد المتابعات الواردة من النظام: '+followups.length,'report-muted');
+    if(followups.length===100)addText(followSection,'p','تنبيه: قد يقتصر السجل المعروض على أحدث 100 متابعة.','report-muted');
+    if(!followups.length)addText(followSection,'p','لا توجد متابعات مسجلة لهذه الخطة.');
+    followups.forEach((f,index)=>{
+      const box=document.createElement('div');box.className='report-box report-followup';
+      addText(box,'strong','المتابعة '+(index+1)+' — '+(f.followup_date||'دون تاريخ'));
+      for(const [label,key] of [['الأنشطة المنفذة','activities_completed'],['ملاحظات المعلم','teacher_observations'],['الخطوات التالية','next_steps']]){
+        const p=document.createElement('p');const b=document.createElement('strong');b.textContent=label+': ';
+        p.append(b,document.createTextNode(f[key]||'—'));box.append(p);
+      }
+      followSection.append(box);
+    });area.append(followSection);
+    const impact=document.createElement('section');impact.className='report-section';
+    addText(impact,'h2','تاسعًا: قياس أثر الخطة العلاجية');
+    addText(impact,'p','لا توجد مقارنة موثقة قبل/بعد مرتبطة بالخطة في البيانات المتاحة لهذا التقرير. تُستكمل هذه الفقرة بعد إجراء تقييم لاحق موثق ومراجعته من المعلم.');
+    area.append(impact);
+    const footer=document.createElement('div');footer.className='report-footer';
+    addText(footer,'p','تاريخ إعداد التقرير: '+new Date().toLocaleDateString('ar-BH'));
+    addText(footer,'p','هذا التقرير يعرض البيانات المسجلة في المنصة، ولا يُعد اعتمادًا تلقائيًا لأي تقييم أو تحسن.');
+    const signatures=document.createElement('div');signatures.className='report-signature';
+    addText(signatures,'span','اسم المعلم: الأستاذ محمد الجيلاني');
+    addText(signatures,'span','التوقيع: __________________');footer.append(signatures);area.append(footer);
+    // الانتظار إطارًا واحدًا لضمان بناء المحتوى قبل استدعاء نافذة الطباعة.
+    await new Promise(resolve=>requestAnimationFrame(resolve));
+    window.print();
+  }catch(err){setStatus('تعذر إعداد التقرير التفصيلي: '+err.message,'error')}
+  finally{button.disabled=false;button.textContent=previous}
+}
 function printPlan(){if(!currentStudent)return;const area=$('printArea');area.replaceChildren();addText(area,'h1','Python Skills Academy');addText(area,'h2','تقرير الخطة التعليمية للطالب');addText(area,'p','اسم الطالب: '+currentStudent.full_name+'\nرقم الطالب: '+currentStudent.student_number+'\nالرقم الأكاديمي: '+(currentStudent.academic_number||'—')+'\nالشعبة: '+(currentStudent.class_section||'—')+'\nالمقرر: '+(currentStudent.course_code||'—')+'\nحالة الخطة: '+$('editorStatus').value);for(const [id,title] of [['strengths','نقاط القوة'],['weaknesses','المهارات المستهدفة'],['teachingRecommendations','التوصيات التعليمية'],['proposedLessons','الأنشطة والدروس المقترحة'],['teacherNotes','ملاحظات المعلم']]){addText(area,'h2',title);addText(area,'p',$(id).value||'—')}addText(area,'p','إعداد وإشراف: الأستاذ محمد الجيلاني\nتاريخ الطباعة: '+new Date().toLocaleDateString('ar-BH'),'printfooter');window.print()}
 $('analyzeBtn').addEventListener('click',analyze);$('studentNumber').addEventListener('keydown',e=>{if(e.key==='Enter')analyze()});$('suggestBtn').addEventListener('click',suggest);$('saveBtn').addEventListener('click',save);$('printBtn').addEventListener('click',printPlan);$('newBtn').addEventListener('click',()=>{currentPlan=null;fillEditor({})});init();
 </script>
