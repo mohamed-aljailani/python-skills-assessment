@@ -32,6 +32,16 @@
   #printArea .report-footer{border-top:1px solid #b6c1d2;padding-top:8px;margin-top:12px;break-inside:avoid;page-break-inside:avoid}
   #printArea .report-footer p{margin:4px 0}
   #printArea .report-signature{display:flex;justify-content:space-between;gap:20px;margin-top:12px}
+  /* Chrome print: prevent a whole section from being pushed to the next page.
+     Flatten wrappers while retaining heading/box styling and natural page flow. */
+  #printArea .report-section{display:contents!important;break-inside:auto!important;page-break-inside:auto!important}
+  #printArea .report-section>h2{margin:9px 0 4px!important;padding:3px 0!important;break-after:avoid-page!important}
+  #printArea .report-section>.report-box{margin:4px 0 7px!important}
+  #printArea .report-section>p{margin:3px 0 7px!important}
+  #printArea .report-followup{break-inside:avoid-page!important;page-break-inside:avoid!important}
+  #printArea .report-footer{break-inside:avoid-page!important}
+  #printArea .report-grid{break-inside:avoid-page!important}
+
 }
 </style>
 </head>
