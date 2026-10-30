@@ -1264,15 +1264,16 @@
       resultsLoaded = false;
 
       const refreshButton =
-        document.getElementById("refreshHome")
-      .addEventListener("click", loadResults);
+        document.getElementById("refreshResults");
 
-    document.getElementById("refreshResults");
+      const homeRefreshButton =
+        document.getElementById("refreshHome");
 
       const exportButton =
         document.getElementById("exportResults");
 
       refreshButton.disabled = true;
+      homeRefreshButton.disabled = true;
       exportButton.disabled = true;
 
       clearResultsError();
@@ -1380,6 +1381,7 @@
         if (requestId === resultsRequestId) {
           resultsLoading = false;
           refreshButton.disabled = false;
+          homeRefreshButton.disabled = false;
 
           exportButton.disabled =
             !resultsLoaded ||
@@ -2003,6 +2005,9 @@
     // ========================================
 
     document.getElementById("refreshResults")
+      .addEventListener("click", loadResults);
+
+    document.getElementById("refreshHome")
       .addEventListener("click", loadResults);
 
     document.getElementById("exportResults")
