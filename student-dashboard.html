@@ -484,13 +484,58 @@
         );
       }
     }
+document.getElementById("logoutButton")
+  .addEventListener("click", async function () {
 
-    document.getElementById("logoutButton")
-      .addEventListener("click", function () {
-        clearSession();
+    const logoutButton = this;
+    const token = sessionStorage.getItem(SESSION_KEY);
 
-        window.location.replace("student-login.html");
-      });
+    logoutButton.disabled = true;
+    logoutButton.textContent = "جارٍ تسجيل الخروج...";
+
+    try {
+      if (token && /^[a-f0-9]{64}$/.test(token)) {
+
+        const response = await fetch(
+          SUPABASE_URL + "/functions/v1/student-logout",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              session_token: token
+            }),
+            cache: "no-store"
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || "تعذر إلغاء الجلسة من الخادم"
+          );
+        }
+      }
+
+      clearSession();
+
+      window.location.replace("student-login.html");
+
+    } catch (error) {
+
+      console.error("Logout failed:", error);
+
+      alert(
+        "تعذر إلغاء جلسة الدخول من الخادم. " +
+        "تحقق من اتصال الإنترنت وحاول مرة أخرى."
+      );
+
+      logoutButton.disabled = false;
+      logoutButton.textContent = "🚪 تسجيل الخروج";
+    }
+  });
 
     // التحقق من الجلسة عند فتح لوحة الطالب
     verifySession();
