@@ -3,10 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#102b50">
 
-  <title>لوحة التحكم | Python Skills Assessment</title>
+  <title>لوحة الإدارة | Python Skills Academy</title>
 
   <style>
+    :root {
+      --navy: #102b50;
+      --navy-light: #244c7e;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --red: #b42318;
+      --background: #f3f6fb;
+      --border: #dce4ee;
+      --muted: #74839a;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -18,8 +30,18 @@
     body {
       margin: 0;
       font-family: Tahoma, Arial, sans-serif;
-      background: #f3f6fb;
+      background: var(--background);
       color: #18243a;
+    }
+
+    button,
+    input,
+    select {
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
     }
 
     .sidebar {
@@ -28,7 +50,7 @@
       top: 0;
       bottom: 0;
       width: 250px;
-      background: #102b50;
+      background: var(--navy);
       color: white;
       padding: 25px 18px;
       overflow-y: auto;
@@ -44,7 +66,7 @@
       width: 60px;
       height: 60px;
       background: #ffd45c;
-      color: #102b50;
+      color: var(--navy);
       border-radius: 18px;
       display: grid;
       place-items: center;
@@ -79,7 +101,7 @@
 
     nav a:hover,
     nav a.active {
-      background: #244c7e;
+      background: var(--navy-light);
       color: white;
     }
 
@@ -99,92 +121,24 @@
     .topbar h1 {
       font-size: 25px;
       margin: 0 0 8px;
+      color: var(--navy);
     }
 
     .topbar p {
-      color: #74839a;
+      color: var(--muted);
       font-size: 14px;
       margin: 0;
+      line-height: 1.8;
     }
 
     .logout {
       border: 0;
       background: white;
-      color: #b42318;
+      color: var(--red);
       padding: 12px 18px;
       border-radius: 10px;
-      cursor: pointer;
       font-weight: bold;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-    }
-
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 17px;
-      box-shadow: 0 5px 20px rgba(16,43,80,.05);
-    }
-
-    .card .emoji {
-      font-size: 28px;
-      margin-bottom: 18px;
-    }
-
-    .card .label {
-      color: #7b8798;
-      font-size: 14px;
-    }
-
-    .card .value {
-      font-size: 31px;
-      font-weight: bold;
-      color: #102b50;
-      margin-top: 10px;
-    }
-
-    .section {
-      margin-top: 30px;
-      background: white;
-      padding: 30px;
-      border-radius: 17px;
-    }
-
-    .section h2 {
-      margin-top: 0;
-      font-size: 20px;
-    }
-
-    .section p {
-      color: #74839a;
-      line-height: 1.9;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 25px;
-    }
-
-    .action {
-      border: 1px solid #dce4ee;
-      background: #f8faff;
-      padding: 22px;
-      border-radius: 13px;
-      text-align: center;
-      font-size: 15px;
-      font-weight: bold;
-      color: #183e70;
-      cursor: pointer;
-    }
-
-    .action:hover {
-      background: #eaf1fb;
+      white-space: nowrap;
     }
 
     .status {
@@ -196,16 +150,90 @@
       font-size: 14px;
     }
 
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 17px;
+      box-shadow: 0 5px 20px rgba(16,43,80,.05);
+      min-width: 0;
+    }
+
+    .card .emoji {
+      font-size: 28px;
+      margin-bottom: 18px;
+    }
+
+    .card .label {
+      color: #7b8798;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .card .value {
+      font-size: 31px;
+      font-weight: bold;
+      color: var(--navy);
+      margin-top: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .section {
+      margin-top: 30px;
+      background: white;
+      padding: 30px;
+      border-radius: 17px;
+      box-shadow: 0 5px 20px rgba(16,43,80,.04);
+    }
+
+    .section h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: var(--navy);
+    }
+
+    .section p {
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .action {
+      border: 1px solid var(--border);
+      background: #f8faff;
+      padding: 22px;
+      border-radius: 13px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: bold;
+      color: #183e70;
+    }
+
+    .action:hover {
+      background: #eaf1fb;
+    }
+
     .loading {
       position: fixed;
       inset: 0;
-      background: #f3f6fb;
+      background: var(--background);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
       gap: 15px;
-      color: #102b50;
+      color: var(--navy);
       z-index: 100;
       text-align: center;
       padding: 20px;
@@ -215,7 +243,7 @@
       width: 65px;
       height: 65px;
       border-radius: 18px;
-      background: #102b50;
+      background: var(--navy);
       color: #ffd45c;
       display: grid;
       place-items: center;
@@ -224,17 +252,240 @@
     }
 
     .loading p {
-      color: #74839a;
+      color: var(--muted);
       font-size: 14px;
     }
 
-    @media (max-width: 1000px) {
-      .cards {
-        grid-template-columns: repeat(2, 1fr);
+    /* قسم النتائج */
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .toolbar h2 {
+      margin: 0;
+    }
+
+    .toolbar-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      padding: 12px 17px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .btn-blue {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: white;
+    }
+
+    .btn-light {
+      background: #eaf1fb;
+      color: var(--navy);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .filter-group {
+      min-width: 0;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--navy);
+    }
+
+    .filter-group input,
+    .filter-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: white;
+      font-size: 13px;
+      color: #18243a;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+      outline: 2px solid #93c5fd;
+      border-color: var(--blue);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat {
+      padding: 20px;
+      background: #f8faff;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .stat-value {
+      margin-top: 10px;
+      font-size: 25px;
+      font-weight: bold;
+      color: var(--navy);
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 950px;
+      border-collapse: collapse;
+      text-align: right;
+    }
+
+    thead {
+      background: #edf3fc;
+    }
+
+    th,
+    td {
+      padding: 15px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--navy);
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover {
+      background: #f8faff;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 8px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .score-high {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .score-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .score-low {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .table-message {
+      padding: 25px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .results-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .note {
+      padding: 14px 18px;
+      border-radius: 10px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 12px;
+      line-height: 2;
+      margin-top: 20px;
+    }
+
+    .error-message {
+      background: #fef2f2;
+      color: #991b1b;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 35px;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 2;
+    }
+
+    @media (max-width: 1150px) {
+      .cards,
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .actions {
-        grid-template-columns: repeat(2, 1fr);
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -267,16 +518,23 @@
       }
 
       .cards,
-      .actions {
+      .actions,
+      .stats,
+      .filters {
         grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-wrap: wrap;
       }
 
       .topbar h1 {
         font-size: 20px;
       }
 
-      .topbar {
-        align-items: flex-start;
+      .section {
+        padding: 20px;
       }
     }
   </style>
@@ -284,10 +542,12 @@
 
 <body>
 
-  <!-- شاشة التحقق من صلاحية المدير -->
+  <!-- شاشة التحقق من المدير -->
   <div class="loading" id="loadingScreen">
     <div class="icon">Py</div>
-    <strong>Python Skills Assessment</strong>
+
+    <strong>Python Skills Academy</strong>
+
     <p id="loadingMessage">
       جارٍ التحقق من صلاحية الدخول...
     </p>
@@ -298,32 +558,47 @@
 
     <div class="brand">
       <div class="icon">Py</div>
-      <h2>Python Skills Assessment</h2>
+
+      <h2>Python Skills Academy</h2>
+
       <p>لوحة إدارة المنصة</p>
     </div>
 
     <nav>
-      <a class="active" href="dashboard.html">
+      <a
+        href="#"
+        id="homeNav"
+        class="active"
+        onclick="showHome(event)"
+      >
         🏠 الرئيسية
       </a>
 
-      <a href="#" onclick="comingSoon(event)">
+      <a href="students.html">
         👨‍🎓 إدارة الطلاب
+      </a>
+
+      <a href="sections.html">
+        🏫 الشعب الدراسية
       </a>
 
       <a href="#" onclick="comingSoon(event)">
         📚 المقررات والمهارات
       </a>
 
-      <a href="#" onclick="comingSoon(event)">
+      <a href="questions.html">
         📝 بنك الأسئلة
       </a>
 
-      <a href="#" onclick="comingSoon(event)">
+      <a href="exams.html">
         🎯 الاختبارات
       </a>
 
-      <a href="#" onclick="comingSoon(event)">
+      <a
+        href="#"
+        id="resultsNav"
+        onclick="showResults(event)"
+      >
         📊 التقارير والنتائج
       </a>
 
@@ -342,93 +617,327 @@
   <main class="main" id="mainContent" hidden>
 
     <header class="topbar">
-
       <div>
-        <h1>مرحبًا بك في لوحة التحكم 👋</h1>
-        <p>
+        <h1 id="pageTitle">
+          مرحبًا بك في لوحة التحكم 👋
+        </h1>
+
+        <p id="pageDescription">
           إدارة الطلاب وتقييم مهارات البرمجة بلغة Python
         </p>
       </div>
 
-      <button class="logout" id="logoutButton">
+      <button
+        class="logout"
+        id="logoutButton"
+        type="button"
+      >
         تسجيل الخروج
       </button>
-
     </header>
 
     <div class="status">
       ✅ تم التحقق من صلاحية المدير بنجاح.
     </div>
 
-    <!-- بطاقات الإحصائيات -->
-    <section class="cards">
+    <!-- الصفحة الرئيسية -->
+    <div id="homePage">
 
-      <div class="card">
-        <div class="emoji">👨‍🎓</div>
-        <div class="label">إجمالي الطلاب</div>
-        <div class="value">—</div>
-      </div>
+      <section class="cards">
 
-      <div class="card">
-        <div class="emoji">📚</div>
-        <div class="label">المهارات التعليمية</div>
-        <div class="value">—</div>
-      </div>
+        <div class="card">
+          <div class="emoji">👨‍🎓</div>
+          <div class="label">إجمالي الطلاب</div>
+          <div class="value">—</div>
+        </div>
 
-      <div class="card">
-        <div class="emoji">📝</div>
-        <div class="label">الاختبارات المنجزة</div>
-        <div class="value">—</div>
-      </div>
+        <div class="card">
+          <div class="emoji">📚</div>
+          <div class="label">المهارات التعليمية</div>
+          <div class="value">—</div>
+        </div>
 
-      <div class="card">
-        <div class="emoji">📈</div>
-        <div class="label">متوسط مستوى الطلاب</div>
-        <div class="value">—</div>
-      </div>
+        <div class="card">
+          <div class="emoji">📝</div>
+          <div class="label">الاختبارات المنجزة</div>
+          <div class="value">—</div>
+        </div>
 
-    </section>
+        <div class="card">
+          <div class="emoji">📈</div>
+          <div class="label">متوسط مستوى الطلاب</div>
+          <div class="value">—</div>
+        </div>
 
-    <!-- الإجراءات السريعة -->
-    <section class="section">
+      </section>
 
-      <h2>🚀 إجراءات سريعة</h2>
+      <section class="section">
+        <h2>🚀 إجراءات سريعة</h2>
 
-      <p>
-        من هنا يمكنك الوصول إلى أهم أدوات إدارة المنصة.
-        سنفعّل هذه الخدمات تدريجيًا.
-      </p>
+        <p>
+          من هنا يمكنك الوصول إلى أهم أدوات إدارة المنصة.
+        </p>
 
-      <div class="actions">
+        <div class="actions">
 
-       <button class="action" onclick="window.location.href='students.html'">
-  ➕ إضافة طالب
-       </button>
+          <button
+            class="action"
+            type="button"
+            onclick="window.location.href='students.html'"
+          >
+            ➕ إضافة طالب
+          </button>
 
-        <button class="action" onclick="comingSoon()">
-          📝 إنشاء اختبار
+          <button
+            class="action"
+            type="button"
+            onclick="window.location.href='exams.html'"
+          >
+            📝 إدارة الاختبارات
+          </button>
+
+          <button
+            class="action"
+            type="button"
+            onclick="showResults()"
+          >
+            📊 عرض التقارير
+          </button>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- صفحة النتائج -->
+    <div id="resultsPage" hidden>
+
+      <section class="section">
+
+        <div class="toolbar">
+
+          <h2>📊 نتائج الطلاب وتقارير الاختبارات</h2>
+
+          <div class="toolbar-buttons">
+
+            <button
+              class="btn btn-blue"
+              id="refreshResults"
+              type="button"
+            >
+              🔄 تحديث النتائج
+            </button>
+
+            <button
+              class="btn btn-green"
+              id="exportResults"
+              type="button"
+              disabled
+            >
+              📥 تصدير Excel / CSV
+            </button>
+
+          </div>
+        </div>
+
+        <p>
+          يمكنك متابعة نتائج الطلاب والبحث عنها
+          وتصفيتها حسب المقرر والشعبة والاختبار.
+        </p>
+
+        <div
+          id="resultsError"
+          class="error-message"
+          role="alert"
+          hidden
+        ></div>
+
+        <!-- البحث والتصفية -->
+        <div class="filters">
+
+          <div class="filter-group">
+            <label for="searchStudent">
+              🔎 البحث عن طالب
+            </label>
+
+            <input
+              id="searchStudent"
+              type="search"
+              placeholder="اسم الطالب أو رقمه"
+              autocomplete="off"
+            >
+          </div>
+
+          <div class="filter-group">
+            <label for="filterCourse">
+              📚 المقرر
+            </label>
+
+            <select id="filterCourse">
+              <option value="">جميع المقررات</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filterSection">
+              🏫 الشعبة
+            </label>
+
+            <select id="filterSection">
+              <option value="">جميع الشعب</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filterExam">
+              📝 الاختبار
+            </label>
+
+            <select id="filterExam">
+              <option value="">جميع الاختبارات</option>
+            </select>
+          </div>
+
+        </div>
+
+        <button
+          class="btn btn-light"
+          id="resetFilters"
+          type="button"
+        >
+          ✖️ مسح عوامل التصفية
         </button>
 
-        <button class="action" onclick="comingSoon()">
-          📊 عرض التقارير
-        </button>
+        <!-- إحصائيات النتائج -->
+        <div class="stats" style="margin-top:25px">
 
-      </div>
+          <div class="stat">
+            <div class="stat-label">
+              👨‍🎓 الطلاب الذين لديهم نتائج
+            </div>
 
-    </section>
+            <div class="stat-value" id="statStudents">
+              —
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              📝 المحاولات المكتملة
+            </div>
+
+            <div class="stat-value" id="statAttempts">
+              —
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              📈 متوسط النسب المئوية
+            </div>
+
+            <div class="stat-value" id="statAverage">
+              —
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              🏆 المحاولات بنسبة 80% فأكثر
+            </div>
+
+            <div class="stat-value" id="statHigh">
+              —
+            </div>
+          </div>
+
+        </div>
+
+        <div class="results-info">
+          <span id="resultsCount">
+            جارٍ تحميل النتائج...
+          </span>
+
+          <span id="lastUpdate"></span>
+        </div>
+
+        <!-- جدول النتائج -->
+        <div class="table-wrapper">
+
+          <table>
+            <thead>
+              <tr>
+                <th>م</th>
+                <th>اسم الطالب</th>
+                <th>رقم الطالب</th>
+                <th>الشعبة</th>
+                <th>المقرر</th>
+                <th>الاختبار</th>
+                <th>الدرجة</th>
+                <th>النسبة</th>
+                <th>تاريخ الإكمال</th>
+              </tr>
+            </thead>
+
+            <tbody id="resultsTableBody">
+              <tr>
+                <td colspan="9" class="table-message">
+                  جارٍ تحميل النتائج...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div class="note">
+          💡 <strong>ملاحظة:</strong>
+          الإحصائيات تُحسب من النتائج المعروضة بعد تطبيق
+          عوامل التصفية. وتعرض النسخة الحالية أحدث
+          500 محاولة مكتملة كحد أقصى.
+          تصدير CSV يشمل النتائج المطابقة للتصفية الحالية فقط.
+        </div>
+
+      </section>
+
+    </div>
+
+    <footer class="footer">
+      Python Skills Academy
+      <br>
+      منصة تعليمية مستقلة بإشراف محمد الجيلاني
+    </footer>
 
   </main>
 
   <script>
+    "use strict";
+
+    // ========================================
     // إعدادات Supabase
+    // ========================================
+
     const SUPABASE_URL =
       "https://gmxjwgacpygorqwyfeoo.supabase.co";
 
-    // المفتاح العام فقط، وليس المفتاح السري
+    // المفتاح العام فقط
     const SUPABASE_KEY =
       "sb_publishable_4sB0pFunm7YFIPN-sGODVg_3vnSvTQp";
 
-    const TOKEN_NAME = "python_skills_access_token";
+    const TOKEN_NAME =
+      "python_skills_access_token";
+
+    const AUTH_ENDPOINT =
+      SUPABASE_URL +
+      "/functions/v1/create-student-account";
+
+    const RESULTS_ENDPOINT =
+      SUPABASE_URL +
+      "/functions/v1/admin-student-results";
+
+    // ========================================
+    // عناصر الصفحة
+    // ========================================
 
     const loadingScreen =
       document.getElementById("loadingScreen");
@@ -442,16 +951,126 @@
     const mainContent =
       document.getElementById("mainContent");
 
-    // إعادة المستخدم إلى صفحة تسجيل الدخول
+    const homePage =
+      document.getElementById("homePage");
+
+    const resultsPage =
+      document.getElementById("resultsPage");
+
+    const resultsTableBody =
+      document.getElementById("resultsTableBody");
+
+    const resultsError =
+      document.getElementById("resultsError");
+
+    let allResults = [];
+    let filteredResults = [];
+
+    let resultsLoaded = false;
+    let resultsLoading = false;
+    let verifiedAdmin = false;
+    let resultsRequestId = 0;
+
+    // ========================================
+    // أدوات مساعدة
+    // ========================================
+
+    function getToken() {
+      return sessionStorage.getItem(TOKEN_NAME);
+    }
+
     function redirectToLogin() {
       sessionStorage.removeItem(TOKEN_NAME);
       window.location.replace("index.html");
     }
 
-    // التحقق من تسجيل الدخول وصلاحية المدير
-    async function verifyAdmin() {
+    function showResultsError(message) {
+      resultsError.textContent = message;
+      resultsError.hidden = false;
+    }
 
-      const token = sessionStorage.getItem(TOKEN_NAME);
+    function clearResultsError() {
+      resultsError.textContent = "";
+      resultsError.hidden = true;
+    }
+
+    function formatNumber(value) {
+      if (
+        value === null ||
+        value === undefined ||
+        value === ""
+      ) {
+        return "—";
+      }
+
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return "—";
+      }
+
+      return new Intl.NumberFormat("ar-BH", {
+        maximumFractionDigits: 2
+      }).format(number);
+    }
+
+    function formatDate(value) {
+      if (!value) return "—";
+
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return "—";
+      }
+
+      return new Intl.DateTimeFormat("ar-BH", {
+        timeZone: "Asia/Bahrain",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(date);
+    }
+
+    function safeText(value) {
+      if (
+        value === null ||
+        value === undefined ||
+        value === ""
+      ) {
+        return "—";
+      }
+
+      return String(value);
+    }
+
+    function createCell(row, value) {
+      const cell = document.createElement("td");
+
+      cell.textContent = safeText(value);
+
+      row.appendChild(cell);
+
+      return cell;
+    }
+
+    function setActiveNav(id) {
+      document.querySelectorAll("nav a")
+        .forEach(link => {
+          link.classList.remove("active");
+        });
+
+      document.getElementById(id)
+        .classList.add("active");
+    }
+
+    // ========================================
+    // التحقق من صلاحية المدير
+    // ========================================
+
+    async function verifyAdmin() {
+      const token = getToken();
 
       if (!token) {
         redirectToLogin();
@@ -459,20 +1078,17 @@
       }
 
       try {
-
         const response = await fetch(
-          SUPABASE_URL +
-          "/functions/v1/create-student-account",
+          AUTH_ENDPOINT,
           {
             method: "POST",
-
             headers: {
               "Content-Type": "application/json",
               "apikey": SUPABASE_KEY,
               "Authorization": "Bearer " + token
             },
-
-            body: JSON.stringify({})
+            body: JSON.stringify({}),
+            cache: "no-store"
           }
         );
 
@@ -481,24 +1097,686 @@
           return;
         }
 
-        // إظهار لوحة التحكم بعد نجاح التحقق
+        const data = await response.json();
+
+        if (!data.success) {
+          redirectToLogin();
+          return;
+        }
+
+        verifiedAdmin = true;
+
         loadingScreen.hidden = true;
         sidebar.hidden = false;
         mainContent.hidden = false;
 
       } catch (error) {
+        console.error(
+          "Admin verification failed:",
+          error.message
+        );
 
         loadingMessage.textContent =
           "تعذر الاتصال بالخادم. جارٍ العودة لتسجيل الدخول...";
 
         setTimeout(redirectToLogin, 1500);
-
       }
     }
 
-    // رسالة للخدمات التي لم تُفعّل بعد
-    function comingSoon(event) {
+    // ========================================
+    // التنقل بين الرئيسية والنتائج
+    // ========================================
 
+    function showHome(event) {
+      if (event) event.preventDefault();
+
+      if (!verifiedAdmin) return;
+
+      homePage.hidden = false;
+      resultsPage.hidden = true;
+
+      setActiveNav("homeNav");
+
+      document.getElementById("pageTitle")
+        .textContent =
+          "مرحبًا بك في لوحة التحكم 👋";
+
+      document.getElementById("pageDescription")
+        .textContent =
+          "إدارة الطلاب وتقييم مهارات البرمجة بلغة Python";
+    }
+
+    function showResults(event) {
+      if (event) event.preventDefault();
+
+      if (!verifiedAdmin) return;
+
+      homePage.hidden = true;
+      resultsPage.hidden = false;
+
+      setActiveNav("resultsNav");
+
+      document.getElementById("pageTitle")
+        .textContent =
+          "📊 التقارير والنتائج";
+
+      document.getElementById("pageDescription")
+        .textContent =
+          "متابعة أداء الطلاب ونتائج الاختبارات الإلكترونية";
+
+      if (!resultsLoaded && !resultsLoading) {
+        loadResults();
+      }
+    }
+
+    // ========================================
+    // جلب النتائج من Supabase
+    // ========================================
+
+    async function loadResults() {
+      if (!verifiedAdmin || resultsLoading) {
+        return;
+      }
+
+      const token = getToken();
+
+      if (!token) {
+        redirectToLogin();
+        return;
+      }
+
+      const requestId = ++resultsRequestId;
+
+      resultsLoading = true;
+      resultsLoaded = false;
+
+      const refreshButton =
+        document.getElementById("refreshResults");
+
+      const exportButton =
+        document.getElementById("exportResults");
+
+      refreshButton.disabled = true;
+      exportButton.disabled = true;
+
+      clearResultsError();
+
+      document.getElementById("resultsCount")
+        .textContent =
+          "جارٍ تحميل النتائج...";
+
+      resultsTableBody.replaceChildren();
+
+      const loadingRow =
+        document.createElement("tr");
+
+      const loadingCell =
+        document.createElement("td");
+
+      loadingCell.colSpan = 9;
+      loadingCell.className = "table-message";
+      loadingCell.textContent =
+        "⏳ جارٍ تحميل نتائج الطلاب...";
+
+      loadingRow.appendChild(loadingCell);
+      resultsTableBody.appendChild(loadingRow);
+
+      try {
+        const response = await fetch(
+          RESULTS_ENDPOINT,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": SUPABASE_KEY,
+              "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({}),
+            cache: "no-store"
+          }
+        );
+
+        const data = await response.json();
+
+        if (
+          requestId !== resultsRequestId ||
+          getToken() !== token
+        ) {
+          return;
+        }
+
+        if (
+          response.status === 401 ||
+          response.status === 403
+        ) {
+          redirectToLogin();
+          return;
+        }
+
+        if (
+          !response.ok ||
+          !data.success ||
+          !Array.isArray(data.results)
+        ) {
+          throw new Error(
+            data.error || "تعذر تحميل نتائج الطلاب"
+          );
+        }
+
+        allResults = data.results;
+        resultsLoaded = true;
+
+        populateFilters();
+        applyFilters();
+
+        document.getElementById("lastUpdate")
+          .textContent =
+            "آخر تحديث: " +
+            formatDate(new Date().toISOString());
+
+      } catch (error) {
+        console.error(
+          "Results loading failed:",
+          error.message
+        );
+
+        allResults = [];
+        filteredResults = [];
+
+        showResultsError(
+          "تعذر تحميل نتائج الطلاب. تحقق من الاتصال وحاول مرة أخرى."
+        );
+
+        document.getElementById("resultsCount")
+          .textContent =
+            "تعذر تحميل النتائج";
+
+        renderEmptyMessage(
+          "حدث خطأ أثناء تحميل النتائج."
+        );
+
+        resetStatistics();
+
+      } finally {
+        if (requestId === resultsRequestId) {
+          resultsLoading = false;
+          refreshButton.disabled = false;
+
+          exportButton.disabled =
+            !resultsLoaded ||
+            filteredResults.length === 0;
+        }
+      }
+    }
+
+    // ========================================
+    // تعبئة قوائم التصفية
+    // ========================================
+
+    function populateSelect(elementId, values, label) {
+      const select =
+        document.getElementById(elementId);
+
+      const previousValue = select.value;
+
+      select.replaceChildren();
+
+      const defaultOption =
+        document.createElement("option");
+
+      defaultOption.value = "";
+      defaultOption.textContent = label;
+
+      select.appendChild(defaultOption);
+
+      const uniqueValues = [
+        ...new Set(
+          values
+            .filter(value =>
+              value !== null &&
+              value !== undefined &&
+              String(value).trim() !== "" &&
+              String(value) !== "—"
+            )
+            .map(value => String(value))
+        )
+      ].sort((a, b) =>
+        a.localeCompare(b, "ar", {
+          numeric: true
+        })
+      );
+
+      for (const value of uniqueValues) {
+        const option =
+          document.createElement("option");
+
+        option.value = value;
+        option.textContent = value;
+
+        select.appendChild(option);
+      }
+
+      if (uniqueValues.includes(previousValue)) {
+        select.value = previousValue;
+      }
+    }
+
+    function populateFilters() {
+      populateSelect(
+        "filterCourse",
+        allResults.map(item => item.course_code),
+        "جميع المقررات"
+      );
+
+      populateSelect(
+        "filterSection",
+        allResults.map(item => item.class_section),
+        "جميع الشعب"
+      );
+
+      populateSelect(
+        "filterExam",
+        allResults.map(item => item.exam_title),
+        "جميع الاختبارات"
+      );
+    }
+
+    // ========================================
+    // تطبيق البحث والتصفية
+    // ========================================
+
+    function applyFilters() {
+      if (!resultsLoaded) {
+        return;
+      }
+
+      const search =
+        document.getElementById("searchStudent")
+          .value.trim().toLocaleLowerCase();
+
+      const course =
+        document.getElementById("filterCourse").value;
+
+      const section =
+        document.getElementById("filterSection").value;
+
+      const exam =
+        document.getElementById("filterExam").value;
+
+      filteredResults = allResults.filter(item => {
+        const studentText = [
+          item.student_name,
+          item.student_number,
+          item.academic_number
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLocaleLowerCase();
+
+        const matchesSearch =
+          !search || studentText.includes(search);
+
+        const matchesCourse =
+          !course || item.course_code === course;
+
+        const matchesSection =
+          !section || item.class_section === section;
+
+        const matchesExam =
+          !exam || item.exam_title === exam;
+
+        return (
+          matchesSearch &&
+          matchesCourse &&
+          matchesSection &&
+          matchesExam
+        );
+      });
+
+      renderResults();
+      updateStatistics();
+
+      document.getElementById("exportResults")
+        .disabled = filteredResults.length === 0;
+    }
+
+    // ========================================
+    // عرض النتائج داخل الجدول
+    // ========================================
+
+    function renderEmptyMessage(message) {
+      resultsTableBody.replaceChildren();
+
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+
+      cell.colSpan = 9;
+      cell.className = "table-message";
+      cell.textContent = message;
+
+      row.appendChild(cell);
+      resultsTableBody.appendChild(row);
+    }
+
+    function renderResults() {
+      resultsTableBody.replaceChildren();
+
+      if (filteredResults.length === 0) {
+        renderEmptyMessage(
+          "لا توجد نتائج مطابقة لمعايير البحث."
+        );
+
+        document.getElementById("resultsCount")
+          .textContent =
+            "عدد النتائج المعروضة: 0";
+
+        return;
+      }
+
+      const fragment =
+        document.createDocumentFragment();
+
+      filteredResults.forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        createCell(row, index + 1);
+
+        createCell(
+          row,
+          item.student_name
+        );
+
+        createCell(
+          row,
+          item.student_number
+        );
+
+        createCell(
+          row,
+          item.class_section
+        );
+
+        createCell(
+          row,
+          item.course_code
+        );
+
+        createCell(
+          row,
+          item.exam_title
+        );
+
+        const scoreText =
+          formatNumber(item.total_score) +
+          " من " +
+          formatNumber(item.max_score);
+
+        createCell(row, scoreText);
+
+        const percentageCell =
+          document.createElement("td");
+
+        const percentageBadge =
+          document.createElement("span");
+
+        percentageBadge.className =
+          "score-badge";
+
+        const percentage =
+          Number(item.percentage);
+
+        if (Number.isFinite(percentage)) {
+          percentageBadge.textContent =
+            formatNumber(percentage) + "%";
+
+          if (percentage >= 80) {
+            percentageBadge.classList.add(
+              "score-high"
+            );
+          } else if (percentage >= 50) {
+            percentageBadge.classList.add(
+              "score-medium"
+            );
+          } else {
+            percentageBadge.classList.add(
+              "score-low"
+            );
+          }
+        } else {
+          percentageBadge.textContent = "—";
+        }
+
+        percentageCell.appendChild(
+          percentageBadge
+        );
+
+        row.appendChild(percentageCell);
+
+        createCell(
+          row,
+          formatDate(item.completed_at)
+        );
+
+        fragment.appendChild(row);
+      });
+
+      resultsTableBody.appendChild(fragment);
+
+      document.getElementById("resultsCount")
+        .textContent =
+          "عدد النتائج المعروضة: " +
+          filteredResults.length +
+          " من " +
+          allResults.length;
+    }
+
+    // ========================================
+    // حساب الإحصائيات
+    // ========================================
+
+    function resetStatistics() {
+      document.getElementById("statStudents")
+        .textContent = "—";
+
+      document.getElementById("statAttempts")
+        .textContent = "—";
+
+      document.getElementById("statAverage")
+        .textContent = "—";
+
+      document.getElementById("statHigh")
+        .textContent = "—";
+    }
+
+    function updateStatistics() {
+      const uniqueStudents = new Set(
+        filteredResults
+          .map(item => item.student_number)
+          .filter(value =>
+            value &&
+            value !== "—"
+          )
+      );
+
+      const percentages = filteredResults
+        .map(item => Number(item.percentage))
+        .filter(value => Number.isFinite(value));
+
+      const totalPercentage = percentages.reduce(
+        (sum, value) => sum + value,
+        0
+      );
+
+      const average = percentages.length
+        ? totalPercentage / percentages.length
+        : null;
+
+      const highCount = percentages.filter(
+        value => value >= 80
+      ).length;
+
+      document.getElementById("statStudents")
+        .textContent =
+          formatNumber(uniqueStudents.size);
+
+      document.getElementById("statAttempts")
+        .textContent =
+          formatNumber(filteredResults.length);
+
+      document.getElementById("statAverage")
+        .textContent =
+          average === null
+            ? "—"
+            : formatNumber(average) + "%";
+
+      document.getElementById("statHigh")
+        .textContent =
+          formatNumber(highCount);
+    }
+
+    // ========================================
+    // تصدير النتائج إلى CSV
+    // ========================================
+
+    function csvEscape(value) {
+      let text = value === null ||
+        value === undefined
+          ? ""
+          : String(value);
+
+      // منع تفسير بيانات الطلاب كصيغ Excel
+      if (/^[\s\u0000-\u001f]*[=+\-@]/.test(text)) {
+        text = "'" + text;
+      }
+
+      return '"' +
+        text.replace(/"/g, '""') +
+        '"';
+    }
+
+    function exportCSV() {
+      if (
+        !verifiedAdmin ||
+        !resultsLoaded ||
+        filteredResults.length === 0
+      ) {
+        alert("لا توجد نتائج متاحة للتصدير.");
+        return;
+      }
+
+      const headers = [
+        "اسم الطالب",
+        "رقم الطالب",
+        "الرقم الأكاديمي",
+        "المرحلة الدراسية",
+        "الشعبة",
+        "المقرر",
+        "الاختبار",
+        "الدرجة",
+        "الدرجة الكلية",
+        "النسبة المئوية",
+        "تاريخ الإكمال"
+      ];
+
+      const rows = filteredResults.map(item => [
+        item.student_name,
+        item.student_number,
+        item.academic_number,
+        item.grade_level,
+        item.class_section,
+        item.course_code,
+        item.exam_title,
+        item.total_score,
+        item.max_score,
+        item.percentage,
+        formatDate(item.completed_at)
+      ]);
+
+      const csvContent = [
+        headers,
+        ...rows
+      ]
+        .map(row =>
+          row.map(csvEscape).join(",")
+        )
+        .join("\r\n");
+
+      // BOM لدعم اللغة العربية في Excel
+      const blob = new Blob(
+        ["\uFEFF", csvContent],
+        {
+          type: "text/csv;charset=utf-8;"
+        }
+      );
+
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      const date = new Date()
+        .toISOString()
+        .slice(0, 10);
+
+      link.href = url;
+
+      link.download =
+        "Python_Skills_Student_Results_" +
+        date +
+        ".csv";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 1000);
+    }
+
+    // ========================================
+    // الأحداث
+    // ========================================
+
+    document.getElementById("refreshResults")
+      .addEventListener("click", loadResults);
+
+    document.getElementById("exportResults")
+      .addEventListener("click", exportCSV);
+
+    document.getElementById("searchStudent")
+      .addEventListener("input", applyFilters);
+
+    document.getElementById("filterCourse")
+      .addEventListener("change", applyFilters);
+
+    document.getElementById("filterSection")
+      .addEventListener("change", applyFilters);
+
+    document.getElementById("filterExam")
+      .addEventListener("change", applyFilters);
+
+    document.getElementById("resetFilters")
+      .addEventListener("click", () => {
+        document.getElementById("searchStudent")
+          .value = "";
+
+        document.getElementById("filterCourse")
+          .value = "";
+
+        document.getElementById("filterSection")
+          .value = "";
+
+        document.getElementById("filterExam")
+          .value = "";
+
+        applyFilters();
+      });
+
+    // ========================================
+    // الخدمات القادمة
+    // ========================================
+
+    function comingSoon(event) {
       if (event) {
         event.preventDefault();
       }
@@ -508,19 +1786,29 @@
       );
     }
 
+    // ========================================
     // تسجيل الخروج
+    // ========================================
+
     document.getElementById("logoutButton")
       .addEventListener("click", () => {
+        resultsRequestId++;
+
+        allResults = [];
+        filteredResults = [];
+
+        verifiedAdmin = false;
 
         sessionStorage.removeItem(TOKEN_NAME);
 
         window.location.replace("index.html");
-
       });
 
-    // تشغيل التحقق عند فتح الصفحة
-    verifyAdmin();
+    // ========================================
+    // بدء تشغيل لوحة الإدارة
+    // ========================================
 
+    verifyAdmin();
   </script>
 
 </body>
