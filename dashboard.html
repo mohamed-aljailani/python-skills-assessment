@@ -537,6 +537,16 @@
         padding: 20px;
       }
     }
+
+    .home-toolbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:0 0 22px;flex-wrap:wrap}
+    .home-toolbar h2{margin:0 0 7px;color:var(--navy);font-size:21px}
+    .home-toolbar p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}
+    .home-distribution{display:grid;gap:14px}
+    .home-bar-row{display:grid;grid-template-columns:145px 1fr 70px;align-items:center;gap:12px;font-size:13px}
+    .home-track{height:13px;background:#e7edf6;border-radius:20px;overflow:hidden}
+    .home-fill{height:100%;background:#2563eb;border-radius:20px}
+    .home-table{min-width:690px}
+    @media(max-width:700px){.home-bar-row{grid-template-columns:115px 1fr 55px;font-size:11px}}
   </style>
 </head>
 
@@ -647,32 +657,26 @@
     <!-- الصفحة الرئيسية -->
     <div id="homePage">
 
+      <div class="home-toolbar">
+        <div><h2>📌 نظرة عامة على الأداء</h2><p>إحصائيات مبنية على أحدث 500 محاولة مكتملة كحد أقصى، وليست إجمالي المسجلين.</p></div>
+        <button class="btn btn-blue" type="button" id="refreshHome">🔄 تحديث المؤشرات</button>
+      </div>
+      <div id="homeError" class="error-message" role="alert" hidden></div>
       <section class="cards">
-
-        <div class="card">
-          <div class="emoji">👨‍🎓</div>
-          <div class="label">إجمالي الطلاب</div>
-          <div class="value">—</div>
-        </div>
-
-        <div class="card">
-          <div class="emoji">📚</div>
-          <div class="label">المهارات التعليمية</div>
-          <div class="value">—</div>
-        </div>
-
-        <div class="card">
-          <div class="emoji">📝</div>
-          <div class="label">الاختبارات المنجزة</div>
-          <div class="value">—</div>
-        </div>
-
-        <div class="card">
-          <div class="emoji">📈</div>
-          <div class="label">متوسط مستوى الطلاب</div>
-          <div class="value">—</div>
-        </div>
-
+        <div class="card"><div class="emoji">👨‍🎓</div><div class="label">طلاب لديهم نتائج</div><div class="value" id="homeStudents">—</div></div>
+        <div class="card"><div class="emoji">📝</div><div class="label">المحاولات المكتملة</div><div class="value" id="homeAttempts">—</div></div>
+        <div class="card"><div class="emoji">🏆</div><div class="label">طلاب متفوقون (90% فأكثر)</div><div class="value" id="homeExcellent">—</div></div>
+        <div class="card"><div class="emoji">📈</div><div class="label">متوسط أفضل نتيجة لكل طالب واختبار</div><div class="value" id="homeAverage">—</div></div>
+      </section>
+      <section class="section">
+        <h2>📊 توزيع مستويات الأداء</h2>
+        <p>يُحسب لكل طالب متوسط أفضل محاولة له في كل اختبار ضمن النتائج المتاحة.</p>
+        <div id="homeDistribution" class="home-distribution" aria-live="polite">جارٍ تحميل البيانات...</div>
+      </section>
+      <section class="section">
+        <div class="toolbar"><h2>🕒 أحدث النتائج المكتملة</h2><button class="btn btn-light" type="button" onclick="showResults()">عرض جميع النتائج ←</button></div>
+        <div class="table-wrapper"><table class="home-table"><thead><tr><th>الطالب</th><th>الشعبة</th><th>المقرر</th><th>الاختبار</th><th>النسبة</th><th>التاريخ</th></tr></thead><tbody id="homeRecent"><tr><td colspan="6">جارٍ التحميل...</td></tr></tbody></table></div>
+        <div class="note">💡 الإحصائيات تشمل الطلاب الذين لديهم محاولات مكتملة فقط. لمعرفة إجمالي الطلاب المسجلين أو الاختبارات المنشورة، سنحتاج إلى مصدر بيانات إداري إضافي.</div>
       </section>
 
       <section class="section">
@@ -1060,6 +1064,69 @@
       return cell;
     }
 
+    // مؤشرات الصفحة الرئيسية - تعتمد على نتائج المدير المحمية فقط
+    function renderHome() {
+      const rows = allResults;
+      const bestByStudentExam = new Map();
+      const studentIds = new Set();
+      for (const row of rows) {
+        const id = String(row.student_number || row.academic_number || "").trim();
+        if (!id || id === "—") continue;
+        studentIds.add(id);
+        const percent = row.percentage == null || row.percentage === "" ? NaN : Number(row.percentage);
+        if (!Number.isFinite(percent)) continue;
+        const key = JSON.stringify([id, row.course_code, row.exam_title]);
+        bestByStudentExam.set(key, Math.max(bestByStudentExam.get(key) ?? -Infinity, percent));
+      }
+      const studentScores = new Map();
+      for (const [key, score] of bestByStudentExam) {
+        const id = JSON.parse(key)[0];
+        if (!studentScores.has(id)) studentScores.set(id, []);
+        studentScores.get(id).push(score);
+      }
+      const means = [...studentScores.values()].map(values => values.reduce((a,b)=>a+b,0)/values.length);
+      const overall = means.length ? means.reduce((a,b)=>a+b,0)/means.length : null;
+      const excellent = means.filter(n=>n>=90).length;
+      document.getElementById("homeStudents").textContent = formatNumber(studentIds.size);
+      document.getElementById("homeAttempts").textContent = formatNumber(rows.length);
+      document.getElementById("homeExcellent").textContent = formatNumber(excellent);
+      document.getElementById("homeAverage").textContent = overall == null ? "—" : formatNumber(overall) + "%";
+      const bands = [
+        ["ممتاز (90–100%)", means.filter(n=>n>=90).length],
+        ["جيد جدًا (80–أقل من 90%)", means.filter(n=>n>=80 && n<90).length],
+        ["جيد (70–أقل من 80%)", means.filter(n=>n>=70 && n<80).length],
+        ["متوسط (60–أقل من 70%)", means.filter(n=>n>=60 && n<70).length],
+        ["يحتاج دعمًا (أقل من 60%)", means.filter(n=>n<60).length]
+      ];
+      const distribution = document.getElementById("homeDistribution");
+      distribution.replaceChildren();
+      if (!means.length) distribution.textContent = "لا توجد نتائج صالحة للتحليل حتى الآن.";
+      for (const [label, count] of bands) {
+        const line = document.createElement("div"); line.className="home-bar-row";
+        const name = document.createElement("span"); name.textContent=label;
+        const track = document.createElement("div"); track.className="home-track";
+        const fill = document.createElement("div"); fill.className="home-fill";
+        fill.style.width=(means.length ? count/means.length*100 : 0)+"%";
+        track.appendChild(fill);
+        const value=document.createElement("strong"); value.textContent=formatNumber(count)+" طالب";
+        line.append(name,track,value); distribution.appendChild(line);
+      }
+      const body=document.getElementById("homeRecent"); body.replaceChildren();
+      if (!rows.length) {const tr=document.createElement("tr");const td=document.createElement("td");td.colSpan=6;td.textContent="لا توجد نتائج مكتملة حتى الآن.";tr.appendChild(td);body.appendChild(tr);}
+      for (const row of rows.slice(0,5)) {
+        const tr=document.createElement("tr");
+        [row.student_name,row.class_section,row.course_code,row.exam_title,
+         row.percentage == null ? "—" : formatNumber(row.percentage)+"%",formatDate(row.completed_at)]
+          .forEach(value=>createCell(tr,value));
+        body.appendChild(tr);
+      }
+    }
+
+    function homeLoadingError(message) {
+      const element = document.getElementById("homeError");
+      element.textContent = message; element.hidden = !message;
+    }
+
     function setActiveNav(id) {
       document.querySelectorAll("nav a")
         .forEach(link => {
@@ -1114,6 +1181,7 @@
         loadingScreen.hidden = true;
         sidebar.hidden = false;
         mainContent.hidden = false;
+        loadResults();
 
       } catch (error) {
         console.error(
@@ -1196,7 +1264,10 @@
       resultsLoaded = false;
 
       const refreshButton =
-        document.getElementById("refreshResults");
+        document.getElementById("refreshHome")
+      .addEventListener("click", loadResults);
+
+    document.getElementById("refreshResults");
 
       const exportButton =
         document.getElementById("exportResults");
@@ -1270,6 +1341,8 @@
 
         allResults = data.results;
         resultsLoaded = true;
+        homeLoadingError("");
+        renderHome();
 
         populateFilters();
         applyFilters();
@@ -1287,6 +1360,7 @@
 
         allResults = [];
         filteredResults = [];
+        homeLoadingError("تعذر تحميل مؤشرات الصفحة الرئيسية. حاول التحديث مرة أخرى.");
 
         showResultsError(
           "تعذر تحميل نتائج الطلاب. تحقق من الاتصال وحاول مرة أخرى."
