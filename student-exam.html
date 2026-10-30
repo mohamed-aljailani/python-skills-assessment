@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101b38">
+<title>أداء الاختبار | Python Skills Academy</title>
+
+<style>
+:root {
+  font-family: Tahoma, Arial, sans-serif;
+  color: #1e293b;
+  background: #f1f5f9;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+header {
+  background: linear-gradient(120deg, #101b38, #253b73);
+  color: white;
+  padding: 22px 5%;
+}
+
+header div {
+  max-width: 940px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+header h1 {
+  font-size: 21px;
+  margin: 0;
+}
+
+a { color: inherit; }
+
+.back {
+  color: #dbeafe;
+  text-decoration: none;
+}
+
+main {
+  max-width: 940px;
+  margin: 30px auto;
+  padding: 0 16px;
+}
+
+.panel {
+  background: white;
+  border-radius: 17px;
+  padding: 25px;
+  margin: 18px 0;
+  box-shadow: 0 6px 22px #0f172a0b;
+}
+
+h2 {
+  color: #101b38;
+  margin-top: 0;
+}
+
+.muted {
+  color: #64748b;
+  line-height: 1.9;
+}
+
+.meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 8px 11px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+button {
+  background: #2563eb;
+  border: 0;
+  border-radius: 9px;
+  color: white;
+  padding: 13px 18px;
+  cursor: pointer;
+  font: bold 14px Tahoma, Arial, sans-serif;
+}
+
+button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.danger { background: #b91c1c; }
+.secondary { background: #475569; }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.timer {
+  font: bold 23px monospace;
+  direction: ltr;
+  color: #0f172a;
+}
+
+.timer.urgent { color: #b91c1c; }
+
+.question {
+  border: 1px solid #e2e8f0;
+  border-radius: 13px;
+  padding: 19px;
+  margin: 18px 0;
+}
+
+.question h3 {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-top: 0;
+  white-space: pre-wrap;
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  margin: 9px 0;
+  cursor: pointer;
+  line-height: 1.6;
+}
+
+.choice:has(input:checked) {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.choice input {
+  margin-top: 5px;
+  accent-color: #2563eb;
+}
+
+.save-status {
+  font-size: 12px;
+  color: #64748b;
+  min-height: 20px;
+}
+
+.save-status.fail { color: #b91c1c; }
+
+.alert {
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  background: #eff6ff;
+  color: #1e40af;
+  line-height: 1.8;
+}
+
+.alert.error {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.alert.ok {
+  background: #ecfdf5;
+  color: #166534;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.result {
+  font-size: 21px;
+  font-weight: bold;
+}
+
+[hidden] {
+  display: none !important;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>🐍 Python Skills Academy | الاختبار الإلكتروني</h1>
+    <a class="back" href="student-dashboard.html">
+      ← لوحة الطالب
+    </a>
+  </div>
+</header>
+
+<main>
+
+  <div id="message" class="alert" role="status">
+    جارٍ تجهيز صفحة الاختبار...
+  </div>
+
+  <section id="ready" class="panel" hidden>
+    <h2>📝 هل أنت مستعد لبدء الاختبار؟</h2>
+
+    <p class="muted">
+      يبدأ احتساب الوقت عند الضغط على «بدء الاختبار الآن».
+      إذا كانت لديك محاولة جارية، فسيستمر توقيتها الأصلي
+      ولن يبدأ من جديد.
+    </p>
+
+    <p class="muted">
+      تُحفظ الإجابات عبر الإنترنت.
+      لا تغلق الصفحة أثناء ظهور «جارٍ الحفظ».
+    </p>
+
+    <button id="beginBtn">
+      بدء الاختبار الآن
+    </button>
+  </section>
+
+  <section id="examPanel" hidden>
+
+    <div class="panel topbar">
+      <div>
+        <h2 id="examTitle">الاختبار</h2>
+
+        <div class="meta">
+          <span class="tag" id="questionCount"></span>
+          <span class="tag" id="progress"></span>
+        </div>
+      </div>
+
+      <div>
+        <div class="muted">الوقت المتبقي</div>
+        <div class="timer" id="timer">--:--</div>
+      </div>
+    </div>
+
+    <div id="saveMessage" class="alert" role="status">
+      اختر إجابة لكل سؤال؛ سيجري حفظها تلقائيًا.
+    </div>
+
+    <div class="panel" id="questions"></div>
+
+    <div class="panel actions">
+      <button id="submitBtn" class="danger">
+        تسليم الاختبار
+      </button>
+    </div>
+
+  </section>
+
+  <section id="resultPanel" class="panel" hidden>
+    <h2>✅ نتيجة الاختبار</h2>
+
+    <p class="result" id="resultText"></p>
+
+    <a href="student-dashboard.html">
+      العودة إلى لوحة الطالب
+    </a>
+  </section>
+
+</main>
+
+<script>
+"use strict";
+
+const BASE =
+  "https://gmxjwgacpygorqwyfeoo.supabase.co/functions/v1/";
+
+const KEY = "psa_student_session";
+
+const uuid =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const tokenPattern = /^[a-f0-9]{64}$/;
+
+const examId =
+  new URLSearchParams(location.search).get("exam_id");
+
+const $ = id => document.getElementById(id);
+
+let attempt = null;
+let exam = null;
+let expiresAt = 0;
+let ticker = null;
+let finished = false;
+let submitting = false;
+
+const answers = new Map();
+const saved = new Map();
+const inflight = new Map();
+const revisions = new Map();
+
+function message(text, kind = "") {
+  const el = $("message");
+
+  el.textContent = text;
+  el.className = "alert" + (kind ? " " + kind : "");
+  el.hidden = false;
+}
+
+function setSaveMessage(text, kind = "") {
+  const el = $("saveMessage");
+
+  el.textContent = text;
+  el.className = "alert" + (kind ? " " + kind : "");
+}
+
+async function api(name, payload) {
+  const token = sessionStorage.getItem(KEY);
+
+  if (!tokenPattern.test(token || "")) {
+    throw Object.assign(
+      new Error("انتهت جلسة الدخول. سجّل الدخول مجددًا."),
+      { auth: true }
+    );
+  }
+
+  let response;
+
+  try {
+    response = await fetch(BASE + name, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        session_token: token,
+        ...payload
+      }),
+      cache: "no-store"
+    });
+  } catch {
+    throw new Error(
+      "تعذر الاتصال بالإنترنت. تحقق من اتصالك وحاول مجددًا."
+    );
+  }
+
+  let data;
+
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error("استجابة غير صالحة من الخادم.");
+  }
+
+  if (!response.ok || !data.success) {
+    const error = new Error(
+      data.error || "تعذر تنفيذ العملية"
+    );
+
+    error.auth = response.status === 401;
+    error.expired = !!data.expired;
+
+    throw error;
+  }
+
+  return data;
+}
+
+function normalizeOptions(options) {
+  if (typeof options === "string") {
+    try {
+      options = JSON.parse(options);
+    } catch {
+      return [];
+    }
+  }
+
+  if (Array.isArray(options)) {
+    return options.map((o, i) => {
+      if (
+        typeof o === "string" ||
+        typeof o === "number"
+      ) {
+        return {
+          value: String(o),
+          label: String(o)
+        };
+      }
+
+      if (o && typeof o === "object") {
+        const value =
+          o.value ?? o.id ?? o.key ?? o.text ?? o.label;
+
+        const label =
+          o.label ?? o.text ?? o.value ?? o.title ?? value;
+
+        return value == null
+          ? null
+          : {
+              value: String(value),
+              label: String(label)
+            };
+      }
+
+      return null;
+    }).filter(Boolean);
+  }
+
+  if (options && typeof options === "object") {
+    return Object.entries(options).map(
+      ([key, value]) => ({
+        value: String(key),
+        label: String(value)
+      })
+    );
+  }
+
+  return [];
+}
+
+function updateProgress() {
+  $("progress").textContent =
+    `المجاب عنها في هذه الصفحة: ${answers.size} / ${exam.questions.length}`;
+}
+
+function setQuestionStatus(id, text, fail = false) {
+  const el = document.getElementById("status-" + id);
+
+  if (el) {
+    el.textContent = text;
+    el.className =
+      "save-status" + (fail ? " fail" : "");
+  }
+}
+
+function scheduleSave(questionId, value) {
+  answers.set(questionId, value);
+  updateProgress();
+
+  const rev =
+    (revisions.get(questionId) || 0) + 1;
+
+  revisions.set(questionId, rev);
+
+  setQuestionStatus(
+    questionId,
+    "جارٍ حفظ الإجابة..."
+  );
+
+  const previous =
+    inflight.get(questionId) || Promise.resolve();
+
+  const task = previous.catch(() => {}).then(async () => {
+    if (
+      finished ||
+      submitting ||
+      rev !== revisions.get(questionId)
+    ) {
+      return;
+    }
+
+    try {
+      await api("student-save-answer", {
+        attempt_id: attempt.id,
+        question_id: questionId,
+        student_answer: value
+      });
+
+      saved.set(questionId, value);
+
+      if (rev === revisions.get(questionId)) {
+        setQuestionStatus(
+          questionId,
+          "✓ تم حفظ الإجابة"
+        );
+      }
+
+    } catch (error) {
+      if (rev === revisions.get(questionId)) {
+        setQuestionStatus(
+          questionId,
+          "⚠ لم تُحفظ الإجابة؛ غيّر اختيارك أو أعد المحاولة",
+          true
+        );
+      }
+
+      setSaveMessage(error.message, "error");
+
+      if (error.expired) {
+        expireUI();
+      }
+    }
+  });
+
+  inflight.set(questionId, task);
+}
+
+function renderQuestions() {
+  const root = $("questions");
+
+  root.replaceChildren();
+
+  exam.questions.forEach((q, i) => {
+    const article = document.createElement("article");
+
+    article.className = "question";
+
+    const title = document.createElement("h3");
+
+    title.textContent =
+      `السؤال ${i + 1}: ${q.question_text}`;
+
+    article.append(title);
+
+    const opts = normalizeOptions(q.options);
+
+    if (
+      q.question_type !== "multiple_choice" ||
+      !opts.length
+    ) {
+      const note = document.createElement("p");
+
+      note.className = "alert error";
+      note.textContent =
+        "نوع السؤال أو خياراته غير مدعومة حاليًا.";
+
+      article.append(note);
+
+    } else {
+      opts.forEach((opt, index) => {
+        const label = document.createElement("label");
+
+        label.className = "choice";
+
+        const input = document.createElement("input");
+
+        input.type = "radio";
+        input.name = "q-" + q.id;
+        input.value = opt.value;
+
+        input.addEventListener("change", () =>
+          scheduleSave(q.id, opt.value)
+        );
+
+        const span = document.createElement("span");
+
+        span.textContent = opt.label;
+
+        label.append(input, span);
+        article.append(label);
+      });
+    }
+
+    const status = document.createElement("p");
+
+    status.className = "save-status";
+    status.id = "status-" + q.id;
+    status.textContent = "لم تُحدَّد إجابة بعد";
+
+    article.append(status);
+    root.append(article);
+  });
+
+  $("questionCount").textContent =
+    `${exam.questions.length} سؤال`;
+
+  updateProgress();
+}
+
+function expireUI() {
+  if (finished) return;
+
+  $("timer").textContent = "00:00";
+  $("timer").classList.add("urgent");
+
+  $("questions")
+    .querySelectorAll("input")
+    .forEach(el => el.disabled = true);
+
+  $("submitBtn").disabled = true;
+
+  setSaveMessage(
+    "انتهى وقت الاختبار. سيقوم الخادم بإنهاء المحاولة وتصحيحها تلقائيًا. يمكنك العودة إلى لوحة الطالب.",
+    "error"
+  );
+}
+
+function tick() {
+  if (!attempt || finished) return;
+
+  const seconds = Math.max(
+    0,
+    Math.ceil((expiresAt - Date.now()) / 1000)
+  );
+
+  $("timer").textContent =
+    `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+
+  $("timer").classList.toggle(
+    "urgent",
+    seconds <= 60
+  );
+
+  if (seconds <= 0) {
+    clearInterval(ticker);
+    expireUI();
+  }
+}
+
+async function start() {
+  if (!uuid.test(examId || "")) {
+    message("رابط الاختبار غير صالح.", "error");
+    return;
+  }
+
+  if (!tokenPattern.test(
+    sessionStorage.getItem(KEY) || ""
+  )) {
+    message(
+      "يرجى تسجيل الدخول من لوحة الطالب أولًا.",
+      "error"
+    );
+    return;
+  }
+
+  $("ready").hidden = false;
+
+  message(
+    "يمكنك بدء الاختبار عندما تكون مستعدًا."
+  );
+}
+
+$("beginBtn").addEventListener("click", async () => {
+  $("beginBtn").disabled = true;
+
+  message("جارٍ بدء الاختبار...");
+
+  try {
+    const data = await api(
+      "student-start-exam",
+      { exam_id: examId }
+    );
+
+    if (
+      !data.attempt ||
+      !uuid.test(data.attempt.id) ||
+      !Array.isArray(data.exam?.questions)
+    ) {
+      throw new Error(
+        "بيانات الاختبار غير مكتملة."
+      );
+    }
+
+    attempt = data.attempt;
+    exam = data.exam;
+
+    const parsed =
+      Date.parse(attempt.expires_at);
+
+    expiresAt = Number.isFinite(parsed)
+      ? parsed
+      : Date.now() +
+        Number(attempt.remaining_seconds) * 1000;
+
+    $("examTitle").textContent =
+      exam.title || "الاختبار";
+
+    renderQuestions();
+
+    $("ready").hidden = true;
+    $("examPanel").hidden = false;
+    $("message").hidden = true;
+
+    tick();
+
+    ticker = setInterval(tick, 1000);
+
+  } catch (error) {
+    message(error.message, "error");
+    $("beginBtn").disabled = false;
+  }
+});
+
+$("submitBtn").addEventListener("click", async () => {
+  if (
+    submitting ||
+    finished ||
+    !attempt
+  ) {
+    return;
+  }
+
+  if (!confirm(
+    "هل أنت متأكد من تسليم الاختبار؟ لن تتمكن من تعديل إجاباتك بعد التسليم."
+  )) {
+    return;
+  }
+
+  submitting = true;
+  $("submitBtn").disabled = true;
+
+  $("questions")
+    .querySelectorAll("input")
+    .forEach(el => el.disabled = true);
+
+  setSaveMessage(
+    "جارٍ انتظار اكتمال حفظ الإجابات..."
+  );
+
+  await Promise.allSettled(
+    [...inflight.values()]
+  );
+
+  const missing = [...answers].filter(
+    ([id, value]) => saved.get(id) !== value
+  );
+
+  if (missing.length) {
+    submitting = false;
+    $("submitBtn").disabled = false;
+
+    $("questions")
+      .querySelectorAll("input")
+      .forEach(el => el.disabled = false);
+
+    setSaveMessage(
+      `لم تُحفظ ${missing.length} إجابة. غيّر اختيارها لإعادة المحاولة قبل التسليم.`,
+      "error"
+    );
+
+    return;
+  }
+
+  try {
+    setSaveMessage(
+      "جارٍ تسليم الاختبار وتصحيحه..."
+    );
+
+    const data = await api(
+      "student-submit-exam",
+      { attempt_id: attempt.id }
+    );
+
+    finished = true;
+
+    clearInterval(ticker);
+
+    $("examPanel").hidden = true;
+    $("resultPanel").hidden = false;
+
+    const r = data.attempt;
+
+    $("resultText").textContent =
+      `الدرجة: ${r.total_score} من ${r.max_score} — النسبة: ${r.percentage}%`;
+
+    message(
+      "تم تسليم الاختبار بنجاح.",
+      "ok"
+    );
+
+  } catch (error) {
+    submitting = false;
+
+    if (Date.now() >= expiresAt) {
+      expireUI();
+    } else {
+      $("submitBtn").disabled = false;
+
+      $("questions")
+        .querySelectorAll("input")
+        .forEach(el => el.disabled = false);
+    }
+
+    setSaveMessage(
+      error.message,
+      "error"
+    );
+  }
+});
+
+start();
+</script>
+
+</body>
+</html>
