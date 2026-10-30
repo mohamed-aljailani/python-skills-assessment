@@ -187,6 +187,15 @@
       font-weight: bold;
     }
 
+    .exam-list { display: grid; gap: 14px; margin-top: 18px; }
+    .exam-item { border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: #f8fafc; }
+    .exam-item h4 { color: var(--navy); margin: 0 0 8px; font-size: 16px; }
+    .exam-item p { margin: 0 0 8px; }
+    .exam-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+    .exam-meta span { background: #e0e7ff; color: #3730a3; padding: 5px 9px; border-radius: 7px; font-size: 12px; }
+    .refresh-btn { margin-top: 12px; padding: 9px 14px; background: #2563eb; color: white; border: 0; border-radius: 8px; cursor: pointer; }
+    .refresh-btn:disabled { opacity: .6; cursor: wait; }
+    .exam-message { margin: 12px 0 0 !important; }
     .notice {
       margin-top: 30px;
       padding: 18px 22px;
@@ -344,7 +353,9 @@
             ستجد هنا الاختبارات المتاحة لك،
             مع إمكانية الإجابة عنها إلكترونيًا.
           </p>
-          <span class="status">قيد التطوير</span>
+          <p id="examsMessage" class="exam-message" role="status">جارٍ تحميل الاختبارات...</p>
+          <div id="examsList" class="exam-list" aria-live="polite"></div>
+          <button id="refreshExams" class="refresh-btn" type="button">🔄 تحديث الاختبارات</button>
         </article>
 
         <article class="card">
@@ -396,6 +407,9 @@
       SUPABASE_URL + "/functions/v1/student-session";
 
     const SESSION_KEY = "psa_student_session";
+    const EXAMS_ENDPOINT = SUPABASE_URL + "/functions/v1/student-exams";
+    let loggingOut = false;
+    let examsRequestId = 0;
 
     const loading =
       document.getElementById("loading");
@@ -411,9 +425,11 @@
 
     function clearSession() {
       sessionStorage.removeItem(SESSION_KEY);
+      examsRequestId++;
     }
 
     function showError(message) {
+      document.getElementById("examsList").replaceChildren();
       loading.hidden = true;
       dashboardContent.hidden = true;
       errorSection.hidden = false;
@@ -439,6 +455,81 @@
       errorSection.hidden = true;
       dashboardContent.hidden = false;
     }
+
+    async function loadExams() {
+      const requestId = ++examsRequestId;
+      const token = sessionStorage.getItem(SESSION_KEY);
+      const message = document.getElementById("examsMessage");
+      const list = document.getElementById("examsList");
+      const button = document.getElementById("refreshExams");
+      if (!token || loggingOut) return;
+      button.disabled = true;
+      message.textContent = "جارٍ تحميل الاختبارات...";
+      list.replaceChildren();
+      try {
+        const response = await fetch(EXAMS_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_token: token }),
+          cache: "no-store"
+        });
+        const data = await response.json();
+        if (requestId !== examsRequestId || loggingOut ||
+            sessionStorage.getItem(SESSION_KEY) !== token) return;
+        if (response.status === 401 || response.status === 403) {
+          clearSession();
+          showError("انتهت جلسة الدخول. يرجى تسجيل الدخول مجددًا.");
+          return;
+        }
+        if (!response.ok || !data.success || !Array.isArray(data.exams)) {
+          throw new Error(data.error || "تعذر تحميل الاختبارات");
+        }
+        if (data.exams.length === 0) {
+          message.textContent = data.message || "لا توجد اختبارات منشورة حاليًا.";
+          return;
+        }
+        message.textContent = `الاختبارات المتاحة: ${data.exams.length}`;
+        for (const exam of data.exams) {
+          const item = document.createElement("article");
+          item.className = "exam-item";
+          const title = document.createElement("h4");
+          title.textContent = exam.title || "اختبار بدون عنوان";
+          item.appendChild(title);
+          if (exam.description) {
+            const description = document.createElement("p");
+            description.textContent = exam.description;
+            item.appendChild(description);
+          }
+          const meta = document.createElement("div");
+          meta.className = "exam-meta";
+          for (const label of [
+            `⏱️ ${exam.duration_minutes ?? "—"} دقيقة`,
+            `📝 ${exam.question_count ?? 0} سؤال`,
+            `⭐ ${exam.total_points ?? 0} درجة`
+          ]) {
+            const badge = document.createElement("span");
+            badge.textContent = label;
+            meta.appendChild(badge);
+          }
+          item.appendChild(meta);
+          const note = document.createElement("p");
+          note.style.marginTop = "10px";
+          note.textContent = "بدء الاختبار سيتاح قريبًا";
+          item.appendChild(note);
+          list.appendChild(item);
+        }
+      } catch (error) {
+        if (requestId === examsRequestId && !loggingOut) {
+          message.textContent = "تعذر تحميل الاختبارات. حاول مرة أخرى.";
+          console.error("Exams loading failed:", error.message);
+        }
+      } finally {
+        if (requestId === examsRequestId) button.disabled = false;
+      }
+    }
+
+    document.getElementById("refreshExams")
+      .addEventListener("click", loadExams);
 
     async function verifySession() {
       const token = sessionStorage.getItem(SESSION_KEY);
@@ -474,7 +565,9 @@
           return;
         }
 
+        if (loggingOut || sessionStorage.getItem(SESSION_KEY) !== token) return;
         displayStudent(data.student);
+        await loadExams();
 
       } catch (error) {
         console.error("Session verification failed:", error);
@@ -488,6 +581,8 @@ document.getElementById("logoutButton")
   .addEventListener("click", async function () {
 
     const logoutButton = this;
+    loggingOut = true;
+    examsRequestId++;
     const token = sessionStorage.getItem(SESSION_KEY);
 
     logoutButton.disabled = true;
@@ -532,6 +627,7 @@ document.getElementById("logoutButton")
         "تحقق من اتصال الإنترنت وحاول مرة أخرى."
       );
 
+      loggingOut = false;
       logoutButton.disabled = false;
       logoutButton.textContent = "🚪 تسجيل الخروج";
     }
