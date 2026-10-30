@@ -876,6 +876,7 @@
                 <th>الدرجة</th>
                 <th>النسبة</th>
                 <th>تاريخ الإكمال</th>
+                <th>تقرير الطالب</th>
               </tr>
             </thead>
 
@@ -1213,7 +1214,7 @@
       const loadingCell =
         document.createElement("td");
 
-      loadingCell.colSpan = 9;
+      loadingCell.colSpan = 10;
       loadingCell.className = "table-message";
       loadingCell.textContent =
         "⏳ جارٍ تحميل نتائج الطلاب...";
@@ -1450,7 +1451,7 @@
       const row = document.createElement("tr");
       const cell = document.createElement("td");
 
-      cell.colSpan = 9;
+      cell.colSpan = 10;
       cell.className = "table-message";
       cell.textContent = message;
 
@@ -1557,6 +1558,15 @@
           formatDate(item.completed_at)
         );
 
+        const reportCell = document.createElement("td");
+        const reportButton = document.createElement("button");
+        reportButton.type = "button";
+        reportButton.className = "btn btn-light";
+        reportButton.textContent = "📄 تقرير الطالب";
+        reportButton.addEventListener("click", () => openStudentReport(item));
+        reportCell.appendChild(reportButton);
+        row.appendChild(reportCell);
+
         fragment.appendChild(row);
       });
 
@@ -1632,6 +1642,160 @@
       document.getElementById("statHigh")
         .textContent =
           formatNumber(highCount);
+    }
+
+    // ========================================
+    // تقرير الطالب الفردي للطباعة / PDF
+    // ========================================
+
+    function reportEscape(value) {
+      return String(value ?? "—").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+      })[character]);
+    }
+
+    function openStudentReport(selected) {
+      if (!verifiedAdmin || !resultsLoaded) return;
+
+      // يشمل التقرير محاولات الطالب المتاحة في آخر 500 نتيجة محمّلة.
+      const studentKey = String(selected.student_number ?? "").trim();
+      const studentResults = allResults.filter(item =>
+        studentKey
+          ? String(item.student_number ?? "").trim() === studentKey
+          : item.student_name === selected.student_name &&
+            item.academic_number === selected.academic_number
+      );
+
+      if (!studentResults.length) {
+        alert("لا توجد نتائج لهذا الطالب.");
+        return;
+      }
+
+      const printable = window.open("", "_blank");
+      if (!printable) {
+        alert("يرجى السماح بالنوافذ المنبثقة لعرض التقرير.");
+        return;
+      }
+
+      const validPercentages = studentResults
+        .map(item => Number(item.percentage))
+        .filter(value => Number.isFinite(value));
+
+      const average = validPercentages.length
+        ? validPercentages.reduce((sum, value) => sum + value, 0) /
+          validPercentages.length
+        : null;
+      const best = validPercentages.length
+        ? Math.max(...validPercentages)
+        : null;
+
+      const level = average === null ? "غير محدد"
+        : average >= 90 ? "ممتاز"
+        : average >= 80 ? "جيد جدًا"
+        : average >= 70 ? "جيد"
+        : average >= 50 ? "يحتاج إلى تطوير"
+        : "يحتاج إلى دعم ومتابعة";
+
+      const safe = reportEscape;
+      const info = [
+        ["اسم الطالب", selected.student_name],
+        ["رقم الطالب", selected.student_number],
+        ["الرقم الأكاديمي", selected.academic_number],
+        ["المرحلة الدراسية", selected.grade_level],
+        ["الشعبة", selected.class_section],
+        ["المقرر", [...new Set(studentResults.map(r => r.course_code).filter(Boolean))].join("، ")]
+      ].map(([label, value]) =>
+        `<div class="field"><span>${safe(label)}</span><strong>${safe(value)}</strong></div>`
+      ).join("");
+
+      const rows = studentResults.map((item, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${safe(item.exam_title)}</td>
+          <td>${safe(item.course_code)}</td>
+          <td>${safe(formatNumber(item.total_score))} من ${safe(formatNumber(item.max_score))}</td>
+          <td>${Number.isFinite(Number(item.percentage)) ? safe(formatNumber(item.percentage)) + "%" : "—"}</td>
+          <td>${safe(formatDate(item.completed_at))}</td>
+        </tr>
+      `).join("");
+
+      const reportHtml = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تقرير الطالب - ${safe(selected.student_name)}</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:Tahoma,Arial,sans-serif;color:#142a4a;margin:0;background:#edf2f8;line-height:1.7}
+  .controls{max-width:850px;margin:20px auto;text-align:left}
+  .controls button{background:#2563eb;color:#fff;border:0;border-radius:8px;padding:12px 24px;cursor:pointer;font-weight:bold}
+  .page{background:white;max-width:850px;min-height:1000px;margin:0 auto 25px;padding:42px;box-shadow:0 5px 30px #142a4a18}
+  .head{border-bottom:4px solid #e3b853;padding-bottom:20px;text-align:center}
+  .logo{display:inline-grid;place-items:center;width:62px;height:62px;border-radius:16px;background:#102b50;color:#f9d774;font-weight:bold;font-size:23px}
+  h1{font-size:23px;margin:10px 0 2px}h2{font-size:18px;margin:28px 0 12px}
+  .subtitle{color:#6b7c95;font-size:13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .field{background:#f5f8fc;border:1px solid #e0e7f0;padding:10px 14px;border-radius:8px;min-width:0}
+  .field span{display:block;font-size:11px;color:#66788f}.field strong{display:block;font-size:13px;overflow-wrap:anywhere}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .stat{border:1px solid #dce5f0;background:#f5f8fc;border-radius:9px;text-align:center;padding:15px 8px}
+  .stat b{display:block;font-size:23px}.stat small{color:#66788f}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th,td{padding:10px 7px;border:1px solid #dce5f0;text-align:right;overflow-wrap:anywhere}
+  th{background:#102b50;color:white}
+  tr:nth-child(even){background:#f7f9fc}
+  .evaluation{padding:14px 18px;background:#eff6ff;border-right:4px solid #2563eb;border-radius:7px}
+  .footer{margin-top:65px;border-top:1px solid #dce5f0;padding-top:24px;text-align:center}
+  .footer strong{font-size:17px}.footer p{margin:3px 0}
+  .footnote{color:#77859a;font-size:10px;margin-top:20px}
+  @page{size:A4;margin:12mm}
+  @media print{
+    body{background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .controls{display:none}.page{width:100%;max-width:none;min-height:0;margin:0;padding:0;box-shadow:none}
+    h2{break-after:avoid}tr{break-inside:avoid}.footer{break-inside:avoid}
+  }
+  @media(max-width:600px){.page{padding:20px}.grid{grid-template-columns:1fr}.stats{gap:6px}}
+</style>
+</head>
+<body>
+<div class="controls"><button type="button" onclick="window.print()">🖨️ طباعة / حفظ PDF</button></div>
+<main class="page">
+  <header class="head">
+    <div class="logo">Py</div>
+    <h1>Python Skills Academy</h1>
+    <div class="subtitle">منصة محمد الجيلاني التعليمية</div>
+    <h2 style="margin:16px 0 0">تقرير الأداء الأكاديمي للطالب</h2>
+  </header>
+  <h2>👨‍🎓 بيانات الطالب</h2>
+  <section class="grid">${info}</section>
+  <h2>📊 ملخص الأداء</h2>
+  <section class="stats">
+    <div class="stat"><b>${safe(formatNumber(studentResults.length))}</b><small>المحاولات المكتملة</small></div>
+    <div class="stat"><b>${average === null ? "—" : safe(formatNumber(average)) + "%"}</b><small>متوسط النتائج</small></div>
+    <div class="stat"><b>${best === null ? "—" : safe(formatNumber(best)) + "%"}</b><small>أعلى نسبة</small></div>
+  </section>
+  <h2>📝 نتائج الاختبارات</h2>
+  <table>
+    <thead><tr><th>م</th><th>الاختبار</th><th>المقرر</th><th>الدرجة</th><th>النسبة</th><th>تاريخ الإكمال</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <h2>🎯 التقييم الأكاديمي</h2>
+  <div class="evaluation">مستوى الأداء وفق متوسط النتائج المتاحة: <strong>${safe(level)}</strong>.</div>
+  <div class="footnote">التقييم وصفي آلي مبني على متوسط المحاولات المكتملة المعروضة، ولا يُعد حكمًا نهائيًا على مستوى الطالب. يشمل التقرير النتائج المتاحة ضمن آخر 500 محاولة في لوحة الإدارة.</div>
+  <footer class="footer">
+    <p>إعداد وإشراف</p>
+    <strong>الأستاذ محمد الجيلاني</strong>
+    <p>Python Skills Academy</p>
+    <p class="subtitle">تاريخ إصدار التقرير: ${safe(formatDate(new Date().toISOString()))}</p>
+  </footer>
+</main>
+</body>
+</html>`;
+
+      printable.document.open();
+      printable.document.write(reportHtml);
+      printable.document.close();
     }
 
     // ========================================
