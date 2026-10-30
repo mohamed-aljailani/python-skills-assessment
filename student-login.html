@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101b38">
+
+  <title>دخول الطلاب | Python Skills Academy</title>
+
+  <style>
+    :root {
+      --navy: #101b38;
+      --blue: #2563eb;
+      --purple: #7c3aed;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Tahoma, Arial, sans-serif;
+      background: linear-gradient(135deg, #101b38, #253b73);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .brand {
+      text-align: center;
+      color: white;
+      margin-bottom: 26px;
+    }
+
+    .logo {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 16px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 35px;
+      box-shadow: 0 12px 30px #0003;
+    }
+
+    .brand h1 {
+      font-size: 27px;
+      margin: 0 0 8px;
+      direction: ltr;
+    }
+
+    .brand p {
+      font-size: 14px;
+      color: #cbd5e1;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 34px;
+      box-shadow: 0 20px 60px #0003;
+    }
+
+    .card h2 {
+      text-align: center;
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 23px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.9;
+      margin: 0 0 28px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 9px;
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s;
+      direction: ltr;
+      text-align: left;
+      background: #f8fafc;
+    }
+
+    input:focus {
+      border-color: var(--blue);
+      background: white;
+      box-shadow: 0 0 0 3px #2563eb18;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      padding-right: 15px;
+      padding-left: 75px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      color: var(--blue);
+      font-size: 12px;
+      padding: 10px;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: white;
+      border: 0;
+      border-radius: 11px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .login-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
+    }
+
+    .message {
+      display: none;
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .message.error {
+      display: block;
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .message.success {
+      display: block;
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .help {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .footer {
+      text-align: center;
+      color: #cbd5e1;
+      margin-top: 25px;
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 25px 20px;
+      }
+
+      .brand h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <header class="brand">
+      <div class="logo">🐍</div>
+      <h1>Python Skills Academy</h1>
+      <p>منصة محمد الجيلاني التعليمية</p>
+    </header>
+
+    <section class="card">
+
+      <h2>🎓 تسجيل دخول الطلاب</h2>
+
+      <p class="subtitle">
+        أهلًا بك في أكاديمية مهارات بايثون
+        <br>
+        أدخل بياناتك للوصول إلى حسابك التعليمي
+      </p>
+
+      <form id="loginForm">
+
+        <div class="field">
+          <label for="studentNumber">رقم الطالب</label>
+
+          <input
+            id="studentNumber"
+            type="text"
+            placeholder="مثال: PSA-0009"
+            autocomplete="username"
+            maxlength="100"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="loginCode">رمز الدخول</label>
+
+          <div class="password-wrapper">
+            <input
+              id="loginCode"
+              type="password"
+              placeholder="أدخل رمز الدخول الخاص بك"
+              autocomplete="off"
+              maxlength="12"
+              required
+            >
+
+            <button
+              class="toggle-password"
+              type="button"
+              id="togglePassword"
+              aria-label="إظهار أو إخفاء رمز الدخول"
+            >
+              إظهار
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="login-btn"
+          id="loginButton"
+        >
+          تسجيل الدخول ←
+        </button>
+
+        <div
+          id="message"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+      </form>
+
+      <div class="help">
+        🔐 رمز الدخول يصدر من إدارة المنصة.
+        <br>
+        إذا فقدت رمزك، تواصل مع المسؤول.
+      </div>
+
+    </section>
+
+    <footer class="footer">
+      Python Skills Academy
+      <br>
+      منصة تعليمية مستقلة بإشراف محمد الجيلاني
+    </footer>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    const SUPABASE_URL =
+      "https://gmxjwgacpygorqwyfeoo.supabase.co";
+
+    const LOGIN_ENDPOINT =
+      SUPABASE_URL + "/functions/v1/student-login";
+
+    const form = document.getElementById("loginForm");
+    const studentNumberInput =
+      document.getElementById("studentNumber");
+    const loginCodeInput =
+      document.getElementById("loginCode");
+    const loginButton =
+      document.getElementById("loginButton");
+    const messageBox =
+      document.getElementById("message");
+
+    function showMessage(text, type = "error") {
+      messageBox.textContent = text;
+      messageBox.className = "message " + type;
+    }
+
+    document.getElementById("togglePassword")
+      .addEventListener("click", function () {
+        const isHidden = loginCodeInput.type === "password";
+
+        loginCodeInput.type =
+          isHidden ? "text" : "password";
+
+        this.textContent = isHidden ? "إخفاء" : "إظهار";
+      });
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const studentNumber =
+        studentNumberInput.value.trim();
+
+      const loginCode =
+        loginCodeInput.value.trim().toUpperCase();
+
+      if (!studentNumber || !loginCode) {
+        showMessage("يرجى إدخال رقم الطالب ورمز الدخول.");
+        return;
+      }
+
+      if (!/^[A-HJ-NP-Z2-9]{12}$/.test(loginCode)) {
+        showMessage("يرجى إدخال رمز الدخول المكوّن من 12 خانة.");
+        return;
+      }
+
+      loginButton.disabled = true;
+      loginButton.textContent = "جارٍ التحقق...";
+      messageBox.className = "message";
+      messageBox.textContent = "";
+
+      try {
+        const response = await fetch(LOGIN_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            student_number: studentNumber,
+            login_code: loginCode
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          showMessage(
+            data.error || "تعذر تسجيل الدخول. حاول مرة أخرى."
+          );
+          return;
+        }
+
+        if (
+          typeof data.session_token !== "string" ||
+          !/^[a-f0-9]{64}$/.test(data.session_token)
+        ) {
+          showMessage("تعذر إنشاء جلسة الدخول.");
+          return;
+        }
+
+        // حفظ الجلسة للتبويب الحالي فقط
+        sessionStorage.setItem(
+          "psa_student_session",
+          data.session_token
+        );
+
+        // لا نحتفظ برمز الدخول الأساسي
+        loginCodeInput.value = "";
+
+        showMessage(
+          "تم تسجيل الدخول بنجاح. مرحبًا بك في المنصة!",
+          "success"
+        );
+
+        // سنضيف الانتقال إلى لوحة الطالب بعد إنشائها.
+        // لا تُستخدم بيانات المتصفح وحدها لمنح صلاحيات الوصول.
+
+      } catch (error) {
+        console.error("Student login request failed:", error);
+
+        showMessage(
+          "تعذر الاتصال بالخادم. تحقق من اتصال الإنترنت."
+        );
+      } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = "تسجيل الدخول ←";
+      }
+    });
+  </script>
+
+</body>
+</html>
