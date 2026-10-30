@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101b38">
+  <title>لوحة الطالب | Python Skills Academy</title>
+
+  <style>
+    :root {
+      --navy: #101b38;
+      --blue: #2563eb;
+      --purple: #7c3aed;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --background: #f1f5f9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #101b38, #253b73);
+      color: white;
+      padding: 22px 6%;
+    }
+
+    .header-content {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 55px;
+      height: 55px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .brand h1 {
+      margin: 0 0 5px;
+      font-size: 22px;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 12px;
+    }
+
+    .logout-btn {
+      padding: 12px 20px;
+      border: 1px solid #ffffff55;
+      border-radius: 10px;
+      color: white;
+      background: #ffffff15;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .logout-btn:hover {
+      background: #ffffff30;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 35px auto;
+      padding: 0 20px;
+    }
+
+    .welcome {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 30px #0f172a0a;
+      margin-bottom: 25px;
+      border-right: 5px solid var(--blue);
+    }
+
+    .welcome h2 {
+      margin: 0 0 12px;
+      font-size: 25px;
+      color: var(--navy);
+      line-height: 1.7;
+    }
+
+    .welcome p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 14px;
+    }
+
+    .student-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .badge {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-radius: 9px;
+      padding: 10px 15px;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .section-title {
+      margin: 35px 0 18px;
+      font-size: 21px;
+      color: var(--navy);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 27px;
+      border-radius: 18px;
+      box-shadow: 0 8px 25px #0f172a08;
+      border: 1px solid var(--border);
+    }
+
+    .card-icon {
+      font-size: 35px;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      font-size: 19px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.9;
+      margin: 0 0 20px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 9px 13px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .notice {
+      margin-top: 30px;
+      padding: 18px 22px;
+      border-radius: 13px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    .loading {
+      text-align: center;
+      background: white;
+      padding: 50px 20px;
+      border-radius: 18px;
+      margin-top: 45px;
+      color: var(--muted);
+    }
+
+    .error-box {
+      text-align: center;
+      background: white;
+      padding: 45px 25px;
+      border-radius: 18px;
+      margin-top: 45px;
+    }
+
+    .error-box h2 {
+      color: #991b1b;
+    }
+
+    .error-box p {
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .return-btn {
+      display: inline-block;
+      background: var(--blue);
+      color: white;
+      padding: 13px 22px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin-top: 15px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 35px 15px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 2;
+    }
+
+    @media (max-width: 800px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome h2 {
+        font-size: 21px;
+      }
+
+      .brand h1 {
+        font-size: 18px;
+      }
+
+      .container {
+        margin-top: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="header-content">
+
+      <div class="brand">
+        <div class="logo">🐍</div>
+        <div>
+          <h1>Python Skills Academy</h1>
+          <p>منصة محمد الجيلاني التعليمية</p>
+        </div>
+      </div>
+
+      <button
+        class="logout-btn"
+        id="logoutButton"
+        type="button"
+      >
+        🚪 تسجيل الخروج
+      </button>
+
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div id="loading" class="loading" role="status">
+      ⏳ جارٍ التحقق من جلسة الدخول...
+    </div>
+
+    <section id="errorSection" class="error-box" hidden>
+      <h2>تعذر فتح لوحة الطالب</h2>
+      <p id="errorMessage">
+        يرجى تسجيل الدخول مرة أخرى.
+      </p>
+      <a class="return-btn" href="student-login.html">
+        العودة إلى تسجيل الدخول
+      </a>
+    </section>
+
+    <div id="dashboardContent" hidden>
+
+      <section class="welcome">
+        <h2>
+          👋 أهلًا بك،
+          <span id="studentName"></span>
+        </h2>
+
+        <p>
+          يسعدنا وجودك في أكاديمية مهارات بايثون.
+          هنا ستتمكن مستقبلًا من متابعة اختباراتك
+          ونتائجك وتطور مهاراتك البرمجية.
+        </p>
+
+        <div class="student-info">
+          <span class="badge">
+            🪪 رقم الطالب:
+            <strong id="studentNumber"></strong>
+          </span>
+
+          <span class="badge">
+            🎓 المرحلة:
+            <strong id="studentGrade"></strong>
+          </span>
+
+          <span class="badge">
+            📚 المقرر:
+            <strong id="studentCourse"></strong>
+          </span>
+        </div>
+      </section>
+
+      <h2 class="section-title">📚 مساحتك التعليمية</h2>
+
+      <div class="cards">
+
+        <article class="card">
+          <div class="card-icon">📝</div>
+          <h3>الاختبارات والتقييمات</h3>
+          <p>
+            ستجد هنا الاختبارات المتاحة لك،
+            مع إمكانية الإجابة عنها إلكترونيًا.
+          </p>
+          <span class="status">قيد التطوير</span>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">📊</div>
+          <h3>نتائجي</h3>
+          <p>
+            تابع درجاتك ومستوى إتقانك
+            للمهارات البرمجية المختلفة.
+          </p>
+          <span class="status">قيد التطوير</span>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🎯</div>
+          <h3>خطة تطوير مهاراتي</h3>
+          <p>
+            احصل مستقبلًا على تدريبات
+            تناسب مستواك ونقاط التحسين لديك.
+          </p>
+          <span class="status">قيد التطوير</span>
+        </article>
+
+      </div>
+
+      <div class="notice">
+        💡 <strong>رسالة من إدارة الأكاديمية:</strong>
+        نعمل حاليًا على تجهيز الاختبارات الإلكترونية
+        والتقارير التعليمية. ستظهر الخدمات هنا
+        تدريجيًا بعد تفعيلها.
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    Python Skills Academy
+    <br>
+    منصة تعليمية مستقلة بإشراف محمد الجيلاني
+  </footer>
+
+  <script>
+    "use strict";
+
+    const SUPABASE_URL =
+      "https://gmxjwgacpygorqwyfeoo.supabase.co";
+
+    const SESSION_ENDPOINT =
+      SUPABASE_URL + "/functions/v1/student-session";
+
+    const SESSION_KEY = "psa_student_session";
+
+    const loading =
+      document.getElementById("loading");
+
+    const dashboardContent =
+      document.getElementById("dashboardContent");
+
+    const errorSection =
+      document.getElementById("errorSection");
+
+    const errorMessage =
+      document.getElementById("errorMessage");
+
+    function clearSession() {
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+
+    function showError(message) {
+      loading.hidden = true;
+      dashboardContent.hidden = true;
+      errorSection.hidden = false;
+
+      errorMessage.textContent =
+        message || "تعذر التحقق من جلسة الدخول.";
+    }
+
+    function displayStudent(student) {
+      document.getElementById("studentName")
+        .textContent = student.full_name || "طالبنا العزيز";
+
+      document.getElementById("studentNumber")
+        .textContent = student.student_number || "—";
+
+      document.getElementById("studentGrade")
+        .textContent = student.grade_level || "—";
+
+      document.getElementById("studentCourse")
+        .textContent = student.course_code || "—";
+
+      loading.hidden = true;
+      errorSection.hidden = true;
+      dashboardContent.hidden = false;
+    }
+
+    async function verifySession() {
+      const token = sessionStorage.getItem(SESSION_KEY);
+
+      if (!token || !/^[a-f0-9]{64}$/.test(token)) {
+        clearSession();
+        showError("لا توجد جلسة دخول صالحة. يرجى تسجيل الدخول.");
+        return;
+      }
+
+      try {
+        const response = await fetch(SESSION_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            session_token: token
+          }),
+          cache: "no-store"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.student) {
+          if (response.status === 401 || response.status === 403) {
+            clearSession();
+          }
+
+          showError(
+            data.error || "تعذر التحقق من جلسة الدخول."
+          );
+          return;
+        }
+
+        displayStudent(data.student);
+
+      } catch (error) {
+        console.error("Session verification failed:", error);
+
+        showError(
+          "تعذر الاتصال بالخادم. حاول تحديث الصفحة لاحقًا."
+        );
+      }
+    }
+
+    document.getElementById("logoutButton")
+      .addEventListener("click", function () {
+        clearSession();
+
+        window.location.replace("student-login.html");
+      });
+
+    // التحقق من الجلسة عند فتح لوحة الطالب
+    verifySession();
+
+    // إعادة التحقق عند العودة إلى التبويب
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden && !dashboardContent.hidden) {
+        verifySession();
+      }
+    });
+  </script>
+
+</body>
+</html>
