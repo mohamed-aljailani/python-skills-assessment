@@ -132,7 +132,12 @@ actionRow.append(detailedPrintBtn);
  const impactBtn=document.createElement('button');impactBtn.type='button';impactBtn.className='secondary';impactBtn.textContent='🧪 اختبار قياس الأثر';
  const impactPanel=document.createElement('div');impactPanel.className='followups-panel hidden';
  impactBtn.addEventListener('click',()=>previewPlanImpact(p,impactBtn,impactPanel));
- actionRow.append(impactBtn);item.append(actionRow,panel,impactPanel);
+ const saveImpactBtn=document.createElement('button');saveImpactBtn.type='button';saveImpactBtn.className='secondary';saveImpactBtn.textContent='💾 حفظ نتائج القياس للمراجعة';
+ saveImpactBtn.addEventListener('click',()=>savePlanImpact(p,saveImpactBtn,impactPanel));
+ const savedImpactBtn=document.createElement('button');savedImpactBtn.type='button';savedImpactBtn.className='secondary';savedImpactBtn.textContent='📋 التقييمات المحفوظة';
+ const savedImpactPanel=document.createElement('div');savedImpactPanel.className='followups-panel hidden';
+ savedImpactBtn.addEventListener('click',()=>loadSavedImpact(p,savedImpactBtn,savedImpactPanel));
+ actionRow.append(impactBtn,saveImpactBtn,savedImpactBtn);item.append(actionRow,panel,impactPanel,savedImpactPanel);
 if(p.status!=='completed'){const actions=document.createElement('div');actions.className='actions';const next=p.status==='draft'?'active':'completed';const btn=document.createElement('button');btn.className='secondary';btn.textContent=next==='active'?'✅ اعتماد الخطة':'🏁 إنهاء الخطة';btn.onclick=()=>setPlanStatus(p,next);actions.append(btn);if(p.status==='active'){const back=document.createElement('button');back.className='secondary';back.textContent='↩ إرجاع لمسودة';back.onclick=()=>setPlanStatus(p,'draft');actions.append(back)}item.append(actions)}list.append(item);if(openFollowups.has(p.id))showPanel()}}catch(e){list.textContent='تعذر تحميل الخطط: '+e.message}}
 async function previewPlanImpact(plan,button,panel){
  if(!verified||button.disabled)return;
@@ -161,6 +166,66 @@ async function previewPlanImpact(plan,button,panel){
   }
   addText(panel,'p','هذه معاينة فقط؛ لم تُحفظ أي نتائج ولم يُعتمد إتقان أو تحسن.','notice');
  }catch(e){progress.textContent='تعذر إجراء المعاينة: '+e.message;progress.className='notice error'}
+ finally{button.disabled=false}
+}
+// حفظ نتائج التحليل الآلي دون اعتمادها تلقائيًا.
+async function savePlanImpact(plan,button,panel){
+ if(!verified||button.disabled)return;
+ if(!confirm('هل تريد حفظ نتائج القياس الحالية بحالة «بانتظار مراجعة المعلم»؟\nالحفظ لا يعني إثبات الإتقان أو تحسن الطالب.'))return;
+ button.disabled=true;
+ panel.classList.remove('hidden');
+ const message=addText(panel,'p','جارٍ حفظ نتائج القياس...','notice');
+ try{
+  const data=await request(IMPACT_ENDPOINT,{action:'save_preview',plan_id:plan.id});
+  message.className='notice ok';
+  message.textContent=data.message||('تم حفظ '+(data.created_count??0)+' تقييمات بانتظار المراجعة.');
+  setStatus('✅ '+message.textContent,'ok');
+ }catch(err){message.className='notice error';message.textContent='تعذر حفظ نتائج القياس: '+err.message}
+ finally{button.disabled=false}
+}
+function impactReviewName(value){return ({pending:'بانتظار المراجعة',approved:'تمت المراجعة والاعتماد',rejected:'مرفوض'})[value]||value||'غير محدد'}
+async function loadSavedImpact(plan,button,panel){
+ if(!verified||button.disabled)return;
+ if(!panel.classList.contains('hidden')){panel.classList.add('hidden');return}
+ panel.classList.remove('hidden');panel.replaceChildren();
+ addText(panel,'h3','📋 نتائج قياس الأثر المحفوظة');
+ const progress=addText(panel,'p','جارٍ تحميل التقييمات المحفوظة...','muted');
+ button.disabled=true;
+ try{
+  const data=await request(IMPACT_ENDPOINT,{action:'list_saved',plan_id:plan.id});
+  progress.remove();
+  const assessments=Array.isArray(data.assessments)?data.assessments:[];
+  if(!assessments.length){addText(panel,'p','لا توجد تقييمات محفوظة لهذه الخطة حتى الآن.','notice');return}
+  addText(panel,'p','عدد التقييمات المحفوظة: '+assessments.length,'muted');
+  for(const a of assessments){
+   const box=document.createElement('div');box.className='followup-entry';
+   addText(box,'strong',(a.skill_name||'مهارة غير محددة')+' — '+(a.assessment_type==='pre'?'تقييم قبلي':a.assessment_type==='post'?'تقييم بعدي':'تقييم'));
+   addText(box,'p','المصدر: '+(a.assessment_source==='automatic'?'تلقائي':'يدوي')+' | التاريخ: '+(a.assessment_date||'—'));
+   addText(box,'p','الأسئلة المختلفة: '+(a.total_questions??'—')+' | الصحيحة: '+(a.correct_answers??'—')+' | النسبة: '+(a.score_percentage??'—')+'%');
+   addText(box,'p','حالة المراجعة: '+impactReviewName(a.review_status),'muted');
+   if((a.total_questions??0)<3)addText(box,'p','⚠️ أدلة غير كافية لإثبات إتقان المهارة (أقل من 3 أسئلة مختلفة).','muted');
+   if(a.teacher_notes)addText(box,'p','ملاحظات المعلم: '+a.teacher_notes,'muted');
+   if(a.review_status==='pending'){
+    const noteLabel=addText(box,'label','ملاحظات المعلم عند المراجعة (اختياري)');
+    const notes=document.createElement('textarea');notes.maxLength=10000;notes.value=a.teacher_notes||'';noteLabel.append(notes);
+    const actions=document.createElement('div');actions.className='actions';
+    for(const [status,label,cls] of [['approved','✅ اعتماد التقييم','secondary'],['rejected','❌ رفض التقييم','danger']]){
+     const btn=document.createElement('button');btn.type='button';btn.className=cls;btn.textContent=label;
+     btn.addEventListener('click',async()=>{
+      if(!confirm('هل تريد '+(status==='approved'?'اعتماد':'رفض')+' هذا التقييم؟\nهذا القرار نهائي من خلال هذه الواجهة، ولا يثبت الإتقان تلقائيًا.'))return;
+      for(const b of actions.querySelectorAll('button'))b.disabled=true;
+      try{
+       await request(IMPACT_ENDPOINT,{action:'review',plan_id:plan.id,assessment_id:a.id,review_status:status,teacher_notes:notes.value.trim()});
+       setStatus('✅ تم تسجيل قرار مراجعة التقييم.','ok');
+       panel.classList.add('hidden');await loadSavedImpact(plan,button,panel);
+      }catch(err){addText(box,'p','تعذر تسجيل المراجعة: '+err.message,'notice error');for(const b of actions.querySelectorAll('button'))b.disabled=false}
+     });actions.append(btn);
+    }box.append(actions);
+   }
+   panel.append(box);
+  }
+  addText(panel,'p','اعتماد التقييم يعني مراجعة البيانات فقط، ولا يثبت وحده إتقان المهارة أو تحقق أثر الخطة.','notice');
+ }catch(err){progress.textContent='تعذر تحميل التقييمات: '+err.message;progress.className='notice error'}
  finally{button.disabled=false}
 }
 async function setPlanStatus(p,status){if(busy)return;const message=status==='active'?'هل راجعت محتوى الخطة وتريد اعتمادها؟':status==='completed'?'هل اكتمل تنفيذ الخطة وتريد إغلاقها؟':'هل تريد إعادة الخطة إلى مسودة؟';if(!confirm(message))return;setBusy(true);try{await request(PLANS_ENDPOINT,{action:'set_status',plan_id:p.id,status});setStatus('تم تحديث حالة الخطة بنجاح.','ok');if(currentPlan?.id===p.id)currentPlan=null;await loadPlans()}catch(e){setStatus('تعذر تحديث الحالة: '+e.message,'error')}finally{setBusy(false)}}
