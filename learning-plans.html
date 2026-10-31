@@ -245,8 +245,12 @@ async function printDetailedReport(plan,button){
   const previous=button.textContent;button.disabled=true;button.textContent='⏳ جارٍ إعداد التقرير...';
   try{
     // نجلب السجل من الخادم وقت الطباعة حتى لا نعتمد على حالة لوحة العرض.
-    const response=await request(PLANS_ENDPOINT,{action:'list_followups',plan_id:plan.id});
+    const [response, impactResponse]=await Promise.all([
+      request(PLANS_ENDPOINT,{action:'list_followups',plan_id:plan.id}),
+      request(IMPACT_ENDPOINT,{action:'list_saved',plan_id:plan.id})
+    ]);
     const followups=Array.isArray(response.followups)?response.followups:[];
+    const savedAssessments=Array.isArray(impactResponse.assessments)?impactResponse.assessments:[];
     const area=$('printArea');area.replaceChildren();
     const header=document.createElement('div');header.className='report-header';
     addText(header,'h1','Python Skills Academy');
@@ -301,7 +305,36 @@ async function printDetailedReport(plan,button){
     });area.append(followSection);
     const impact=document.createElement('section');impact.className='report-section';
     addText(impact,'h2','تاسعًا: قياس أثر الخطة العلاجية');
-    addText(impact,'p','لا توجد مقارنة موثقة قبل/بعد مرتبطة بالخطة في البيانات المتاحة لهذا التقرير. تُستكمل هذه الفقرة بعد إجراء تقييم لاحق موثق ومراجعته من المعلم.');
+    addText(impact,'p','التقييمات المحفوظة المرتبطة بهذه الخطة: '+savedAssessments.length,'report-muted');
+    if(!savedAssessments.length){
+      addText(impact,'p','لا توجد تقييمات محفوظة مرتبطة بهذه الخطة حتى تاريخ إعداد التقرير.');
+    }else{
+      const ordered=[...savedAssessments].sort((a,b)=>String(a.assessment_date||'').localeCompare(String(b.assessment_date||''))||String(a.created_at||'').localeCompare(String(b.created_at||'')));
+      for(const a of ordered){
+        const box=document.createElement('div');box.className='report-box';
+        const phase=a.assessment_type==='pre'?'قبلي':a.assessment_type==='post'?'بعدي':'غير محدد';
+        const source=a.assessment_source==='automatic'?'تلقائي':a.assessment_source==='manual'?'يدوي':'غير محدد';
+        addText(box,'strong',(a.skill_name||'مهارة غير محددة')+' — تقييم '+phase);
+        addText(box,'p','المصدر: '+source+' | تاريخ التقييم: '+(a.assessment_date||'—')+' | حالة المراجعة: '+impactReviewName(a.review_status));
+        addText(box,'p','الأسئلة المختلفة: '+(a.total_questions??'—')+' | الإجابات الصحيحة: '+(a.correct_answers??'—')+' | نسبة الإجابات الصحيحة: '+(a.score_percentage==null?'—':a.score_percentage+'%'));
+        if(a.reviewed_at)addText(box,'p','تاريخ قرار المراجعة: '+new Date(a.reviewed_at).toLocaleString('ar-BH',{timeZone:'Asia/Bahrain'}),'report-muted');
+        if(a.teacher_notes)addText(box,'p','ملاحظات المعلم: '+a.teacher_notes);
+        if((a.total_questions??0)<3)addText(box,'p','تنبيه: أدلة غير كافية لإثبات الإتقان؛ أقل من 3 أسئلة مختلفة.','report-muted');
+        if(a.review_status==='rejected')addText(box,'p','هذا التقييم مرفوض، ولا يُستخدم لإثبات الإتقان أو تحسن مستوى الطالب.','report-muted');
+        else if(a.review_status==='pending')addText(box,'p','هذا التقييم بانتظار مراجعة المعلم، ولا يُستخدم لإثبات الإتقان أو التحسن.','report-muted');
+        else addText(box,'p','اعتماد المعلم يثبت مراجعة السجل فقط، ولا يثبت وحده الإتقان أو التحسن.','report-muted');
+        impact.append(box);
+      }
+    }
+    const approved=savedAssessments.filter(a=>a.review_status==='approved'&&Number(a.total_questions)>=3);
+    const preSkills=new Set(approved.filter(a=>a.assessment_type==='pre').map(a=>a.skill_name));
+    const postSkills=new Set(approved.filter(a=>a.assessment_type==='post').map(a=>a.skill_name));
+    const pairedSkills=[...preSkills].filter(name=>postSkills.has(name));
+    if(!pairedSkills.length){
+      addText(impact,'p','خلاصة قياس الأثر: لا توجد حتى الآن أدلة قبلية وبعدية معتمدة وكافية للمهارة نفسها لإثبات التحسن.','report-muted');
+    }else{
+      addText(impact,'p','توجد تقييمات قبلية وبعدية معتمدة وكافية مبدئيًا للمهارات: '+pairedSkills.join('، ')+'. يلزم التحقق من قابلية المقارنة وتحديد مقدار التغير قبل إصدار حكم على الأثر.','report-muted');
+    }
     area.append(impact);
     const footer=document.createElement('div');footer.className='report-footer';
     addText(footer,'p','تاريخ إعداد التقرير: '+new Date().toLocaleDateString('ar-BH'));
