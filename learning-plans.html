@@ -64,6 +64,7 @@ const TOKEN_NAME='python_skills_access_token';
 const AUTH_ENDPOINT=SUPABASE_URL+'/functions/v1/create-student-account';
 const ANALYSIS_ENDPOINT=SUPABASE_URL+'/functions/v1/admin-student-skill-analysis';
 const PLANS_ENDPOINT=SUPABASE_URL+'/functions/v1/admin-learning-plans';
+const IMPACT_ENDPOINT=SUPABASE_URL+'/functions/v1/admin-learning-plan-impact';
 const $=id=>document.getElementById(id);
 let currentStudent=null,currentAnalysis=null,currentPlan=null,verified=false,busy=false;
 const openFollowups=new Set();
@@ -127,8 +128,41 @@ const actionRow=document.createElement('div');actionRow.className='actions';acti
 const detailedPrintBtn=document.createElement('button');
 detailedPrintBtn.className='secondary';detailedPrintBtn.textContent='📄 طباعة التقرير التفصيلي';
 detailedPrintBtn.addEventListener('click',()=>printDetailedReport(p,detailedPrintBtn));
-actionRow.append(detailedPrintBtn);item.append(actionRow,panel);
+actionRow.append(detailedPrintBtn);
+ const impactBtn=document.createElement('button');impactBtn.type='button';impactBtn.className='secondary';impactBtn.textContent='🧪 اختبار قياس الأثر';
+ const impactPanel=document.createElement('div');impactPanel.className='followups-panel hidden';
+ impactBtn.addEventListener('click',()=>previewPlanImpact(p,impactBtn,impactPanel));
+ actionRow.append(impactBtn);item.append(actionRow,panel,impactPanel);
 if(p.status!=='completed'){const actions=document.createElement('div');actions.className='actions';const next=p.status==='draft'?'active':'completed';const btn=document.createElement('button');btn.className='secondary';btn.textContent=next==='active'?'✅ اعتماد الخطة':'🏁 إنهاء الخطة';btn.onclick=()=>setPlanStatus(p,next);actions.append(btn);if(p.status==='active'){const back=document.createElement('button');back.className='secondary';back.textContent='↩ إرجاع لمسودة';back.onclick=()=>setPlanStatus(p,'draft');actions.append(back)}item.append(actions)}list.append(item);if(openFollowups.has(p.id))showPanel()}}catch(e){list.textContent='تعذر تحميل الخطط: '+e.message}}
+async function previewPlanImpact(plan,button,panel){
+ if(!verified||button.disabled)return;
+ panel.classList.remove('hidden');panel.replaceChildren();
+ addText(panel,'h3','🧪 معاينة قياس أثر الخطة — دون حفظ أو اعتماد');
+ const progress=addText(panel,'p','جارٍ استخراج نتائج الاختبارات...','muted');
+ button.disabled=true;
+ try{
+  const data=await request(IMPACT_ENDPOINT,{action:'preview',plan_id:plan.id});
+  progress.remove();
+  if(data.mode!=='preview_only'||data.saved!==false){addText(panel,'p','تنبيه: استجابة غير متوقعة؛ يرجى التحقق من الوظيفة.','notice error');return;}
+  const summary=document.createElement('div');summary.className='grid';
+  summary.append(metric('محاولات قبل الاعتماد',data.pre_attempts??0),metric('محاولات بعد الاعتماد',data.post_attempts??0),metric('المحاولات المؤهلة',data.eligible_completed_attempts??0));
+  panel.append(summary);
+  if(data.activated_at)addText(panel,'p','تاريخ الاعتماد: '+new Date(data.activated_at).toLocaleString('ar-BH',{timeZone:'Asia/Bahrain'}),'muted');
+  const comparisons=Array.isArray(data.comparisons)?data.comparisons:[];
+  if(!comparisons.length)addText(panel,'p','لا تتوفر بيانات مهارات للمقارنة حاليًا.','notice');
+  for(const c of comparisons){
+   const box=document.createElement('div');box.className='followup-entry';
+   addText(box,'strong',c.skill_name||'مهارة غير محددة');
+   const describe=(a)=>a?`${a.distinct_questions??a.total_questions??'—'} أسئلة مختلفة، ${a.correct_questions??'—'} صحيحة، ${a.score_percentage??'—'}%`:'لا توجد نتائج';
+   addText(box,'p','التقييم القبلي: '+describe(c.pre));
+   addText(box,'p','التقييم البعدي: '+describe(c.post));
+   addText(box,'p',c.comparable?'فرق النسبة: '+c.score_change+' نقطة مئوية — بانتظار مراجعة المعلم':'الأدلة غير كافية للمقارنة (يلزم 3 أسئلة مختلفة على الأقل لكل فترة).','muted');
+   panel.append(box);
+  }
+  addText(panel,'p','هذه معاينة فقط؛ لم تُحفظ أي نتائج ولم يُعتمد إتقان أو تحسن.','notice');
+ }catch(e){progress.textContent='تعذر إجراء المعاينة: '+e.message;progress.className='notice error'}
+ finally{button.disabled=false}
+}
 async function setPlanStatus(p,status){if(busy)return;const message=status==='active'?'هل راجعت محتوى الخطة وتريد اعتمادها؟':status==='completed'?'هل اكتمل تنفيذ الخطة وتريد إغلاقها؟':'هل تريد إعادة الخطة إلى مسودة؟';if(!confirm(message))return;setBusy(true);try{await request(PLANS_ENDPOINT,{action:'set_status',plan_id:p.id,status});setStatus('تم تحديث حالة الخطة بنجاح.','ok');if(currentPlan?.id===p.id)currentPlan=null;await loadPlans()}catch(e){setStatus('تعذر تحديث الحالة: '+e.message,'error')}finally{setBusy(false)}}
 async function save(){if(!currentStudent||busy)return;const payload={};for(const [field,id] of Object.entries(fieldIds))payload[field]=$(id).value.trim();if(!payload.teaching_recommendations&&!payload.proposed_lessons){$('editorMessage').textContent='أدخل توصية تعليمية أو نشاطًا مقترحًا على الأقل.';return}setBusy(true);$('editorMessage').textContent='جارٍ الحفظ...';try{const data=await request(PLANS_ENDPOINT,{action:currentPlan?'update':'create',...(currentPlan?{plan_id:currentPlan.id}:{student_id:currentStudent.id,attempt_id:null}),...payload});currentPlan=data.plan;$('editorMessage').textContent='✅ '+(data.message||'تم الحفظ بنجاح');$('editorStatus').value=({draft:'مسودة',active:'نشطة',completed:'مكتملة'})[data.plan.status];setStatus('تم حفظ الخطة بنجاح.','ok');await loadPlans()}catch(e){$('editorMessage').textContent='❌ '+e.message}finally{setBusy(false)}}
 function reportSection(area,title,content){
