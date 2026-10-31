@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مخطط الدروس | Python Skills Academy</title>
+<style>
+:root{font-family:Tahoma,Arial,sans-serif;color:#152b48;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}header{background:#102b50;color:#fff;padding:22px max(20px,calc((100vw - 950px)/2))}header h1{margin:0 0 8px;font-size:24px}header p{margin:0;color:#d5e2f2;font-size:13px}main{max-width:950px;margin:28px auto;padding:0 18px}.card{background:#fff;border:1px solid #e0e7f0;border-radius:15px;padding:24px;margin-bottom:18px;box-shadow:0 4px 18px #102b5010}h2{font-size:19px;margin:0 0 12px}p{line-height:1.9}.muted{color:#687a91}.status{padding:13px 16px;border-radius:10px;background:#eff6ff;color:#1e40af;margin:12px 0;white-space:pre-wrap}.status.good{background:#e9f9f0;color:#166534}.status.bad{background:#fff0f0;color:#a41c1c}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.course{border:1px solid #dce5f0;border-radius:12px;padding:18px;background:#f9fbff}.course b{display:block;font-size:18px;margin-bottom:9px}.course strong{font-size:29px;color:#174878}.course span{font-size:13px;color:#687a91}a.button,button{display:inline-block;background:#163e70;color:white;text-decoration:none;border:0;border-radius:9px;padding:11px 17px;font:inherit;cursor:pointer}button:disabled{opacity:.6;cursor:wait}.buttons{display:flex;gap:10px;flex-wrap:wrap}.note{font-size:13px;color:#65748b}@media(max-width:700px){.grid{grid-template-columns:1fr}header{padding:20px}}
+</style>
+</head>
+<body>
+<header><h1>📘 مخطط الدروس</h1><p>Python Skills Academy — اختبار الاتصال الأولي</p></header>
+<main>
+<section class="card"><h2>🔐 التحقق من الحساب</h2><div id="authStatus" class="status" role="status">جارٍ التحقق من جلسة الدخول وصلاحية المدير...</div><div class="buttons"><a class="button" href="dashboard.html">← العودة إلى لوحة التحكم</a><button id="retry" type="button">🔄 إعادة الاختبار</button></div></section>
+<section class="card"><h2>📚 المقررات الدراسية</h2><p class="muted">تُقرأ المقررات والدروس من Supabase دون تعديل أو حفظ أي بيانات.</p><div id="dataStatus" class="status">بانتظار التحقق من الحساب...</div><div id="courses" class="grid" aria-live="polite"></div></section>
+<section class="card"><p class="note">هذه نسخة اختبار فقط. لا تتضمن بعد نموذج إعداد الخطة أو طباعتها. لا تشارك رمز الجلسة أو بيانات الدخول مع أي شخص.</p></section>
+</main>
+<script>
+'use strict';
+const SUPABASE_URL='https://gmxjwgacpygorqwyfeoo.supabase.co';
+const SUPABASE_KEY='sb_publishable_4sB0pFunm7YFIPN-sGODVg_3vnSvTQp';
+const TOKEN_NAME='python_skills_access_token';
+const authStatus=document.getElementById('authStatus');
+const dataStatus=document.getElementById('dataStatus');
+const coursesBox=document.getElementById('courses');
+const retry=document.getElementById('retry');
+function setStatus(el,message,type=''){el.textContent=message;el.className='status'+(type?' '+type:'');}
+async function request(path,token,options={}){
+ const response=await fetch(SUPABASE_URL+path,{...options,headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,...options.headers},cache:'no-store'});
+ let data;try{data=await response.json()}catch{data=null}
+ if(!response.ok){const error=new Error('HTTP '+response.status+(data?.message||data?.error?': '+(data.message||data.error):''));error.status=response.status;throw error}
+ return data;
+}
+async function run(){
+ retry.disabled=true;coursesBox.replaceChildren();setStatus(authStatus,'جارٍ التحقق من جلسة الدخول وصلاحية المدير...');setStatus(dataStatus,'بانتظار التحقق من الحساب...');
+ try{
+  const token=sessionStorage.getItem(TOKEN_NAME);
+  if(!token){setStatus(authStatus,'لا توجد جلسة دخول في هذا التبويب. افتح صفحة تسجيل الدخول ثم انتقل إلى مخطط الدروس من التبويب نفسه.','bad');setStatus(dataStatus,'لم يبدأ الاختبار.');return}
+  const check=await request('/functions/v1/create-student-account',token,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+  if(check?.success!==true){throw new Error('لم تؤكد وظيفة التحقق صلاحية المدير.')} 
+  setStatus(authStatus,'✅ جلسة الدخول صالحة، وتم التحقق من صلاحية المدير.','good');
+  const [courses,lessons]=await Promise.all([
+   request('/rest/v1/lesson_planner_courses?select=id,course_code,course_name,is_active&order=course_code.asc',token),
+   request('/rest/v1/lesson_planner_lessons?select=id,course_id,is_active',token)
+  ]);
+  if(!Array.isArray(courses)||!Array.isArray(lessons))throw new Error('استجابة غير متوقعة من قاعدة البيانات.');
+  setStatus(dataStatus,'✅ تم الاتصال بقاعدة البيانات. عدد المقررات: '+courses.length+' — عدد سجلات الدروس: '+lessons.length+'.','good');
+  if(!courses.length){const p=document.createElement('p');p.textContent='لم تظهر مقررات لهذا الحساب. قد تكون المشكلة في صلاحيات القراءة (RLS).';coursesBox.appendChild(p)}
+  for(const course of courses){
+   const count=lessons.filter(x=>x.course_id===course.id).length;
+   const card=document.createElement('div');card.className='course';
+   const title=document.createElement('b');title.textContent=course.course_code;
+   const name=document.createElement('p');name.textContent=course.course_name||'مقرر بلا اسم';
+   const total=document.createElement('strong');total.textContent=String(count);
+   const label=document.createElement('span');label.textContent=' درس مسجل';
+   const state=document.createElement('p');state.className='note';state.textContent=course.is_active?'مقرر نشط':'مقرر غير نشط';
+   card.append(title,name,total,label,state);coursesBox.appendChild(card);
+  }
+ }catch(err){
+  const message=err.status===401?'انتهت الجلسة أو لم تعد صالحة. سجّل الدخول مجددًا.':err.status===403?'تم رفض الوصول. نحتاج مراجعة صلاحيات الحساب.':err.message||'تعذر الاتصال.';
+  if(authStatus.classList.contains('good'))setStatus(dataStatus,'❌ تعذر قراءة المقررات أو الدروس: '+message,'bad');
+  else{setStatus(authStatus,'❌ فشل التحقق: '+message,'bad');setStatus(dataStatus,'لم يبدأ اختبار قراءة البيانات.');}
+ }finally{retry.disabled=false}
+}
+retry.addEventListener('click',run);run();
+</script>
+</body>
+</html>
