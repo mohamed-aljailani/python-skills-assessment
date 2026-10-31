@@ -1,457 +1,133 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>مخطط الدروس | Python Skills Academy</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f3f6fb;color:#142a4a;font-family:Tahoma,Arial,sans-serif}
-header{background:#1b2d51;color:white;padding:26px 5%}
-header h1{margin:0 0 9px;font-size:26px}
-header p{margin:0;font-size:13px}
-main{max-width:1050px;margin:32px auto;padding:0 15px}
-.card{background:white;border:1px solid #dce4ee;border-radius:17px;padding:26px;margin-bottom:20px;box-shadow:0 5px 22px #102b5010}
-h2{font-size:21px;margin:0 0 18px}
-.note{color:#718096;font-size:13px;line-height:1.9}
-.status{padding:15px;border-radius:10px;margin:14px 0;line-height:1.9}
-.ok{background:#e9f8ee;color:#166534}
-.bad{background:#fdf0f0;color:#991b1b}
-button,a.btn{display:inline-block;border:0;border-radius:10px;padding:13px 18px;background:#253f75;color:white;font-weight:bold;font-size:14px;text-decoration:none;cursor:pointer}
-button:hover,a.btn:hover{background:#31528d}
-button:disabled{opacity:.6;cursor:wait}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.course{background:#f8faff;border:1px solid #dce5f2;border-radius:12px;padding:20px}
-.course h3{margin:0 0 18px}
-.course strong{font-size:29px;color:#253f75}
-.course p{font-size:14px}
-.course small{color:#718096}
-.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:17px}
-.field label{display:block;font-weight:bold;font-size:13px;margin-bottom:8px}
-.field input,.field select{width:100%;padding:13px;border:1px solid #d4ddeb;border-radius:9px;font:inherit;font-size:14px;background:white}
-.field input:focus,.field select:focus{outline:2px solid #a8c7ff}
-.full{grid-column:1/-1}
-.footer{text-align:center;color:#718096;font-size:12px;padding:22px}
-[hidden]{display:none!important}
-@media(max-width:700px){.grid,.form-grid{grid-template-columns:1fr}header h1{font-size:21px}}
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#142a4a;font-family:Tahoma,Arial,sans-serif}header{background:#1b2d51;color:#fff;padding:26px 5%}header h1{margin:0 0 9px;font-size:26px}header p{margin:0;font-size:13px}main{max-width:1100px;margin:32px auto;padding:0 15px}.card{background:#fff;border:1px solid #dce4ee;border-radius:17px;padding:26px;margin-bottom:20px;box-shadow:0 5px 22px #102b5010}h2{font-size:21px;margin:0 0 18px}.note{color:#718096;font-size:13px;line-height:1.9}.status{padding:15px;border-radius:10px;margin:14px 0;line-height:1.9}.ok{background:#e9f8ee;color:#166534}.bad{background:#fdf0f0;color:#991b1b}.info{background:#eff6ff;color:#1e40af}button,a.btn{display:inline-block;border:0;border-radius:10px;padding:13px 18px;background:#253f75;color:#fff;font-weight:bold;font-size:14px;text-decoration:none;cursor:pointer}button:hover,a.btn:hover{background:#31528d}button:disabled{opacity:.6;cursor:wait}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.course{background:#f8faff;border:1px solid #dce5f2;border-radius:12px;padding:20px}.course h3{margin:0 0 18px}.course strong{font-size:29px;color:#253f75}.course p{font-size:14px}.course small{color:#718096}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:17px}.field label{display:block;font-weight:bold;font-size:13px;margin-bottom:8px}.field input,.field select,.field textarea{width:100%;padding:13px;border:1px solid #d4ddeb;border-radius:9px;font:inherit;font-size:14px;background:#fff}.field textarea{min-height:105px;resize:vertical;line-height:1.8}.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #a8c7ff}.full{grid-column:1/-1}.footer{text-align:center;color:#718096;font-size:12px;padding:22px}[hidden]{display:none!important}@media(max-width:700px){.grid,.form-grid{grid-template-columns:1fr}header h1{font-size:21px}.card{padding:18px}}
 </style>
 </head>
 <body>
-
-<header>
-  <h1>📘 مخطط الدروس</h1>
-  <p>Python Skills Academy — إعداد الخطط الدراسية اليومية</p>
-</header>
-
+<header><h1>📘 مخطط الدروس</h1><p>Python Skills Academy — إعداد الخطط الدراسية اليومية</p></header>
 <main>
-
-<section class="card">
-  <h2>🔐 التحقق من الحساب</h2>
-  <div id="authStatus" class="status">جارٍ التحقق من الحساب...</div>
-  <div class="actions">
-    <a class="btn" href="dashboard.html">← العودة إلى لوحة التحكم</a>
-    <button onclick="location.reload()">🔄 إعادة الاختبار</button>
-  </div>
-</section>
-
-<section class="card" id="coursesCard" hidden>
-  <h2>📚 المقررات الدراسية</h2>
-  <p class="note">المقررات والدروس المسجلة في قاعدة بيانات Supabase.</p>
-  <div id="coursesStatus"></div>
-  <div class="grid" id="coursesGrid"></div>
-</section>
-
-<section class="card" id="settingsCard" hidden>
-  <h2>⚙️ إعدادات المعلم</h2>
-  <p class="note">
-    أدخل بياناتك مرة واحدة، وسيتم استخدامها تلقائيًا
-    في الخطط الدراسية الجديدة. يمكنك تعديلها مستقبلًا
-    عند تغيير المدرسة أو المسؤولين.
-  </p>
-
-  <form id="settingsForm">
-    <div class="form-grid">
-
-      <div class="field">
-        <label for="teacherName">اسم المعلم</label>
-        <input id="teacherName" required>
-      </div>
-
-      <div class="field">
-        <label for="schoolName">اسم المدرسة</label>
-        <input id="schoolName" required>
-      </div>
-
-      <div class="field">
-        <label for="departmentName">القسم الأكاديمي</label>
-        <input id="departmentName">
-      </div>
-
-      <div class="field">
-        <label for="seniorTeacherName">اسم المعلم الأول</label>
-        <input id="seniorTeacherName">
-      </div>
-
-      <div class="field">
-        <label for="principalName">اسم مدير المدرسة</label>
-        <input id="principalName">
-      </div>
-
-      <div class="field">
-        <label for="academicYear">العام الدراسي</label>
-        <input id="academicYear" placeholder="2026-2027" required>
-      </div>
-
-      <div class="field">
-        <label for="semester">الفصل الدراسي</label>
-        <select id="semester">
-          <option value="1">الفصل الدراسي الأول</option>
-          <option value="2">الفصل الدراسي الثاني</option>
-        </select>
-      </div>
-
-    </div>
-
-    <div class="actions">
-      <button type="submit" id="saveButton">💾 حفظ الإعدادات</button>
-    </div>
-
-    <div id="settingsStatus" aria-live="polite"></div>
-  </form>
-</section>
-
-<div class="footer">
-  Python Skills Academy — منصة محمد الجيلاني التعليمية
-</div>
-
+<section class="card"><h2>🔐 التحقق من الحساب</h2><div id="authStatus" class="status info">جارٍ التحقق من الحساب...</div><div class="actions"><a class="btn" href="dashboard.html">← العودة إلى لوحة التحكم</a><button type="button" onclick="location.reload()">🔄 إعادة الاختبار</button></div></section>
+<section class="card" id="coursesCard" hidden><h2>📚 المقررات الدراسية</h2><p class="note">المقررات والدروس المسجلة في قاعدة بيانات Supabase.</p><div id="coursesStatus"></div><div class="grid" id="coursesGrid"></div></section>
+<section class="card" id="settingsCard" hidden><h2>⚙️ إعدادات المعلم</h2><p class="note">تُستخدم هذه البيانات في الخطط الجديدة. ويمكنك تعديلها مستقبلًا دون تغيير بيانات الخطط المحفوظة سابقًا.</p>
+<form id="settingsForm"><div class="form-grid">
+<div class="field"><label for="teacherName">اسم المعلم</label><input id="teacherName" required></div><div class="field"><label for="schoolName">اسم المدرسة</label><input id="schoolName" required></div>
+<div class="field"><label for="departmentName">القسم الأكاديمي</label><input id="departmentName"></div><div class="field"><label for="seniorTeacherName">اسم المعلم الأول</label><input id="seniorTeacherName"></div>
+<div class="field"><label for="principalName">اسم مدير المدرسة</label><input id="principalName"></div><div class="field"><label for="academicYear">العام الدراسي</label><input id="academicYear" placeholder="2026-2027" required></div>
+<div class="field"><label for="semester">الفصل الدراسي</label><select id="semester"><option value="1">الفصل الدراسي الأول</option><option value="2">الفصل الدراسي الثاني</option></select></div></div>
+<div class="actions"><button type="submit" id="saveSettingsButton">💾 حفظ الإعدادات</button></div><div id="settingsStatus" aria-live="polite"></div></form></section>
+<section class="card" id="plannerCard" hidden><h2>📝 إعداد خطة درس جديدة</h2><p class="note">المرحلة الأولى من نموذج الخطة اليومية. اختر المقرر والدرس ثم أدخل بيانات الحصة والكفايات والأهداف التعليمية.</p>
+<form id="planForm"><div class="form-grid">
+<div class="field"><label for="planCourse">المقرر الدراسي *</label><select id="planCourse" required><option value="">اختر المقرر</option></select></div>
+<div class="field"><label for="planLesson">الدرس *</label><select id="planLesson" required disabled><option value="">اختر المقرر أولًا</option></select></div>
+<div class="field"><label for="planClass">الشعبة *</label><input id="planClass" placeholder="مثال: موحد 3-ب" required maxlength="100"></div>
+<div class="field"><label for="planDate">تاريخ الدرس *</label><input id="planDate" type="date" required></div>
+<div class="field"><label for="planPeriod">رقم الحصة *</label><input id="planPeriod" placeholder="مثال: الثالثة" required maxlength="40"></div>
+<div class="field"><label for="planTitle">عنوان الدرس *</label><input id="planTitle" required maxlength="300"></div>
+<div class="field full"><label for="planCompetencies">الكفايات الأساسية</label><textarea id="planCompetencies" placeholder="اكتب الكفايات المرتبطة بالدرس..."></textarea></div>
+<div class="field full"><label for="planObjectives">الأهداف التعليمية</label><textarea id="planObjectives" placeholder="اكتب الأهداف التعليمية، هدفًا في كل سطر..."></textarea></div>
+</div><div class="actions"><button type="submit" id="savePlanButton">💾 حفظ خطة الدرس</button><button type="button" id="resetPlanButton">➕ خطة جديدة</button></div><div id="planStatus" aria-live="polite"></div></form></section>
+<div class="footer">Python Skills Academy — منصة محمد الجيلاني التعليمية</div>
 </main>
-
 <script>
 "use strict";
-
-const SUPABASE_URL =
-  "https://gmxjwgacpygorqwyfeoo.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_4sB0pFunm7YFIPN-sGODVg_3vnSvTQp";
-
-const TOKEN_NAME = "python_skills_access_token";
-
-let currentUserId = null;
-let settingsId = null;
-
-function getToken() {
-  return sessionStorage.getItem(TOKEN_NAME);
+const SUPABASE_URL="https://gmxjwgacpygorqwyfeoo.supabase.co";
+const SUPABASE_KEY="sb_publishable_4sB0pFunm7YFIPN-sGODVg_3vnSvTQp";
+const TOKEN_NAME="python_skills_access_token";
+let currentUserId=null,settingsId=null,courses=[],lessons=[];
+const el=id=>document.getElementById(id);
+const getToken=()=>sessionStorage.getItem(TOKEN_NAME);
+function showStatus(id,message,type="ok"){const node=el(id);node.className="status "+type;node.textContent=message;}
+function value(id){return el(id).value.trim()}
+function setValue(id,v){el(id).value=v??""}
+async function request(path,options={}){
+ const token=getToken();if(!token)throw new Error("انتهت جلسة الدخول. سجّل الدخول مجددًا.");
+ const response=await fetch(SUPABASE_URL+path,{...options,headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+token,"Content-Type":"application/json",...(options.headers||{})},cache:"no-store"});
+ const raw=await response.text();let data=null;try{data=raw?JSON.parse(raw):null}catch{throw new Error("تعذر قراءة استجابة الخادم.")}
+ if(!response.ok)throw new Error(data?.message||data?.error||"فشل الطلب ("+response.status+")");return data;
 }
-
-function showStatus(elementId, text, success) {
-  const el = document.getElementById(elementId);
-  el.className = "status " + (success ? "ok" : "bad");
-  el.textContent = text;
+async function verifyAccount(){
+ try{
+  if(!getToken()){location.replace("index.html");return}
+  const result=await request("/functions/v1/create-student-account",{method:"POST",body:"{}"});
+  if(!result?.success)throw new Error("تعذر التحقق من صلاحية المدير.");
+  const user=await request("/auth/v1/user");if(!user?.id)throw new Error("تعذر تحديد هوية المستخدم.");currentUserId=user.id;
+  showStatus("authStatus","✅ جلسة الدخول صالحة، وتم التحقق من صلاحية المدير.");
+  el("coursesCard").hidden=false;el("settingsCard").hidden=false;el("plannerCard").hidden=false;
+  await Promise.all([loadCourses(),loadSettings()]);
+ }catch(error){showStatus("authStatus","❌ "+error.message,"bad");el("coursesCard").hidden=true;el("settingsCard").hidden=true;el("plannerCard").hidden=true}
 }
-
-async function request(path, options = {}) {
-  const token = getToken();
-
-  if (!token) {
-    throw new Error("لا توجد جلسة دخول. سجّل الدخول من جديد.");
+async function loadCourses(){
+ try{
+  [courses,lessons]=await Promise.all([
+   request("/rest/v1/lesson_planner_courses?select=id,course_code,course_name,is_active&order=course_code.asc"),
+   request("/rest/v1/lesson_planner_lessons?select=id,course_id,lesson_title,lesson_order,semester,academic_year,competencies,learning_objectives,is_active&order=lesson_order.asc")
+  ]);
+  const grid=el("coursesGrid");grid.replaceChildren();const select=el("planCourse");select.replaceChildren(new Option("اختر المقرر",""));
+  for(const course of courses){
+   const count=lessons.filter(l=>l.course_id===course.id).length;
+   const card=document.createElement("div");card.className="course";
+   const title=document.createElement("h3");title.textContent=course.course_code;
+   const name=document.createElement("p");name.textContent=course.course_name;
+   const number=document.createElement("strong");number.textContent=count;
+   const desc=document.createElement("small");desc.textContent=" درس مسجل";
+   const state=document.createElement("p");state.textContent=course.is_active?"مقرر نشط":"مقرر غير نشط";
+   card.append(title,name,number,desc,state);grid.appendChild(card);
+   if(course.is_active)select.add(new Option(course.course_code+" — "+course.course_name,course.id));
   }
-
-  const response = await fetch(SUPABASE_URL + path, {
-    ...options,
-    headers: {
-      "apikey": SUPABASE_KEY,
-      "Authorization": "Bearer " + token,
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    },
-    cache: "no-store"
-  });
-
-  let data = null;
-  const text = await response.text();
-
-  if (text) {
-    try {
-      data = JSON.parse(text);
-    } catch {
-      throw new Error("تعذر قراءة استجابة الخادم.");
-    }
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      data?.message ||
-      data?.error ||
-      "تعذر تنفيذ الطلب. رمز الحالة: " + response.status
-    );
-  }
-
-  return data;
+  showStatus("coursesStatus","✅ تم الاتصال بقاعدة البيانات. عدد المقررات: "+courses.length+" — عدد سجلات الدروس: "+lessons.length+".");
+ }catch(error){showStatus("coursesStatus","❌ تعذر تحميل المقررات: "+error.message,"bad");el("planCourse").disabled=true}
 }
-
-async function verifyAccount() {
-  try {
-    const token = getToken();
-
-    if (!token) {
-      window.location.replace("index.html");
-      return;
-    }
-
-    const result = await request(
-      "/functions/v1/create-student-account",
-      {
-        method: "POST",
-        body: JSON.stringify({})
-      }
-    );
-
-    if (!result?.success) {
-      throw new Error("تعذر التحقق من صلاحية المدير.");
-    }
-
-    const userData = await request("/auth/v1/user");
-
-    if (!userData?.id) {
-      throw new Error("تعذر التعرف على حساب المستخدم.");
-    }
-
-    currentUserId = userData.id;
-
-    showStatus(
-      "authStatus",
-      "✅ جلسة الدخول صالحة، وتم التحقق من صلاحية المدير.",
-      true
-    );
-
-    document.getElementById("coursesCard").hidden = false;
-    document.getElementById("settingsCard").hidden = false;
-
-    await Promise.all([
-      loadCourses(),
-      loadSettings()
-    ]);
-
-  } catch (error) {
-    showStatus(
-      "authStatus",
-      "❌ " + error.message,
-      false
-    );
-  }
+function refreshLessons(){
+ const courseId=value("planCourse"),semester=Number(el("semester").value),year=value("academicYear");
+ const select=el("planLesson");select.replaceChildren(new Option("اختر الدرس",""));
+ const matching=lessons.filter(l=>l.course_id===courseId&&l.is_active!==false&&(!l.semester||l.semester===semester)&&(!l.academic_year||l.academic_year===year));
+ for(const l of matching)select.add(new Option(l.lesson_title,l.id));
+ select.disabled=!courseId||!matching.length;
+ if(courseId&&!matching.length)select.options[0].textContent="لا توجد دروس لهذا المقرر والفصل الدراسي";
+ setValue("planTitle","");setValue("planCompetencies","");setValue("planObjectives","");
 }
-
-async function loadCourses() {
-  try {
-    const courses = await request(
-      "/rest/v1/lesson_planner_courses" +
-      "?select=id,course_code,course_name,is_active" +
-      "&order=course_code.asc"
-    );
-
-    const lessons = await request(
-      "/rest/v1/lesson_planner_lessons" +
-      "?select=id,course_id"
-    );
-
-    const grid = document.getElementById("coursesGrid");
-    grid.replaceChildren();
-
-    for (const course of courses) {
-      const count = lessons.filter(
-        lesson => lesson.course_id === course.id
-      ).length;
-
-      const card = document.createElement("div");
-      card.className = "course";
-
-      const title = document.createElement("h3");
-      title.textContent = course.course_code;
-
-      const name = document.createElement("p");
-      name.textContent = course.course_name;
-
-      const number = document.createElement("strong");
-      number.textContent = count;
-
-      const description = document.createElement("small");
-      description.textContent = " درس مسجل";
-
-      const state = document.createElement("p");
-      state.textContent = course.is_active
-        ? "مقرر نشط"
-        : "مقرر غير نشط";
-
-      card.append(
-        title,
-        name,
-        number,
-        description,
-        state
-      );
-
-      grid.appendChild(card);
-    }
-
-    showStatus(
-      "coursesStatus",
-      "✅ تم الاتصال بقاعدة البيانات. عدد المقررات: " +
-      courses.length + " — عدد سجلات الدروس: " +
-      lessons.length + ".",
-      true
-    );
-
-  } catch (error) {
-    showStatus(
-      "coursesStatus",
-      "❌ تعذر تحميل المقررات: " + error.message,
-      false
-    );
-  }
+function selectLesson(){const lesson=lessons.find(l=>l.id===value("planLesson"));setValue("planTitle",lesson?.lesson_title||"");setValue("planCompetencies",lesson?.competencies||"");setValue("planObjectives",lesson?.learning_objectives||"")}
+async function loadSettings(){
+ try{
+  const rows=await request("/rest/v1/lesson_planner_settings?select=*&owner_id=eq."+encodeURIComponent(currentUserId)+"&limit=1");
+  if(rows.length){const s=rows[0];settingsId=s.id;setValue("teacherName",s.teacher_name);setValue("schoolName",s.school_name);setValue("departmentName",s.department_name);setValue("seniorTeacherName",s.senior_teacher_name);setValue("principalName",s.principal_name);setValue("academicYear",s.academic_year);setValue("semester",s.semester||1);showStatus("settingsStatus","✅ تم استرجاع إعداداتك المحفوظة بنجاح.");}
+  else{settingsId=null;setValue("teacherName","محمد الجيلاني");setValue("departmentName","الحاسب الآلي");setValue("academicYear","2026-2027");setValue("semester",1);showStatus("settingsStatus","ℹ️ لا توجد إعدادات محفوظة بعد. أدخل بياناتك واضغط حفظ الإعدادات.","info")}
+  refreshLessons();
+ }catch(error){showStatus("settingsStatus","❌ تعذر تحميل الإعدادات: "+error.message,"bad")}
 }
-
-function setField(id, value) {
-  document.getElementById(id).value = value ?? "";
+async function saveSettings(event){
+ event.preventDefault();if(!currentUserId)return;const button=el("saveSettingsButton");button.disabled=true;
+ const payload={owner_id:currentUserId,teacher_name:value("teacherName"),school_name:value("schoolName"),department_name:value("departmentName"),senior_teacher_name:value("seniorTeacherName"),principal_name:value("principalName"),academic_year:value("academicYear"),semester:Number(el("semester").value),updated_at:new Date().toISOString()};
+ try{
+  if(settingsId)await request("/rest/v1/lesson_planner_settings?id=eq."+encodeURIComponent(settingsId),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify(payload)});
+  else{const saved=await request("/rest/v1/lesson_planner_settings",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify(payload)});settingsId=saved?.[0]?.id||null}
+  showStatus("settingsStatus","✅ تم حفظ إعدادات المعلم بنجاح في Supabase.");refreshLessons();
+ }catch(error){showStatus("settingsStatus","❌ تعذر حفظ الإعدادات: "+error.message,"bad")}finally{button.disabled=false}
 }
-
-function getField(id) {
-  return document.getElementById(id).value.trim();
+async function savePlan(event){
+ event.preventDefault();if(!currentUserId)return;
+ const course=courses.find(c=>c.id===value("planCourse")),lesson=lessons.find(l=>l.id===value("planLesson"));
+ if(!course||!lesson||lesson.course_id!==course.id){showStatus("planStatus","❌ اختر المقرر والدرس بصورة صحيحة.","bad");return}
+ if(!settingsId){showStatus("planStatus","❌ احفظ إعدادات المعلم أولًا قبل إنشاء خطة درس.","bad");return}
+ const button=el("savePlanButton");button.disabled=true;
+ const payload={owner_id:currentUserId,course_id:course.id,lesson_id:lesson.id,lesson_title:value("planTitle"),class_name:value("planClass"),lesson_date:value("planDate"),period_number:value("planPeriod"),academic_year:value("academicYear"),semester:Number(el("semester").value),teacher_name:value("teacherName"),school_name:value("schoolName"),department_name:value("departmentName"),senior_teacher_name:value("seniorTeacherName"),principal_name:value("principalName"),competencies:value("planCompetencies"),learning_activities:[],status:"draft",updated_at:new Date().toISOString()};
+ // The current database schema does not yet include a learning_objectives column in lesson_planner_plans.
+ // Preserve objectives in a structured activity entry until that column is added in a later step.
+ if(value("planObjectives"))payload.learning_activities=[{type:"learning_objectives",text:value("planObjectives")}];
+ try{
+  const saved=await request("/rest/v1/lesson_planner_plans",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify(payload)});
+  if(!Array.isArray(saved)||!saved[0]?.id)throw new Error("لم يُرجع الخادم تأكيدًا بحفظ الخطة.");
+  showStatus("planStatus","✅ تم حفظ مسودة خطة الدرس في Supabase بنجاح. رقم الخطة: "+saved[0].id);
+ }catch(error){showStatus("planStatus","❌ تعذر حفظ الخطة: "+error.message,"bad")}finally{button.disabled=false}
 }
-
-async function loadSettings() {
-  const status = document.getElementById("settingsStatus");
-
-  try {
-    const rows = await request(
-      "/rest/v1/lesson_planner_settings" +
-      "?select=*" +
-      "&owner_id=eq." + encodeURIComponent(currentUserId) +
-      "&limit=1"
-    );
-
-    if (rows.length) {
-      const s = rows[0];
-
-      settingsId = s.id;
-
-      setField("teacherName", s.teacher_name);
-      setField("schoolName", s.school_name);
-      setField("departmentName", s.department_name);
-      setField("seniorTeacherName", s.senior_teacher_name);
-      setField("principalName", s.principal_name);
-      setField("academicYear", s.academic_year);
-      setField("semester", s.semester || 1);
-
-      showStatus(
-        "settingsStatus",
-        "✅ تم استرجاع إعداداتك المحفوظة بنجاح.",
-        true
-      );
-
-    } else {
-      settingsId = null;
-
-      setField("teacherName", "محمد الجيلاني");
-      setField("departmentName", "الحاسب الآلي");
-      setField("academicYear", "2026-2027");
-      setField("semester", 1);
-
-      status.className = "status ok";
-      status.textContent =
-        "ℹ️ لا توجد إعدادات محفوظة بعد. أدخل بياناتك واضغط حفظ الإعدادات.";
-    }
-
-  } catch (error) {
-    showStatus(
-      "settingsStatus",
-      "❌ تعذر تحميل الإعدادات: " + error.message,
-      false
-    );
-  }
-}
-
-async function saveSettings(event) {
-  event.preventDefault();
-
-  if (!currentUserId) {
-    showStatus(
-      "settingsStatus",
-      "❌ يجب التحقق من الحساب أولًا.",
-      false
-    );
-    return;
-  }
-
-  const button = document.getElementById("saveButton");
-  button.disabled = true;
-
-  const payload = {
-    owner_id: currentUserId,
-    teacher_name: getField("teacherName"),
-    school_name: getField("schoolName"),
-    department_name: getField("departmentName"),
-    senior_teacher_name: getField("seniorTeacherName"),
-    principal_name: getField("principalName"),
-    academic_year: getField("academicYear"),
-    semester: Number(document.getElementById("semester").value),
-    updated_at: new Date().toISOString()
-  };
-
-  try {
-    if (settingsId) {
-      await request(
-        "/rest/v1/lesson_planner_settings" +
-        "?id=eq." + encodeURIComponent(settingsId),
-        {
-          method: "PATCH",
-          headers: {
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify(payload)
-        }
-      );
-    } else {
-      const saved = await request(
-        "/rest/v1/lesson_planner_settings",
-        {
-          method: "POST",
-          headers: {
-            "Prefer": "return=representation"
-          },
-          body: JSON.stringify(payload)
-        }
-      );
-
-      if (Array.isArray(saved) && saved.length) {
-        settingsId = saved[0].id;
-      }
-    }
-
-    showStatus(
-      "settingsStatus",
-      "✅ تم حفظ إعدادات المعلم بنجاح في Supabase.",
-      true
-    );
-
-  } catch (error) {
-    showStatus(
-      "settingsStatus",
-      "❌ تعذر حفظ الإعدادات: " + error.message,
-      false
-    );
-
-  } finally {
-    button.disabled = false;
-  }
-}
-
-document.getElementById("settingsForm")
-  .addEventListener("submit", saveSettings);
-
+function resetPlan(){el("planForm").reset();el("planLesson").replaceChildren(new Option("اختر المقرر أولًا",""));el("planLesson").disabled=true;el("planStatus").textContent="";el("planStatus").className=""}
+el("settingsForm").addEventListener("submit",saveSettings);el("planForm").addEventListener("submit",savePlan);
+el("planCourse").addEventListener("change",refreshLessons);el("planLesson").addEventListener("change",selectLesson);el("resetPlanButton").addEventListener("click",resetPlan);el("semester").addEventListener("change",refreshLessons);el("academicYear").addEventListener("change",refreshLessons);
 verifyAccount();
 </script>
-
 </body>
 </html>
