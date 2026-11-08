@@ -251,6 +251,40 @@
  body.print-overview #overviewPanel .overview-note{font-size:9px!important}
  body.print-overview #overviewPanel{break-inside:auto!important}
 }
+
+/* V3.9.1: override legacy student-only print selectors when printing overview. */
+@media print {
+  body.print-overview #app > #overviewPanel,
+  body.print-overview #app > #overviewPanel:not(#profilePanel),
+  body.print-overview main #app > #overviewPanel {
+    display:block!important;visibility:visible!important;position:static!important;
+    width:100%!important;max-width:none!important;height:auto!important;
+    margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;
+    overflow:visible!important;
+  }
+  body.print-overview #app > #profilePanel,
+  body.print-overview main #app > #profilePanel,
+  body.print-overview #app > #classPanel,
+  body.print-overview #app > #sectionReportPanel,
+  body.print-overview #app > .panel:not(#overviewPanel) {
+    display:none!important;
+  }
+  body.print-overview #overviewPrintArea,
+  body.print-overview #overviewContent,
+  body.print-overview #overviewPanel .overview-stats,
+  body.print-overview #overviewPanel .overview-table-wrap,
+  body.print-overview #overviewPanel .overview-charts,
+  body.print-overview #overviewPanel .overview-alerts {
+    visibility:visible!important;
+  }
+  body.print-overview #overviewPanel .overview-print-heading {display:flex!important}
+  body.print-overview #overviewPanel .overview-print-footer {display:block!important}
+  body.print-overview #overviewPanel .overview-table-wrap {overflow:visible!important}
+  body.print-overview #overviewPanel .overview-stats {display:grid!important}
+  body.print-overview #overviewPanel .overview-charts {display:grid!important}
+  body.print-overview #overviewPanel .overview-alerts {display:block!important}
+  body.print-overview #overviewPanel table {display:table!important}
+}
 </style></head><body><header><div class="toolbar"><div><h2 style="margin:0">رصد | RASD</h2><small>Python Skills Academy — تسجيل الحضور والمشاركات والسلوك</small></div><a href="dashboard.html">لوحة الإدارة</a></div></header><main>
 <div class="panel warning">يبدأ كل طالب بحالة <b>غير مسجل</b> حتى تختار حالته. كل حصة مستقلة؛ احرص على اختيار التاريخ ورقم الحصة الصحيحين. لا يوجد حفظ دون اتصال بالإنترنت.</div>
 <div id="message" class="panel muted" role="status" aria-live="polite">جارٍ التحقق من تسجيل الدخول وتحميل البيانات...</div>
