@@ -124,6 +124,45 @@
  body.print-section-report #sectionReportPrintArea .report-footer{break-inside:avoid}
  body.print-section-report #sectionReportPrintArea .report-brand{break-inside:avoid}
 }
+
+/* V3.7.1 — print isolation: the earlier student-report rules were hiding the class report. */
+@media print {
+  body.print-section-report #app > #sectionReportPanel {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  body.print-section-report #app > #profilePanel,
+  body.print-section-report #app > #classPanel,
+  body.print-section-report #app > .panel:not(#sectionReportPanel) {
+    display: none !important;
+  }
+  body.print-section-report #sectionReportPrintArea,
+  body.print-section-report #sectionReportBrand,
+  body.print-section-report #sectionReportContent,
+  body.print-section-report #sectionReportFooter {
+    display: block !important;
+    visibility: visible !important;
+  }
+  body.print-section-report main,
+  body.print-section-report #app {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  body.print-section-report #sectionReportPanel .school-heritage {
+    display: block !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
 </style></head><body><header><div class="toolbar"><div><h2 style="margin:0">رصد | RASD</h2><small>Python Skills Academy — تسجيل الحضور والمشاركات والسلوك</small></div><a href="dashboard.html">لوحة الإدارة</a></div></header><main>
 <div class="panel warning">يبدأ كل طالب بحالة <b>غير مسجل</b> حتى تختار حالته. كل حصة مستقلة؛ احرص على اختيار التاريخ ورقم الحصة الصحيحين. لا يوجد حفظ دون اتصال بالإنترنت.</div>
 <div id="message" class="panel muted" role="status" aria-live="polite">جارٍ التحقق من تسجيل الدخول وتحميل البيانات...</div>
