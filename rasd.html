@@ -214,6 +214,43 @@
 #overviewPanel .overview-note{font-size:12px;color:#56627b;line-height:1.8}
 @media(max-width:700px){#overviewPanel .overview-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media print{#overviewPanel{display:none!important}}
+
+/* V3.9: comparison, alerts and print */
+#overviewPanel .overview-actions{display:flex;justify-content:flex-start;margin:10px 0}
+#overviewPanel .overview-actions button{background:#1b2d52;color:white}
+#overviewPanel .overview-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}
+#overviewPanel .overview-chart{border:1px solid #e0e5ef;border-radius:10px;padding:12px;min-width:0}
+#overviewPanel .overview-chart h4{margin:0 0 10px;color:#1b2d52}
+#overviewPanel .chart-row{display:grid;grid-template-columns:75px minmax(0,1fr) 40px;align-items:center;gap:6px;margin:7px 0;font-size:11px}
+#overviewPanel .chart-row b{font-size:11px;text-align:left}
+#overviewPanel .chart-track{height:11px;border-radius:8px;background:#edf0f5;overflow:hidden}
+#overviewPanel .chart-bar{height:100%;background:#c49a4b;border-radius:8px}
+#overviewPanel .overview-alerts{border:1px solid #ead8a5;background:#fffaf0;padding:12px;border-radius:10px;margin:14px 0;font-size:12px}
+#overviewPanel .overview-alerts h4{margin:0 0 6px}
+#overviewPanel .overview-alerts p{margin:5px 0}
+#overviewPanel .overview-print-heading,#overviewPanel .overview-print-footer{display:none}
+@media(max-width:850px){#overviewPanel .overview-charts{grid-template-columns:1fr}}
+@media print{
+ body.print-overview header,body.print-overview .warning,body.print-overview #message,body.print-overview .controls,body.print-overview .tabs,body.print-overview main>p,body.print-overview #overviewPanel>h3,body.print-overview #overviewPanel>.muted,body.print-overview #overviewPanel>.section-report-controls,body.print-overview #overviewPanel>#overviewStatus,body.print-overview #overviewPanel>.overview-actions{display:none!important}
+ body.print-overview #app,body.print-overview main,body.print-overview #overviewPanel,body.print-overview #overviewPrintArea{display:block!important;visibility:visible!important;overflow:visible!important;max-width:none!important;width:100%!important;margin:0!important;padding:0!important;box-shadow:none!important}
+ body.print-overview #classPanel,body.print-overview #profilePanel,body.print-overview #sectionReportPanel{display:none!important}
+ body.print-overview #overviewPanel .overview-print-heading{display:flex!important;justify-content:space-between;align-items:center;border-bottom:2px solid #bd9648;padding:5px 0 10px;margin-bottom:8px;font-size:12px}
+ body.print-overview #overviewPanel .overview-print-heading span{font-weight:700;color:#1b2d52}
+ body.print-overview #overviewPanel .overview-print-footer{display:block!important;border-top:1px solid #bd9648;padding-top:8px;margin-top:15px;font-size:11px}
+ body.print-overview #overviewPanel .overview-stats{grid-template-columns:repeat(4,1fr)!important;gap:5px!important;margin:7px 0!important}
+ body.print-overview #overviewPanel .overview-stats .stat{padding:5px!important}
+ body.print-overview #overviewPanel .overview-stats strong{font-size:14px!important}
+ body.print-overview #overviewPanel table{min-width:0!important;font-size:8px!important}
+ body.print-overview #overviewPanel th,body.print-overview #overviewPanel td{padding:4px 2px!important}
+ body.print-overview #overviewPanel .overview-charts{grid-template-columns:repeat(3,1fr)!important;gap:5px!important}
+ body.print-overview #overviewPanel .overview-chart{padding:5px!important}
+ body.print-overview #overviewPanel .chart-row{grid-template-columns:53px minmax(0,1fr) 24px;font-size:8px;gap:3px}
+ body.print-overview #overviewPanel .overview-chart h4{font-size:10px}
+ body.print-overview #overviewPanel .overview-alerts{padding:6px!important}
+ body.print-overview #overviewPanel .overview-alerts p{font-size:9px!important}
+ body.print-overview #overviewPanel .overview-note{font-size:9px!important}
+ body.print-overview #overviewPanel{break-inside:auto!important}
+}
 </style></head><body><header><div class="toolbar"><div><h2 style="margin:0">رصد | RASD</h2><small>Python Skills Academy — تسجيل الحضور والمشاركات والسلوك</small></div><a href="dashboard.html">لوحة الإدارة</a></div></header><main>
 <div class="panel warning">يبدأ كل طالب بحالة <b>غير مسجل</b> حتى تختار حالته. كل حصة مستقلة؛ احرص على اختيار التاريخ ورقم الحصة الصحيحين. لا يوجد حفظ دون اتصال بالإنترنت.</div>
 <div id="message" class="panel muted" role="status" aria-live="polite">جارٍ التحقق من تسجيل الدخول وتحميل البيانات...</div>
@@ -223,11 +260,11 @@
   <div class="report-brand-title">تقرير الطالب الشهري</div>
 </div>
 <div id="profileContent"></div><div class="school-heritage" role="img" aria-label="رسم تراثي لمبنى مدرسة الهداية الخليفية القديم"></div><div class="report-footer"><div><div class="prepared-label">إعداد وإشراف</div><div class="prepared-name">الأستاذ محمد الجيلاني</div></div><div class="report-credit"><div>Python Skills Academy | RASD</div><div class="report-issued">تاريخ إصدار التقرير: <span id="reportIssueDate">—</span></div></div></div><div class="profile-actions"><button type="button" id="profilePrint" disabled title="اعرض التقرير أولًا">طباعة التقرير</button></div></div><div id="overviewPanel" class="panel" hidden>
-<h3>لوحة إحصاءات الشعب الست</h3>
+<h3>لوحة إحصاءات الشعب الست — V3.9</h3>
 <p class="muted">مقارنة شهرية من سجلات Supabase المحفوظة فقط. نسب الحضور تعتمد على الحالات المسجلة، وتظهر معها نسبة اكتمال التسجيل.</p>
 <div class="section-report-controls"><div><label for="overviewMonth">الشهر</label><input type="month" id="overviewMonth"></div><button type="button" class="primary" id="overviewLoad">تحديث الإحصاءات</button></div>
 <p class="muted" id="overviewStatus" role="status" aria-live="polite">اختر الشهر واضغط تحديث الإحصاءات.</p>
-<div id="overviewContent"></div>
+<div class="overview-actions"><button type="button" id="overviewPrint" disabled>طباعة التقرير الإجمالي / PDF</button></div><div id="overviewPrintArea"><div class="overview-print-heading"><strong>مدرسة الهداية الخليفية الثانوية للبنين</strong><span>RASD | تقرير إحصاءات الشعب الست</span></div><div id="overviewContent"></div><div class="overview-print-footer">إعداد وإشراف: الأستاذ محمد الجيلاني <span id="overviewIssue"></span></div></div>
 </div>
 <div id="sectionReportPanel" class="panel" hidden>
 <h3 class="profile-title">التقرير الشهري للشعبة</h3>
@@ -359,6 +396,7 @@ function openOverview(){
   profileMode=true;
   for(const id of ['classPanel','profilePanel','sectionReportPanel'])$(id).hidden=true;
   $('overviewPanel').hidden=false;
+  document.body.classList.remove('print-overview');
   for(const id of ['att','part','beh','profileTab','sectionReportTab'])$(id).classList.remove('active');
   $('overviewTab').classList.add('active');
   document.body.classList.remove('print-section-report');
@@ -368,6 +406,7 @@ async function loadOverview(){
   if(!/^\d{4}-\d{2}$/.test(month)){$('overviewStatus').textContent='اختر شهرًا صحيحًا.';return}
   const request=++overviewRequest;
   $('overviewLoad').disabled=true;
+  $('overviewPrint').disabled=true;
   $('overviewContent').replaceChildren();
   $('overviewStatus').textContent='جارٍ قراءة سجلات الشعب الست...';
   try{
@@ -400,29 +439,54 @@ async function loadOverview(){
     const total={students:0,sessions:0,present:0,absent:0,late:0,excused:0,part:0,pos:0,neg:0,score:0};
     for(const m of all)for(const k of Object.keys(total))total[k]+=m[k];
     const recorded=total.present+total.absent+total.late+total.excused;
+    const attended=total.present+total.late+total.excused;
+    const onTime=total.present;
     const possible=all.reduce((sum,m)=>sum+m.students*m.sessions,0);
     const percent=(n,d)=>d?Math.round(n*100/d)+'%':'—';
     const content=$('overviewContent');
     const summary=make('div',undefined,'overview-stats');
-    for(const [label,val] of [['عدد الشعب',all.length],['إجمالي الطلاب',total.students],['اكتمال تسجيل الحضور',percent(recorded,possible)],['نسبة الحضور من المسجل',percent(total.present,recorded)],['حاضر',total.present],['غائب',total.absent],['متأخر',total.late],['مشاركات',total.part]])summary.append(reportStat(label,val));
+    for(const [label,val] of [['عدد الشعب',all.length],['إجمالي الطلاب',total.students],['حصص لها سجل',total.sessions],['حالات حضور محددة',recorded+' / '+possible],['اكتمال التسجيل',percent(recorded,possible)],['نسبة الحضور (شامل المتأخر والمستأذن)',percent(attended,recorded)],['الالتزام بالموعد',percent(onTime,recorded)],['مشاركات',total.part]])summary.append(reportStat(label,val));
     content.append(summary);
     const wrap=make('div',undefined,'overview-table-wrap'),table=make('table'),head=make('thead'),hr=make('tr');
-    for(const h of ['الشعبة','المقرر','الطلاب','حصص لها سجل','اكتمال التسجيل','حضور من المسجل','غائب','متأخر','مشاركات','إيجابي','سلبي','الرصيد'])hr.append(make('th',h));
+    for(const h of ['الشعبة','المقرر','الطلاب','حصص لها سجل','اكتمال التسجيل','الحضور من المسجل','الالتزام بالموعد','غائب','متأخر','مشاركات','إيجابي','سلبي','الرصيد'])hr.append(make('th',h));
     head.append(hr);table.append(head);
     const body=make('tbody');
     for(const m of all){const row=make('tr'),n=m.present+m.absent+m.late+m.excused;
-      for(const v of [m.name,m.course,m.students,m.sessions,percent(n,m.students*m.sessions),percent(m.present,n),m.absent,m.late,m.part,m.pos,m.neg,m.score])row.append(make('td',String(v)));
+      for(const v of [m.name,m.course,m.students,m.sessions,percent(n,m.students*m.sessions),percent(m.present+m.late+m.excused,n),percent(m.present,n),m.absent,m.late,m.part,m.pos,m.neg,m.score])row.append(make('td',String(v)));
       body.append(row)
     }
     table.append(body);wrap.append(table);content.append(wrap);
-    content.append(make('p','نسبة الحضور = عدد حالات «حاضر» ÷ جميع حالات الحضور المحددة (حاضر، غائب، متأخر، مستأذن). اكتمال التسجيل = الحالات المحددة ÷ (عدد الطلاب × عدد الحصص التي لها سجل). لا تُحسب الحالات غير المسجلة غيابًا. لا تتضمن الأرقام الحصص التي لم يُنشأ لها سجل أصلًا.','overview-note'));
+    const charts=make('div',undefined,'overview-charts');
+    function chart(title,key,maximum,unit){
+      const panel=make('section',undefined,'overview-chart');panel.append(make('h4',title));
+      for(const m of all){const row=make('div',undefined,'chart-row');row.append(make('span',m.name));
+        const track=make('div',undefined,'chart-track'),bar=make('div',undefined,'chart-bar');
+        const value=key(m);bar.style.width=(maximum?Math.max(0,Math.min(100,value/maximum*100)):0)+'%';track.append(bar);row.append(track);row.append(make('b',unit(value)));panel.append(row)
+      }charts.append(panel)
+    }
+    chart('الحضور من الحالات المحددة',m=>{const n=m.present+m.absent+m.late+m.excused;return n?(m.present+m.late+m.excused)/n*100:0},100,v=>v?Math.round(v)+'%':'—');
+    chart('المشاركات الصفية',m=>m.part,Math.max(1,...all.map(m=>m.part)),v=>String(v));
+    chart('أحداث السلوك الإيجابي',m=>m.pos,Math.max(1,...all.map(m=>m.pos)),v=>String(v));
+    content.append(charts);
+    const alerts=make('div',undefined,'overview-alerts');alerts.append(make('h4','تنبيهات اكتمال التسجيل'));
+    for(const m of all){const n=m.present+m.absent+m.late+m.excused,possibleM=m.students*m.sessions;
+      if(!m.sessions)alerts.append(make('p','• '+m.name+': لا توجد حصص مسجلة لهذا الشهر؛ لا يمكن استنتاج الحضور أو الغياب.'));
+      else if(n<possibleM)alerts.append(make('p','• '+m.name+': '+(possibleM-n)+' حالة حضور غير مسجلة من '+possibleM+' حالة متوقعة للحصص المحفوظة.'));
+    }
+    if(!alerts.querySelector('p'))alerts.append(make('p','جميع حالات الحضور للحصص المحفوظة مكتملة.'));
+    content.append(alerts);
+    content.append(make('p','نسبة الحضور = (حاضر + متأخر + مستأذن) ÷ الحالات المحددة. الالتزام بالموعد = حاضر فقط ÷ الحالات المحددة. اكتمال التسجيل = الحالات المحددة ÷ (عدد الطلاب × الحصص التي لها سجل). لا تُحسب الحالات غير المسجلة غيابًا. لا تتضمن الأرقام الحصص التي لم يُنشأ لها سجل أصلًا.','overview-note'));
+    $('overviewIssue').textContent=' | تاريخ الإصدار: '+new Date().toLocaleDateString('ar-BH',{timeZone:'Asia/Bahrain'});
+    $('overviewPrint').disabled=false;
     $('overviewStatus').textContent='تم تحميل مقارنة '+all.length+' شعب لشهر '+month+' بنجاح.';
   }catch(e){if(request===overviewRequest)$('overviewStatus').textContent='تعذر تحميل الإحصاءات: '+e.message}
   finally{if(request===overviewRequest)$('overviewLoad').disabled=false}
 }
 $('overviewTab').addEventListener('click',openOverview);
 $('overviewLoad').addEventListener('click',loadOverview);
-$('overviewMonth').addEventListener('change',()=>{overviewRequest++;$('overviewContent').replaceChildren()});
+$('overviewMonth').addEventListener('change',()=>{overviewRequest++;$('overviewContent').replaceChildren();$('overviewPrint').disabled=true});
+$('overviewPrint').addEventListener('click',()=>{if($('overviewPrint').disabled)return;document.body.classList.add('print-overview');window.print()});
+window.addEventListener('afterprint',()=>document.body.classList.remove('print-overview'));
 
 $('sectionReportTab').addEventListener('click',activateSectionReport);
 $('sectionReportLoad').addEventListener('click',loadClassReport);
