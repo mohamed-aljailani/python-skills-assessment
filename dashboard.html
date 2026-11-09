@@ -550,6 +550,10 @@
 
     /* أدوات المعلم */
     .teacher-tools{max-width:980px;margin:auto}
+    .wheel-wrap{position:relative;width:min(100%,360px);margin:14px auto 18px;aspect-ratio:1;filter:drop-shadow(0 8px 12px #102b5026)}
+    #studentWheel{width:100%;height:100%;display:block;border-radius:50%}
+    .wheel-pointer{position:absolute;z-index:2;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:32px solid #c79329;filter:drop-shadow(0 2px 2px #0004)}
+    @media(prefers-reduced-motion:reduce){.wheel-wrap{filter:none}}
     .tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
     .tool-card{background:#fff;border:1px solid #dce4ee;border-radius:16px;padding:22px;box-shadow:0 4px 18px #102b500a}
     .tool-card h3{color:#102b50;margin:0 0 10px}
@@ -693,7 +697,8 @@
         <section class="tool-card">
           <h3>🎯 اختيار طالب عشوائي</h3>
           <p>اختيار دون تكرار حتى يحصل جميع الطلاب على دورهم، ثم تبدأ دورة جديدة تلقائيًا.</p>
-          <button class="tool-btn" type="button" id="pickStudentBtn">اختيار طالب</button>
+          <div class="wheel-wrap"><div class="wheel-pointer" aria-hidden="true"></div><canvas id="studentWheel" width="600" height="600" role="img" aria-label="عجلة أسماء الطلاب"></canvas></div>
+          <button class="tool-btn" type="button" id="pickStudentBtn">🎡 أدر العجلة</button>
           <button class="tool-btn secondary" type="button" id="resetPickerBtn">إعادة الدورة</button>
           <div class="tool-result chosen-student" id="pickedStudent" aria-live="polite">اضغط لاختيار طالب</div>
           <p id="pickerProgress"></p>
@@ -2210,8 +2215,34 @@ async function testStudentSkillAnalysis() {
       const id=document.getElementById('toolSection').value;
       return toolStudents.filter(x=>x.class_section_id===id);
     }
+    let wheelAngle=0, wheelBusy=false, wheelFrame=0;
+    const wheelCanvas=document.getElementById('studentWheel');
+    const wheelCtx=wheelCanvas.getContext('2d');
+    function drawStudentWheel() {
+      if(!wheelCtx)return;
+      const ctx=wheelCtx, w=600, r=290, names=pickerRemaining;
+      ctx.clearRect(0,0,w,w);ctx.save();ctx.translate(300,300);ctx.rotate(wheelAngle);
+      if(!names.length){ctx.fillStyle='#102b50';ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();}
+      const n=names.length, step=n?Math.PI*2/n:Math.PI*2;
+      names.forEach((student,i)=>{
+        const start=i*step, mid=start+step/2;
+        ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,r,start,start+step);ctx.closePath();
+        ctx.fillStyle=['#102b50','#d7ad52','#284b76','#f0d99a','#1d3b61','#b88b37'][i%6];ctx.fill();
+        ctx.strokeStyle='#ffffff99';ctx.lineWidth=2;ctx.stroke();
+        ctx.save();ctx.rotate(mid);ctx.translate(r*.64,0);
+        if(Math.cos(mid+wheelAngle)<0){ctx.rotate(Math.PI);}
+        ctx.fillStyle=(i%6===1||i%6===3||i%6===5)?'#102b50':'#ffffff';
+        const label=student.full_name.split(/\s+/).slice(0,2).join(' ');
+        ctx.font='bold '+(n>22?15:n>15?18:22)+'px Tahoma,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(label,0,0,r*.58);ctx.restore();
+      });
+      ctx.restore();ctx.beginPath();ctx.arc(300,300,37,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=8;ctx.strokeStyle='#c79329';ctx.stroke();
+      ctx.font='bold 25px Arial';ctx.fillStyle='#102b50';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Py',300,300);
+    }
     function resetPicker() {
+      if(wheelBusy)return;
       pickerRemaining=secureShuffle(currentToolStudents());
+      wheelAngle=0;drawStudentWheel();
       document.getElementById('pickedStudent').textContent='اضغط لاختيار طالب';
       document.getElementById('pickerProgress').textContent='المتبقون في الدورة: '+pickerRemaining.length;
     }
@@ -2256,12 +2287,42 @@ async function testStudentSkillAnalysis() {
       groupsText='';document.getElementById('copyGroupsBtn').disabled=true;
     });
     document.getElementById('pickStudentBtn').addEventListener('click',()=>{
+      if(wheelBusy)return;
       const list=currentToolStudents();
       if(!list.length){document.getElementById('pickedStudent').textContent='لا يوجد طلاب في الشعبة';return;}
-      if(!pickerRemaining.length)pickerRemaining=secureShuffle(list);
-      const selected=pickerRemaining.pop();
-      document.getElementById('pickedStudent').textContent=selected.full_name;
-      document.getElementById('pickerProgress').textContent='المتبقون في الدورة: '+pickerRemaining.length;
+      if(!pickerRemaining.length){pickerRemaining=secureShuffle(list);wheelAngle=0;drawStudentWheel();}
+      const names=pickerRemaining, n=names.length;
+      const random=new Uint32Array(1);crypto.getRandomValues(random);
+      const selectedIndex=random[0]%n;
+      const step=Math.PI*2/n;
+      const target=-Math.PI/2-(selectedIndex+.5)*step;
+      const startAngle=wheelAngle;
+      const turns=6+random[0]%3;
+      const delta=((target-startAngle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+      const finalAngle=startAngle+turns*Math.PI*2+delta;
+      const duration=4300, start=performance.now();
+      wheelBusy=true;
+      document.getElementById('pickStudentBtn').disabled=true;
+      document.getElementById('resetPickerBtn').disabled=true;
+      document.getElementById('toolSection').disabled=true;
+      document.getElementById('pickedStudent').textContent='🎡 العجلة تدور...';
+      function animate(now){
+        const t=Math.min(1,(now-start)/duration);
+        const ease=1-Math.pow(1-t,4);
+        wheelAngle=startAngle+(finalAngle-startAngle)*ease;
+        drawStudentWheel();
+        if(t<1){wheelFrame=requestAnimationFrame(animate);return;}
+        const selected=names.splice(selectedIndex,1)[0];
+        wheelBusy=false;
+        document.getElementById('pickStudentBtn').disabled=false;
+        document.getElementById('resetPickerBtn').disabled=false;
+        document.getElementById('toolSection').disabled=false;
+        document.getElementById('pickedStudent').textContent='🎉 '+selected.full_name;
+        document.getElementById('pickerProgress').textContent='المتبقون في الدورة: '+names.length+(names.length?'':' — ستبدأ دورة جديدة عند التدوير التالي');
+        // تأخير إعادة الرسم حتى تبقى النتيجة واضحة لحظة التوقف
+        setTimeout(()=>{if(!wheelBusy)drawStudentWheel();},1100);
+      }
+      wheelFrame=requestAnimationFrame(animate);
     });
     document.getElementById('resetPickerBtn').addEventListener('click',resetPicker);
     document.getElementById('makeGroupsBtn').addEventListener('click',()=>{
