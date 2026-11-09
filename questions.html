@@ -7,7 +7,7 @@
 *{box-sizing:border-box}body{margin:0;background:#f3f6fc;color:#182d52;font-family:Tahoma,Arial,sans-serif}header{background:#1b2d52;color:white;padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}h1{font-size:24px;margin:0}header p{font-size:12px;color:#cad6ea}a.back{background:#ffda5c;color:#17284a;text-decoration:none;padding:12px 17px;border-radius:9px;font-weight:bold}main{max-width:1200px;margin:28px auto;padding:0 18px}.panel{background:white;border-radius:16px;padding:24px;margin-bottom:22px;box-shadow:0 5px 20px #1c32500a}h2{font-size:19px;margin:0 0 20px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.field.wide{grid-column:span 3}.field.two{grid-column:span 2}label{display:block;font-weight:bold;margin-bottom:8px;font-size:14px}input,select,textarea{width:100%;padding:12px;border:1px solid #d6e0ed;border-radius:9px;background:white;color:#142b4e;font:inherit}textarea{resize:vertical;min-height:90px}textarea.code{direction:ltr;text-align:left;font-family:Consolas,monospace;white-space:pre;tab-size:4}small{display:block;color:#677992;margin-top:6px;line-height:1.7}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}button{padding:11px 18px;border:0;border-radius:9px;font-family:inherit;font-weight:bold;cursor:pointer}button:disabled{opacity:.5;cursor:wait}.primary{background:#263f75;color:white}.secondary{background:#e9eef7;color:#263f75}.danger{background:#ffe9e9;color:#9b1c1c}.notice{padding:14px 16px;border-radius:9px;margin-bottom:18px;line-height:1.7;white-space:pre-wrap}.success{background:#e7f7ed;color:#11622d}.error{background:#fff0f0;color:#a02222}.info{background:#eaf2ff;color:#234979}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:800px}th,td{padding:13px 10px;border-bottom:1px solid #e6ecf5;text-align:right;font-size:13px;vertical-align:top}th{background:#f4f7fc}td button{margin:2px;padding:8px 11px}.badge{background:#eaf0f9;padding:5px 9px;border-radius:8px;white-space:nowrap}.muted{color:#72809a}.codeview{direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:8px;border-radius:7px;font-family:Consolas,monospace;max-width:450px}.inline{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.inline input[type=checkbox]{width:auto}#loading{max-width:650px;margin:35px auto;text-align:center}@media(max-width:800px){.grid{grid-template-columns:1fr}.field.wide,.field.two{grid-column:span 1}.panel{padding:16px}}
 
 /* Claude import */
-.import-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.import-item{border:1px solid #d6e0ed;border-radius:12px;padding:16px;margin:12px 0;background:#fbfcff}.import-item textarea{margin-top:7px}.import-meta{font-size:12px;color:#63738a;margin-bottom:10px}.import-item .grid{margin-top:12px}.import-item label{margin-top:8px}.import-item input[type=checkbox]{width:auto}.import-summary{padding:12px;background:#edf4ff;border-radius:10px;line-height:1.8}.import-error{color:#a02222;white-space:pre-wrap;font-size:12px}.import-item pre{white-space:pre-wrap;direction:ltr;text-align:left}@media(max-width:800px){.import-grid{grid-template-columns:1fr}}
+.ai-toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:end;margin:14px 0}.ai-toolbar .field{min-width:160px;flex:1}.ai-toolbar button{white-space:nowrap}.ai-toolbar .muted{width:100%;font-size:13px}.import-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.import-item{border:1px solid #d6e0ed;border-radius:12px;padding:16px;margin:12px 0;background:#fbfcff}.import-item textarea{margin-top:7px}.import-meta{font-size:12px;color:#63738a;margin-bottom:10px}.import-item .grid{margin-top:12px}.import-item label{margin-top:8px}.import-item input[type=checkbox]{width:auto}.import-summary{padding:12px;background:#edf4ff;border-radius:10px;line-height:1.8}.import-error{color:#a02222;white-space:pre-wrap;font-size:12px}.import-item pre{white-space:pre-wrap;direction:ltr;text-align:left}@media(max-width:800px){.import-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -37,7 +37,19 @@
 <p class="muted">ارفع ملف JSON الذي أعدّه Claude. راجع كل سؤال وعدّله ثم حدّد الأسئلة التي تريد حفظها. لن تُحفظ أي أسئلة تلقائيًا، وستكون غير مفعّلة عند الاستيراد.</p>
 <div class="import-grid"><div class="field"><label for="claudeFile">ملف الأسئلة بصيغة JSON</label><input id="claudeFile" type="file" accept=".json,application/json"><small>حد أقصى 2 ميغابايت، و200 سؤال لكل ملف.</small></div><div class="field"><label for="claudeCourse">المقرر الافتراضي</label><select id="claudeCourse"><option value="TECH107">TECH107</option><option value="TECH108">TECH108</option><option value="TECH221">TECH221</option></select><small>يمكن تغيير المقرر والمهارة لكل سؤال أثناء المراجعة.</small></div></div>
 <div class="actions"><button class="secondary" type="button" id="claudeTemplate">⬇️ تنزيل نموذج JSON وتعليمات Claude</button><button class="secondary" type="button" id="claudeClear">مسح المعاينة</button></div>
-<div id="claudeSummary" class="import-summary" hidden></div><div id="claudeItems"></div>
+<div id="claudeSummary" class="import-summary" hidden></div>
+<div id="claudeToolbar" class="ai-toolbar" hidden>
+ <button type="button" class="secondary" id="aiSelectAll">☑️ تحديد الكل</button>
+ <button type="button" class="secondary" id="aiSelectNone">☐ إلغاء تحديد الكل</button>
+ <button type="button" class="secondary" id="aiSelectVisible">تحديد المعروض</button>
+ <button type="button" class="secondary" id="aiDeselectVisible">إلغاء تحديد المعروض</button>
+ <div class="field"><label for="aiOriginFilter">مصدر السؤال</label><select id="aiOriginFilter"><option value="">الكل</option><option value="original">تمارين أصلية</option><option value="generated">أسئلة مولّدة</option></select></div>
+ <div class="field"><label for="aiSkillFilter">المهارة</label><select id="aiSkillFilter"><option value="">كل المهارات</option></select></div>
+ <div class="field"><label for="aiTypeFilter">نوع السؤال</label><select id="aiTypeFilter"><option value="">كل الأنواع</option><option value="multiple_choice">اختيار من متعدد</option><option value="true_false">صح أو خطأ</option><option value="predict_output">توقع الناتج</option><option value="code_ordering">ترتيب الكود</option><option value="fill_code">إكمال الكود</option><option value="write_code">كتابة الكود</option></select></div>
+ <div class="field"><label for="aiReviewFilter">حالة المراجعة</label><select id="aiReviewFilter"><option value="">الكل</option><option value="selected">المحددة فقط</option><option value="unselected">غير المحددة</option><option value="errors">تحتاج تصحيحًا</option></select></div>
+ <div class="muted" id="aiSelectionCount" role="status"></div>
+</div>
+<div id="claudeItems"></div>
 <div class="actions"><button class="primary" type="button" id="claudeSave" disabled>💾 حفظ الأسئلة المحددة بعد المراجعة</button></div>
 <div id="claudeProgress" class="notice info" hidden role="status"></div>
 </section>
@@ -105,43 +117,63 @@ function aiValidate(q){
  if(q.question_type!=='write_code'&&!answer)return 'الإجابة الصحيحة مطلوبة.';
  return null;
 }
+function aiVisible(q){
+ const origin=$('aiOriginFilter').value,skill=$('aiSkillFilter').value,type=$('aiTypeFilter').value,review=$('aiReviewFilter').value;
+ return (!origin||q.origin===origin)&&(!skill||q.skill_name===skill)&&(!type||q.question_type===type)&&(!review||(review==='selected'&&q.selected)||(review==='unselected'&&!q.selected)||(review==='errors'&&!!aiValidate({...q,selected:true})));
+}
+function aiCounts(){
+ const selected=aiItems.filter(q=>q.selected).length,visible=aiItems.filter(aiVisible).length;
+ $('aiSelectionCount').textContent=`المحدد للحفظ: ${selected} من ${aiItems.length} | المعروض حسب التصفية: ${visible} | لن يُحفظ أي سؤال إلا بعد الضغط على زر الحفظ والتأكيد.`;
+ $('claudeSave').disabled=!selected||aiSaving;
+}
+function aiRefreshSkillFilter(){
+ const sel=$('aiSkillFilter'),old=sel.value;sel.replaceChildren(new Option('كل المهارات',''));
+ [...new Set(aiItems.map(q=>q.skill_name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ar')).forEach(name=>sel.add(new Option(name,name)));
+ if([...sel.options].some(o=>o.value===old))sel.value=old;
+}
 function aiRender(){
- const host=$('claudeItems');host.replaceChildren();$('claudeSave').disabled=!aiItems.length||aiSaving;
- $('claudeSummary').hidden=!aiItems.length;
- if(!aiItems.length)return;
+ const host=$('claudeItems');host.replaceChildren();
+ $('claudeSummary').hidden=!aiItems.length;$('claudeToolbar').hidden=!aiItems.length;
+ if(!aiItems.length){aiCounts();return;}
  const originals=aiItems.filter(x=>x.origin==='original').length;
  $('claudeSummary').textContent=`عدد الأسئلة: ${aiItems.length} | التمارين الأصلية: ${originals} | الأسئلة المولدة: ${aiItems.length-originals}. يجب مراجعة الإجابات والمصادر يدويًا قبل الحفظ.`;
  aiItems.forEach((q,i)=>{
- const item=aiEl('div',{className:'import-item'},host);
- const head=aiEl('div',{className:'inline'},item);const check=aiEl('input',{type:'checkbox',checked:q.selected},head);check.addEventListener('change',()=>{q.selected=check.checked;aiShowErrors();});
- aiEl('strong',{text:`السؤال ${i+1} — ${q.origin==='original'?'تمرين أصلي':'سؤال مولّد'}`},head);
- aiEl('div',{className:'import-meta',text:'المرجع: '+(q.source_ref||'لم يُذكر — تحقق من الحقيبة')},item);
- const grid=aiEl('div',{className:'grid'},item);
- const course=aiSelect(grid,'المقرر',[['TECH107','TECH107'],['TECH108','TECH108'],['TECH221','TECH221']],q.course_code,v=>{q.course_code=v;q.skill_id='';aiRender();});
- const skillOptions=[['','اختر المهارة'],...skills.filter(s=>s.course_code===q.course_code).map(s=>[String(s.id),s.skill_name])];
- aiSelect(grid,'المهارة',skillOptions,q.skill_id,v=>{q.skill_id=v;aiShowErrors();});
- aiSelect(grid,'نوع السؤال',aiTypes.map(v=>[v,typeNames[v]]),q.question_type,v=>{q.question_type=v;aiShowErrors();});
- const question=aiField(item,'نص السؤال',q.question_text,v=>{q.question_text=v;aiShowErrors();});question.style.direction='ltr';question.style.textAlign='left';
- aiField(item,'الخيارات (كل خيار بسطر، عند الحاجة)',q.options,v=>{q.options=v;aiShowErrors();});
- const answer=aiField(item,'الإجابة الصحيحة',q.correct_answer,v=>{q.correct_answer=v;aiShowErrors();});answer.style.direction='ltr';answer.style.textAlign='left';
- aiField(item,'الشرح / التغذية الراجعة',q.explanation,v=>q.explanation=v);
- const settings=aiEl('div',{className:'grid'},item);
- aiSelect(settings,'الصعوبة',[['easy','سهل'],['medium','متوسط'],['hard','صعب']],q.difficulty,v=>q.difficulty=v);
- aiSelect(settings,'المرحلة',[['1','1'],['2','2']],String(q.stage),v=>q.stage=Number(v));
- const points=aiField(settings,'الدرجة',String(q.points),v=>q.points=Number(v),'input');points.type='number';points.min='1';points.step='1';
- const err=aiEl('div',{className:'import-error'},item);q._errorEl=err;
+  if(!aiVisible(q)){q._errorEl=null;return;}
+  const item=aiEl('div',{className:'import-item'},host);
+  const head=aiEl('div',{className:'inline'},item);const check=aiEl('input',{type:'checkbox',checked:q.selected},head);check.addEventListener('change',()=>{q.selected=check.checked;aiShowErrors();if($('aiReviewFilter').value)aiRender();});
+  aiEl('strong',{text:`السؤال ${i+1} — ${q.origin==='original'?'تمرين أصلي':'سؤال مولّد'}`},head);
+  aiEl('div',{className:'import-meta',text:'المرجع: '+(q.source_ref||'لم يُذكر — تحقق من الحقيبة')},item);
+  const grid=aiEl('div',{className:'grid'},item);
+  aiSelect(grid,'المقرر',[['TECH107','TECH107'],['TECH108','TECH108'],['TECH221','TECH221']],q.course_code,v=>{q.course_code=v;q.skill_id='';aiRender();});
+  const skillOptions=[['','اختر المهارة'],...skills.filter(s=>s.course_code===q.course_code).map(s=>[String(s.id),s.skill_name])];
+  aiSelect(grid,'المهارة',skillOptions,q.skill_id,v=>{q.skill_id=v;aiShowErrors();});
+  aiSelect(grid,'نوع السؤال',aiTypes.map(v=>[v,typeNames[v]]),q.question_type,v=>{q.question_type=v;aiShowErrors();});
+  const question=aiField(item,'نص السؤال',q.question_text,v=>{q.question_text=v;aiShowErrors();});question.style.direction='ltr';question.style.textAlign='left';
+  aiField(item,'الخيارات (كل خيار بسطر، عند الحاجة)',q.options,v=>{q.options=v;aiShowErrors();});
+  const answer=aiField(item,'الإجابة الصحيحة',q.correct_answer,v=>{q.correct_answer=v;aiShowErrors();});answer.style.direction='ltr';answer.style.textAlign='left';
+  aiField(item,'الشرح / التغذية الراجعة',q.explanation,v=>q.explanation=v);
+  const settings=aiEl('div',{className:'grid'},item);
+  aiSelect(settings,'الصعوبة',[['easy','سهل'],['medium','متوسط'],['hard','صعب']],q.difficulty,v=>q.difficulty=v);
+  aiSelect(settings,'المرحلة',[['1','1'],['2','2']],String(q.stage),v=>q.stage=Number(v));
+  const points=aiField(settings,'الدرجة',String(q.points),v=>q.points=Number(v),'input');points.type='number';points.min='1';points.step='1';
+  const err=aiEl('div',{className:'import-error'},item);q._errorEl=err;
  });aiShowErrors();
 }
-function aiShowErrors(){for(const q of aiItems){if(q._errorEl)q._errorEl.textContent=aiValidate(q)||'';}}
+function aiShowErrors(){for(const q of aiItems){if(q._errorEl)q._errorEl.textContent=aiValidate(q)||'';}aiCounts();}
 $('claudeFile').addEventListener('change',async e=>{
  const file=e.target.files?.[0];if(!file)return;
  try{if(file.size>2*1024*1024)throw Error('حجم الملف يتجاوز 2 ميغابايت.');
  const parsed=JSON.parse(await file.text());const list=Array.isArray(parsed)?parsed:parsed.questions;
  if(!Array.isArray(list)||!list.length||list.length>200)throw Error('الملف يجب أن يحتوي على questions: قائمة من 1 إلى 200 سؤال.');
  const normalized=list.map((x,i)=>{try{return aiNormalize(x)}catch(err){throw Error('السؤال '+(i+1)+': '+err.message)}});
- aiItems=normalized;aiRender();$('claudeProgress').hidden=true;
+ aiItems=normalized;aiRefreshSkillFilter();aiRender();$('claudeProgress').hidden=true;
  }catch(err){aiItems=[];aiRender();$('claudeProgress').hidden=false;$('claudeProgress').className='notice error';$('claudeProgress').textContent='تعذر قراءة الملف: '+err.message;}
 });
+for(const id of ['aiOriginFilter','aiSkillFilter','aiTypeFilter','aiReviewFilter'])$(id).addEventListener('change',aiRender);
+$('aiSelectAll').addEventListener('click',()=>{aiItems.forEach(q=>q.selected=true);aiRender();});
+$('aiSelectNone').addEventListener('click',()=>{aiItems.forEach(q=>q.selected=false);aiRender();});
+$('aiSelectVisible').addEventListener('click',()=>{aiItems.filter(aiVisible).forEach(q=>q.selected=true);aiRender();});
+$('aiDeselectVisible').addEventListener('click',()=>{aiItems.filter(aiVisible).forEach(q=>q.selected=false);aiRender();});
 $('claudeClear').addEventListener('click',()=>{aiItems=[];$('claudeFile').value='';aiRender();$('claudeProgress').hidden=true;});
 $('claudeTemplate').addEventListener('click',()=>{
  const sample={instructions:'استخدم في Claude: استخرج التمارين الأصلية من الحقيبة كما هي، ثم ولّد أسئلة جديدة من شرحها فقط. لا تستخدم معرفة خارج الملف. لا تخمّن الإجابات أو أرقام الصفحات. أخرج JSON فقط وفق هذا النموذج، وراجع كل سؤال.',questions:[{origin:'original',course_code:'TECH107',skill_name:'اسم المهارة كما في بنك الأسئلة',question_type:'multiple_choice',question_text:'نص السؤال الأصلي',options:['خيار 1','خيار 2'],correct_answer:'خيار 1',explanation:'الشرح إذا ورد أو أمكن الاستدلال عليه من الحقيبة',difficulty:'medium',stage:1,points:2,source_ref:'الصفحة أو الشريحة 3'},{origin:'generated',course_code:'TECH107',skill_name:'اسم المهارة كما في بنك الأسئلة',question_type:'true_false',question_text:'نص السؤال الجديد من شرح الحقيبة فقط',options:[],correct_answer:'true',explanation:'تعليل مستند إلى شرح الحقيبة',difficulty:'easy',stage:1,points:2,source_ref:'الصفحة أو الشريحة 4'}]};
@@ -156,8 +188,8 @@ $('claudeSave').addEventListener('click',async()=>{
  const body={skill_id:Number(q.skill_id),question_text:q.question_text.trim(),question_type:q.question_type,options:['multiple_choice','code_ordering'].includes(q.question_type)?options:null,correct_answer:q.question_type==='write_code'?null:(q.question_type==='true_false'?q.correct_answer.trim().toLowerCase():q.correct_answer.trim()),explanation:q.explanation.trim()||null,difficulty:q.difficulty,stage:q.stage,points:q.points,is_active:false};
  try{await api('questions',{method:'POST',headers:{Prefer:'return=minimal'},body});saved++;q.selected=false;q._saved=true;}catch(err){failures.push('السؤال '+(aiItems.indexOf(q)+1)+': '+errorText(err));}
  }
- await loadAll();aiItems=aiItems.filter(q=>!q._saved);aiRender();$('claudeProgress').hidden=false;$('claudeProgress').className='notice '+(failures.length?'error':'success');$('claudeProgress').textContent=`تم حفظ ${saved} سؤالًا غير مفعل. ${failures.length?'فشل '+failures.length+' سؤالًا:\n'+failures.join('\n'):'يمكنك تفعيلها لاحقًا بعد المراجعة النهائية.'}`;
- }finally{aiSaving=false;$('claudeSave').disabled=!aiItems.length;}
+ await loadAll();aiItems=aiItems.filter(q=>!q._saved);aiRefreshSkillFilter();aiRender();$('claudeProgress').hidden=false;$('claudeProgress').className='notice '+(failures.length?'error':'success');$('claudeProgress').textContent=`تم حفظ ${saved} سؤالًا غير مفعل. ${failures.length?'فشل '+failures.length+' سؤالًا:\n'+failures.join('\n'):'يمكنك تفعيلها لاحقًا بعد المراجعة النهائية.'}`;
+ }finally{aiSaving=false;aiCounts();}
 });
 
 </script>
