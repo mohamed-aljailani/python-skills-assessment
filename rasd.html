@@ -1,4 +1,4 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b50"><title>رصد RASD V4.1.2 | إحصاءات اللقاءات المتتالية</title><style>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b50"><title>رصد RASD V4.1.4 | إحصاءات اللقاءات المتتالية</title><style>
 :root{font-family:Tahoma,Arial,sans-serif;color:#172b4b;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}header{background:#102b50;color:#fff;padding:20px}header small{color:#c6d5e8}header a{color:white}main{max-width:1050px;margin:auto;padding:16px}.panel{background:white;border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 4px 20px #102b5010}.muted{color:#66788f;font-size:13px;line-height:1.8}select,button,input{font:inherit;border-radius:10px;padding:11px;border:1px solid #dce4ee}select,input{width:100%;background:white}button{cursor:pointer;background:#f3f6fb}button:disabled{opacity:.5;cursor:wait}button.active{background:#102b50;color:#fff}button.primary{background:#2563eb;color:white;border:0}.tabs,.actions{display:flex;gap:8px;flex-wrap:wrap}.student{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #edf0f5;padding:14px 0;flex-wrap:wrap}.actions button{font-size:12px;padding:9px}.warning{background:#fff7e5;padding:12px;border-radius:10px;color:#7d4b00;line-height:1.8}.error{background:#fff0f0;color:#9a1e1e;padding:12px;border-radius:10px;line-height:1.8}.ok{background:#eaf9ef;color:#17623b;padding:12px;border-radius:10px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#f3f6fb;border-radius:12px;text-align:center;padding:14px}.stat strong{font-size:24px;display:block}.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.tag{background:#eef4ff;border-radius:8px;padding:6px 10px;font-size:12px}.controls{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}.controls label{font-size:13px;font-weight:bold;display:block;margin-bottom:6px}.busy{opacity:.65;pointer-events:none}.small{font-size:12px}.profile-controls{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end}.profile-controls label{font-size:13px;font-weight:bold;display:block;margin-bottom:6px}.profile-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}.profile-table th,.profile-table td{padding:10px;border-bottom:1px solid #e8edf4;text-align:right}.profile-table th{background:#f3f6fb}.profile-scroll{overflow-x:auto}.profile-actions{margin-top:12px}.profile-actions button{margin-left:8px}.profile-title{margin:0 0 12px}.profile-empty{padding:16px;background:#f3f6fb;border-radius:10px}.small{font-size:12px}@media(max-width:650px){.profile-controls{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.student{align-items:flex-start}.actions{width:100%}.actions button{flex:1}}
 @media print{header,.warning,#message,.controls,.tabs,#classPanel,.profile-controls,.profile-actions,main>p{display:none!important}#profilePanel{display:block!important;box-shadow:none}.panel{margin:0;padding:8px}body{background:white}.profile-table{font-size:11px}}
 
@@ -304,7 +304,15 @@
 #profileContent .insight-metric strong{display:block;font-size:18px;color:#0c3554}
 @media(max-width:650px){#profileContent .insight-grid{grid-template-columns:1fr}}
 @media print{#profileContent .insight-panel{padding:8px!important;margin:7px 0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}#profileContent .insight-grid{gap:4px!important;margin:5px 0!important}#profileContent .insight-metric{padding:4px!important}#profileContent .insight-metric strong{font-size:14px!important}#profileContent .insight-line{font-size:10px!important;margin:2px 0!important}}
-</style></head><body><header><div class="toolbar"><div><h2 style="margin:0">رصد | RASD</h2><small>Python Skills Academy — تسجيل الحضور والمشاركات والسلوك</small></div><a href="dashboard.html">لوحة الإدارة</a></div></header><main>
+
+/* V4.1.4: prominent accessible navigation button */
+.dashboard-return{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:10px 17px;border:1px solid #d8b76a;border-radius:12px;background:#d8b76a;color:#102b50!important;text-decoration:none;font-weight:700;font-size:13px;box-shadow:0 3px 12px #0002;transition:background .2s,transform .2s,box-shadow .2s}
+.dashboard-return:hover{background:#f1d994;transform:translateY(-1px);box-shadow:0 5px 15px #0003}
+.dashboard-return:focus-visible{outline:3px solid white;outline-offset:3px}
+.dashboard-return svg{flex:none}
+@media(max-width:480px){header .toolbar{align-items:stretch}header .toolbar>div{flex:1 1 100%}.dashboard-return{width:100%}}
+@media print{.dashboard-return{display:none!important}}
+</style></head><body><header><div class="toolbar"><div><h2 style="margin:0">رصد | RASD</h2><small>Python Skills Academy — تسجيل الحضور والمشاركات والسلوك</small></div><a class="dashboard-return" href="dashboard.html" aria-label="العودة إلى لوحة التحكم"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>العودة للوحة التحكم</span></a></div></header><main>
 <div class="panel warning">يبدأ كل طالب بحالة <b>غير مسجل</b> حتى تختار حالته. كل حصة مستقلة؛ احرص على اختيار التاريخ ورقم الحصة الصحيحين. لا يوجد حفظ دون اتصال بالإنترنت.</div>
 <div id="message" class="panel muted" role="status" aria-live="polite">جارٍ التحقق من تسجيل الدخول وتحميل البيانات...</div>
 <div id="app" hidden><div class="panel"><div class="controls"><div><label for="section">الشعبة والمقرر</label><select id="section"></select></div><div><label for="date">تاريخ الحصة</label><input id="date" type="date"></div><div><label for="period">رقم الحصة</label><select id="period"></select></div></div><p id="schedule" class="muted"></p><div class="tabs"><button id="att" class="active" type="button">الحضور</button><button id="part" type="button">المشاركات</button><button id="beh" type="button">السلوك</button><button id="quickTab" type="button">⚡ وضع المعلم السريع</button><button id="refresh" type="button">↻ تحديث السجلات</button><button id="profileTab" type="button">ملف الطالب والتقارير</button><button id="sectionReportTab" type="button">تقارير الشعب</button><button id="overviewTab" type="button">لوحة الإحصاءات</button></div></div>
@@ -318,7 +326,7 @@
   <div class="report-brand-title">تقرير الطالب الشهري</div>
 </div>
 <div id="profileContent"></div><div class="school-heritage" role="img" aria-label="رسم تراثي لمبنى مدرسة الهداية الخليفية القديم"></div><div class="report-footer"><div><div class="prepared-label">إعداد وإشراف</div><div class="prepared-name">الأستاذ محمد الجيلاني</div></div><div class="report-credit"><div>Python Skills Academy | RASD</div><div class="report-issued">تاريخ إصدار التقرير: <span id="reportIssueDate">—</span></div></div></div><div class="profile-actions"><button type="button" id="profilePrint" disabled title="اعرض التقرير أولًا">طباعة التقرير</button></div></div><div id="overviewPanel" class="panel" hidden>
-<h3>لوحة إحصاءات الشعب الست — V4.1.3</h3>
+<h3>لوحة إحصاءات الشعب الست — V4.1.4</h3>
 <p class="muted">مقارنة شهرية من سجلات Supabase المحفوظة فقط. نسب الحضور تعتمد على الحالات المسجلة، وتظهر معها نسبة اكتمال التسجيل.</p>
 <div class="section-report-controls"><div><label for="overviewMonth">الشهر</label><input type="month" id="overviewMonth"></div><button type="button" class="primary" id="overviewLoad">تحديث الإحصاءات</button></div>
 <p class="muted" id="overviewStatus" role="status" aria-live="polite">اختر الشهر واضغط تحديث الإحصاءات.</p>
@@ -350,16 +358,21 @@ function localDate(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bahr
 // V4.1.1: one attendance register for each consecutive teaching block.
 function firstScheduleOfBlock(sc){
  if(!sc)return null;
- const periods=schedule.filter(x=>x.class_section_id===sc.class_section_id&&x.day_of_week===sc.day_of_week).sort((a,b)=>a.period_number-b.period_number);
- let first=sc;for(let i=periods.findIndex(x=>x.id===sc.id)-1;i>=0;i--){
-  if(periods[i].period_number!==first.period_number-1)break;first=periods[i];
- }return first;
+ const periods=schedule.filter(x=>x.class_section_id===sc.class_section_id && Number(x.day_of_week)===Number(sc.day_of_week) && Number.isFinite(Number(x.period_number)))
+  .sort((a,b)=>Number(a.period_number)-Number(b.period_number));
+ const current=Number(sc.period_number);
+ let first=sc;
+ for(let p=current-1;p>=1;p--){const previous=periods.find(x=>Number(x.period_number)===p);if(!previous)break;first=previous;}
+ return first;
 }
 function isFirstPeriod(){const sc=chosenSchedule();return sc&&firstScheduleOfBlock(sc)?.id===sc.id}
-function meetingKey(se){const sc=schedule.find(x=>x.id===se.schedule_id);return se.session_date+'|'+(firstScheduleOfBlock(sc)?.id||se.schedule_id)}
+function meetingKey(se){
+ const sc=schedule.find(x=>x.id===se.schedule_id);
+ return se.session_date+'|'+(firstScheduleOfBlock(sc)?.id||se.schedule_id);
+}
 function meetingGroups(rows){
- // Group by actual section, date, and consecutive period numbers. A session used
- // only for behavior/participation must not create another attendance meeting.
+ // One meeting for consecutive scheduled periods of the same section and date.
+ // Retain every source session in its group so events from both periods count.
  const buckets=new Map();
  for(const se of rows){
   const sc=schedule.find(x=>x.id===se.schedule_id);
@@ -369,11 +382,13 @@ function meetingGroups(rows){
  }
  const groups=[];
  for(const items of buckets.values()){
-  items.sort((a,b)=>(schedule.find(x=>x.id===a.schedule_id)?.period_number||0)-(schedule.find(x=>x.id===b.schedule_id)?.period_number||0));
+  const sorted=items.slice().sort((a,b)=>Number(schedule.find(x=>x.id===a.schedule_id)?.period_number||0)-Number(schedule.find(x=>x.id===b.schedule_id)?.period_number||0));
   let group=[],lastPeriod=null;
-  for(const se of items){
-   const period=Number(schedule.find(x=>x.id===se.schedule_id)?.period_number);
-   if(group.length && (!Number.isFinite(period)||period>lastPeriod+1)){
+  for(const se of sorted){
+   const sc=schedule.find(x=>x.id===se.schedule_id);
+   const period=sc?Number(sc.period_number):NaN;
+   // Never merge separate blocks with a gap in their period numbers.
+   if(group.length && (!Number.isFinite(period)||!Number.isFinite(lastPeriod)||period>lastPeriod+1)){
     groups.push(group);group=[];
    }
    group.push(se);lastPeriod=period;
@@ -384,8 +399,8 @@ function meetingGroups(rows){
 }
 function attendanceSessions(rows){return meetingGroups(rows).map(group=>{
  const first=firstScheduleOfBlock(schedule.find(x=>x.id===group[0].schedule_id));
- return group.find(x=>x.schedule_id===first?.id)||null;
- })}
+ return group.find(x=>x.schedule_id===first?.id)||group[0]||null;
+})}
 function chosenSchedule(){return schedule.find(x=>x.class_section_id===$('section').value&&String(x.period_number)===$('period').value)}
 function sectionStudents(){return students.filter(x=>x.class_section_id===$('section').value).sort((a,b)=>a.full_name.localeCompare(b.full_name,'ar'))}
 function locked(v){busy=v;for(const id of ['section','date','period','refresh'])$(id).disabled=v;render();renderQuick()}
@@ -621,7 +636,8 @@ async function loadOverview(){
       const sectionId=sessionSection.get(group[0].id),m=metrics.get(sectionId);
       if(!m)continue;
       m.sessions++;
-      const primary=group[0];
+      const first=firstScheduleOfBlock(schedule.find(x=>x.id===group[0].schedule_id));
+      const primary=group.find(x=>x.schedule_id===first?.id)||group[0];
       for(const st of students){
         if(st.class_section_id!==sectionId)continue;
         const status=attByStudentSession.get(primary.id+'|'+st.id)||group.map(x=>attByStudentSession.get(x.id+'|'+st.id)).find(Boolean);
