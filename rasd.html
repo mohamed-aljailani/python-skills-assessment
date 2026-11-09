@@ -1,4 +1,4 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b50"><title>رصد RASD V4.1.1 | متابعة الحصص المتتالية</title><style>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b50"><title>رصد RASD V4.1.2 | إحصاءات اللقاءات المتتالية</title><style>
 :root{font-family:Tahoma,Arial,sans-serif;color:#172b4b;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}header{background:#102b50;color:#fff;padding:20px}header small{color:#c6d5e8}header a{color:white}main{max-width:1050px;margin:auto;padding:16px}.panel{background:white;border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 4px 20px #102b5010}.muted{color:#66788f;font-size:13px;line-height:1.8}select,button,input{font:inherit;border-radius:10px;padding:11px;border:1px solid #dce4ee}select,input{width:100%;background:white}button{cursor:pointer;background:#f3f6fb}button:disabled{opacity:.5;cursor:wait}button.active{background:#102b50;color:#fff}button.primary{background:#2563eb;color:white;border:0}.tabs,.actions{display:flex;gap:8px;flex-wrap:wrap}.student{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #edf0f5;padding:14px 0;flex-wrap:wrap}.actions button{font-size:12px;padding:9px}.warning{background:#fff7e5;padding:12px;border-radius:10px;color:#7d4b00;line-height:1.8}.error{background:#fff0f0;color:#9a1e1e;padding:12px;border-radius:10px;line-height:1.8}.ok{background:#eaf9ef;color:#17623b;padding:12px;border-radius:10px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#f3f6fb;border-radius:12px;text-align:center;padding:14px}.stat strong{font-size:24px;display:block}.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.tag{background:#eef4ff;border-radius:8px;padding:6px 10px;font-size:12px}.controls{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}.controls label{font-size:13px;font-weight:bold;display:block;margin-bottom:6px}.busy{opacity:.65;pointer-events:none}.small{font-size:12px}.profile-controls{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end}.profile-controls label{font-size:13px;font-weight:bold;display:block;margin-bottom:6px}.profile-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}.profile-table th,.profile-table td{padding:10px;border-bottom:1px solid #e8edf4;text-align:right}.profile-table th{background:#f3f6fb}.profile-scroll{overflow-x:auto}.profile-actions{margin-top:12px}.profile-actions button{margin-left:8px}.profile-title{margin:0 0 12px}.profile-empty{padding:16px;background:#f3f6fb;border-radius:10px}.small{font-size:12px}@media(max-width:650px){.profile-controls{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.student{align-items:flex-start}.actions{width:100%}.actions button{flex:1}}
 @media print{header,.warning,#message,.controls,.tabs,#classPanel,.profile-controls,.profile-actions,main>p{display:none!important}#profilePanel{display:block!important;box-shadow:none}.panel{margin:0;padding:8px}body{background:white}.profile-table{font-size:11px}}
 
@@ -444,14 +444,14 @@ const groups=meetingGroups(list),meetingStatuses=groups.map(group=>{
  return (primary&&amap.get(primary.id))||group.map(x=>amap.get(x.id)).find(Boolean)||null;
 });
 const counts={present:0,absent:0,late:0,excused:0};for(const status of meetingStatuses)if(status in counts)counts[status]++;
-const registered=Object.values(counts).reduce((a,b)=>a+b,0);const part=ev.filter(x=>x.event_type==='participation').length,positive=ev.filter(x=>x.event_type==='positive_behavior').length,negative=ev.filter(x=>x.event_type==='negative_behavior').length;const grid=make('div',undefined,'grid');for(const [label,val] of [['اللقاءات المسجلة',registered],['حاضر',counts.present],['غائب',counts.absent],['متأخر',counts.late],['مستأذن',counts.excused],['مشاركات',part],['سلوك إيجابي',positive],['ملاحظات سلبية',negative],['الرصيد السلوكي',ev.filter(x=>x.event_type!=='participation').reduce((sum,x)=>sum+x.points,0)]])grid.append(summaryBox(label,val));const sectionInfo=sections.find(x=>x.id===sid);const studentMeta=make('div',undefined,'report-student-meta');for(const [label,value] of [['الرقم الأكاديمي',student.academic_number||'غير متوفر'],['رقم الطالب',student.student_number||'غير متوفر'],['الشعبة',sectionInfo?.section_name||'—'],['المقرر',sectionInfo?.course_code||'—']]){const field=make('div',undefined,'report-meta-item');field.append(make('span',label,'report-meta-label'),make('strong',value));studentMeta.append(field)}const unregisteredNote=make('p','حصص لها سجل دون تحديد حالة حضور: '+(list.length-registered)+'؛ لا تُحتسب غيابًا.','report-unregistered');$('profileContent').append(make('h4',student.full_name+' — '+month),studentMeta,grid,unregisteredNote);$('reportIssueDate').textContent=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Bahrain',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const note=make('p','نسبة الحضور من الحصص التي سُجّلت حالتها: '+(registered?Math.round(100*counts.present/registered)+'%':'لا توجد بيانات كافية')+'. عدد الحصص التي لها سجل في هذا الشهر: '+list.length+'.','muted');$('profileContent').append(note);
+const registered=Object.values(counts).reduce((a,b)=>a+b,0);const part=ev.filter(x=>x.event_type==='participation').length,positive=ev.filter(x=>x.event_type==='positive_behavior').length,negative=ev.filter(x=>x.event_type==='negative_behavior').length;const grid=make('div',undefined,'grid');for(const [label,val] of [['اللقاءات المسجلة',registered],['حاضر',counts.present],['غائب',counts.absent],['متأخر',counts.late],['مستأذن',counts.excused],['مشاركات',part],['سلوك إيجابي',positive],['ملاحظات سلبية',negative],['الرصيد السلوكي',ev.filter(x=>x.event_type!=='participation').reduce((sum,x)=>sum+x.points,0)]])grid.append(summaryBox(label,val));const sectionInfo=sections.find(x=>x.id===sid);const studentMeta=make('div',undefined,'report-student-meta');for(const [label,value] of [['الرقم الأكاديمي',student.academic_number||'غير متوفر'],['رقم الطالب',student.student_number||'غير متوفر'],['الشعبة',sectionInfo?.section_name||'—'],['المقرر',sectionInfo?.course_code||'—']]){const field=make('div',undefined,'report-meta-item');field.append(make('span',label,'report-meta-label'),make('strong',value));studentMeta.append(field)}const unregisteredNote=make('p','اللقاءات التي لم تُحدد لها حالة حضور: '+Math.max(0,groups.length-registered)+'؛ الحصص التابعة لا تتطلب تسجيل حضور مستقلًا ولا تُحتسب غيابًا.','report-unregistered');$('profileContent').append(make('h4',student.full_name+' — '+month),studentMeta,grid,unregisteredNote);$('reportIssueDate').textContent=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Bahrain',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const note=make('p','نسبة الحضور من اللقاءات التي سُجّلت حالتها (حاضر + متأخر + مستأذن): '+(registered?Math.round(100*(counts.present+counts.late+counts.excused)/registered)+'%':'لا توجد بيانات كافية')+'. عدد اللقاءات ذات السجلات في هذا الشهر: '+groups.length+'.','muted');$('profileContent').append(note);
 // V4.1: descriptive indicators derived only from saved records; no inferred absences or diagnoses.
 const insight=make('section',undefined,'insight-panel');insight.append(make('h4','📌 قراءة تحليلية للسجلات الشهرية'));
 const metricRow=make('div',undefined,'insight-grid');
 const attendanceRate=registered?Math.round(100*(counts.present+counts.late+counts.excused)/registered):null;
 const coverageRate=groups.length?Math.round(100*registered/groups.length):null;
 const participationSessions=new Set(ev.filter(x=>x.event_type==='participation').map(x=>x.session_id)).size;
-for(const [label,value] of [['الحضور شامل التأخير',attendanceRate===null?'غير متاح':attendanceRate+'%'],['اكتمال تسجيل الحضور',coverageRate===null?'لا توجد لقاءات':coverageRate+'%'],['حصص شهدت مشاركات',participationSessions+' من '+list.length]]){
+for(const [label,value] of [['الحضور شامل التأخير',attendanceRate===null?'غير متاح':attendanceRate+'%'],['اكتمال تسجيل حضور اللقاءات',coverageRate===null?'لا توجد لقاءات':coverageRate+'%'],['حصص شهدت مشاركات',participationSessions+' من '+list.length]]){
 const m=make('div',undefined,'insight-metric');m.append(make('strong',value),make('span',label));metricRow.append(m)
 }insight.append(metricRow);
 const insights=[];
@@ -545,7 +545,7 @@ for(const group of classGroups){
     const table=make('table',undefined,'section-report-table');const thead=make('thead'),hr=make('tr');
     for(const h of ['م','اسم الطالب','رقم الطالب','حاضر','غائب','متأخر','مستأذن','غير مسجل','مشاركات','إيجابي','سلبي','الرصيد']){const th=make('th',h);if(h==='اسم الطالب')th.className='student-name';hr.append(th)}thead.append(hr);table.append(thead);
     const tbody=make('tbody');
-    classStudents.forEach((st,i)=>{const x=per.get(st.id),done=x.present+x.absent+x.late+x.excused;const tr=make('tr');for(const [val,cls] of [[i+1,'num'],[st.full_name,'student-name'],[st.student_number||'—','num'],[x.present,'num'],[x.absent,'num'],[x.late,'num'],[x.excused,'num'],[sessions.length-done,'num'],[x.part,'num'],[x.pos,'num'],[x.neg,'num'],[x.score,'num']])tr.append(reportCell(val,cls));tbody.append(tr)});
+    classStudents.forEach((st,i)=>{const x=per.get(st.id),done=x.present+x.absent+x.late+x.excused;const tr=make('tr');for(const [val,cls] of [[i+1,'num'],[st.full_name,'student-name'],[st.student_number||'—','num'],[x.present,'num'],[x.absent,'num'],[x.late,'num'],[x.excused,'num'],[Math.max(0,classGroups.length-done),'num'],[x.part,'num'],[x.pos,'num'],[x.neg,'num'],[x.score,'num']])tr.append(reportCell(val,cls));tbody.append(tr)});
     table.append(tbody);const scroll=make('div',undefined,'profile-scroll');scroll.append(table);content.append(scroll);
     content.append(make('p','إيجابي وسلبي: عدد الأحداث، أما الرصيد فهو مجموع النقاط. هذا تقرير متابعة للسجلات المحفوظة، وليس كشف حضور رسميًا.','section-report-note'));
     const sourceBrand=document.querySelector('#profilePanel .report-brand');const sourceFooter=document.querySelector('#profilePanel .report-footer');
@@ -591,11 +591,19 @@ async function loadOverview(){
     const sessionSection=new Map(sessions.map(x=>[x.id,scheduleSection.get(x.schedule_id)]));
     const studentSection=new Map(students.map(x=>[x.id,x.class_section_id]));
     const metrics=new Map(sections.map(x=>[x.id,{name:x.section_name,course:x.course_code,students:students.filter(st=>st.class_section_id===x.id).length,sessions:0,present:0,absent:0,late:0,excused:0,part:0,pos:0,neg:0,score:0}]));
-    for(const se of sessions){const m=metrics.get(sessionSection.get(se.id));if(m)m.sessions++}
-    const seen=new Set();
-    for(const a of att){const sid=sessionSection.get(a.session_id),m=metrics.get(sid),key=a.session_id+'|'+a.student_id;
-      if(!m||studentSection.get(a.student_id)!==sid||seen.has(key))continue;
-      if(['present','absent','late','excused'].includes(a.status)){m[a.status]++;seen.add(key)}
+    const overviewGroups=meetingGroups(sessions);
+    const attByStudentSession=new Map(att.filter(a=>['present','absent','late','excused'].includes(a.status)).map(a=>[a.session_id+'|'+a.student_id,a.status]));
+    for(const group of overviewGroups){
+      const sectionId=sessionSection.get(group[0].id),m=metrics.get(sectionId);
+      if(!m)continue;
+      m.sessions++;
+      const first=firstScheduleOfBlock(schedule.find(x=>x.id===group[0].schedule_id));
+      const primary=group.find(x=>x.schedule_id===first?.id);
+      for(const st of students){
+        if(st.class_section_id!==sectionId)continue;
+        const status=(primary&&attByStudentSession.get(primary.id+'|'+st.id))||group.map(x=>attByStudentSession.get(x.id+'|'+st.id)).find(Boolean);
+        if(status)m[status]++;
+      }
     }
     for(const e of ev){const sid=sessionSection.get(e.session_id),m=metrics.get(sid);if(!m||studentSection.get(e.student_id)!==sid)continue;
       if(e.event_type==='participation')m.part++;
@@ -613,10 +621,10 @@ async function loadOverview(){
     const percent=(n,d)=>d?Math.round(n*100/d)+'%':'—';
     const content=$('overviewContent');
     const summary=make('div',undefined,'overview-stats');
-    for(const [label,val] of [['عدد الشعب',all.length],['إجمالي الطلاب',total.students],['حصص لها سجل',total.sessions],['حالات حضور محددة',recorded+' / '+possible],['اكتمال التسجيل',percent(recorded,possible)],['نسبة الحضور (شامل المتأخر والمستأذن)',percent(attended,recorded)],['الالتزام بالموعد',percent(onTime,recorded)],['مشاركات',total.part]])summary.append(reportStat(label,val));
+    for(const [label,val] of [['عدد الشعب',all.length],['إجمالي الطلاب',total.students],['لقاءات لها سجل',total.sessions],['حالات حضور محددة',recorded+' / '+possible],['اكتمال التسجيل',percent(recorded,possible)],['نسبة الحضور (شامل المتأخر والمستأذن)',percent(attended,recorded)],['الالتزام بالموعد',percent(onTime,recorded)],['مشاركات',total.part]])summary.append(reportStat(label,val));
     content.append(summary);
     const wrap=make('div',undefined,'overview-table-wrap'),table=make('table'),head=make('thead'),hr=make('tr');
-    for(const h of ['الشعبة','المقرر','الطلاب','حصص لها سجل','اكتمال التسجيل','الحضور من المسجل','الالتزام بالموعد','غائب','متأخر','مشاركات','إيجابي','سلبي','الرصيد'])hr.append(make('th',h));
+    for(const h of ['الشعبة','المقرر','الطلاب','لقاءات لها سجل','اكتمال التسجيل','الحضور من المسجل','الالتزام بالموعد','غائب','متأخر','مشاركات','إيجابي','سلبي','الرصيد'])hr.append(make('th',h));
     head.append(hr);table.append(head);
     const body=make('tbody');
     for(const m of all){const row=make('tr'),n=m.present+m.absent+m.late+m.excused;
@@ -638,12 +646,12 @@ async function loadOverview(){
     content.append(charts);
     const alerts=make('div',undefined,'overview-alerts');alerts.append(make('h4','تنبيهات اكتمال التسجيل'));
     for(const m of all){const n=m.present+m.absent+m.late+m.excused,possibleM=m.students*m.sessions;
-      if(!m.sessions)alerts.append(make('p','• '+m.name+': لا توجد حصص مسجلة لهذا الشهر؛ لا يمكن استنتاج الحضور أو الغياب.'));
-      else if(n<possibleM)alerts.append(make('p','• '+m.name+': '+(possibleM-n)+' حالة حضور غير مسجلة من '+possibleM+' حالة متوقعة للحصص المحفوظة.'));
+      if(!m.sessions)alerts.append(make('p','• '+m.name+': لا توجد لقاءات محفوظة لهذا الشهر؛ لا يمكن استنتاج الحضور أو الغياب.'));
+      else if(n<possibleM)alerts.append(make('p','• '+m.name+': '+(possibleM-n)+' حالة حضور غير مسجلة من '+possibleM+' حالة متوقعة للقاءات المحفوظة.'));
     }
-    if(!alerts.querySelector('p'))alerts.append(make('p','جميع حالات الحضور للحصص المحفوظة مكتملة.'));
+    if(!alerts.querySelector('p'))alerts.append(make('p','جميع حالات الحضور للقاءات المحفوظة مكتملة.'));
     content.append(alerts);
-    content.append(make('p','نسبة الحضور = (حاضر + متأخر + مستأذن) ÷ الحالات المحددة. الالتزام بالموعد = حاضر فقط ÷ الحالات المحددة. اكتمال التسجيل = الحالات المحددة ÷ (عدد الطلاب × الحصص التي لها سجل). لا تُحسب الحالات غير المسجلة غيابًا. لا تتضمن الأرقام الحصص التي لم يُنشأ لها سجل أصلًا.','overview-note'));
+    content.append(make('p','نسبة الحضور = (حاضر + متأخر + مستأذن) ÷ الحالات المحددة. الالتزام بالموعد = حاضر فقط ÷ الحالات المحددة. اكتمال التسجيل = الحالات المحددة ÷ (عدد الطلاب × اللقاءات التي لها سجل). يُسجل الحضور مرة واحدة في أول حصة من اللقاء المتصل؛ وتظل مشاركات وسلوك الحصص التالية محسوبة. لا تُحسب الحالات غير المسجلة غيابًا، ولا تتضمن الأرقام اللقاءات التي لم يُنشأ لها سجل أصلًا.','overview-note'));
     $('overviewIssue').textContent=' | تاريخ الإصدار: '+new Date().toLocaleDateString('ar-BH',{timeZone:'Asia/Bahrain'});
     $('overviewPrint').disabled=false;
     $('overviewStatus').textContent='تم تحميل مقارنة '+all.length+' شعب لشهر '+month+' بنجاح.';
