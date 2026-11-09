@@ -318,7 +318,7 @@
   <div class="report-brand-title">تقرير الطالب الشهري</div>
 </div>
 <div id="profileContent"></div><div class="school-heritage" role="img" aria-label="رسم تراثي لمبنى مدرسة الهداية الخليفية القديم"></div><div class="report-footer"><div><div class="prepared-label">إعداد وإشراف</div><div class="prepared-name">الأستاذ محمد الجيلاني</div></div><div class="report-credit"><div>Python Skills Academy | RASD</div><div class="report-issued">تاريخ إصدار التقرير: <span id="reportIssueDate">—</span></div></div></div><div class="profile-actions"><button type="button" id="profilePrint" disabled title="اعرض التقرير أولًا">طباعة التقرير</button></div></div><div id="overviewPanel" class="panel" hidden>
-<h3>لوحة إحصاءات الشعب الست — V3.9</h3>
+<h3>لوحة إحصاءات الشعب الست — V4.1.3</h3>
 <p class="muted">مقارنة شهرية من سجلات Supabase المحفوظة فقط. نسب الحضور تعتمد على الحالات المسجلة، وتظهر معها نسبة اكتمال التسجيل.</p>
 <div class="section-report-controls"><div><label for="overviewMonth">الشهر</label><input type="month" id="overviewMonth"></div><button type="button" class="primary" id="overviewLoad">تحديث الإحصاءات</button></div>
 <p class="muted" id="overviewStatus" role="status" aria-live="polite">اختر الشهر واضغط تحديث الإحصاءات.</p>
@@ -357,7 +357,31 @@ function firstScheduleOfBlock(sc){
 }
 function isFirstPeriod(){const sc=chosenSchedule();return sc&&firstScheduleOfBlock(sc)?.id===sc.id}
 function meetingKey(se){const sc=schedule.find(x=>x.id===se.schedule_id);return se.session_date+'|'+(firstScheduleOfBlock(sc)?.id||se.schedule_id)}
-function meetingGroups(rows){const groups=new Map();for(const se of rows){const key=meetingKey(se);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(se)}return [...groups.values()]}
+function meetingGroups(rows){
+ // Group by actual section, date, and consecutive period numbers. A session used
+ // only for behavior/participation must not create another attendance meeting.
+ const buckets=new Map();
+ for(const se of rows){
+  const sc=schedule.find(x=>x.id===se.schedule_id);
+  const key=(sc?.class_section_id||se.schedule_id)+'|'+se.session_date;
+  if(!buckets.has(key))buckets.set(key,[]);
+  buckets.get(key).push(se);
+ }
+ const groups=[];
+ for(const items of buckets.values()){
+  items.sort((a,b)=>(schedule.find(x=>x.id===a.schedule_id)?.period_number||0)-(schedule.find(x=>x.id===b.schedule_id)?.period_number||0));
+  let group=[],lastPeriod=null;
+  for(const se of items){
+   const period=Number(schedule.find(x=>x.id===se.schedule_id)?.period_number);
+   if(group.length && (!Number.isFinite(period)||period>lastPeriod+1)){
+    groups.push(group);group=[];
+   }
+   group.push(se);lastPeriod=period;
+  }
+  if(group.length)groups.push(group);
+ }
+ return groups;
+}
 function attendanceSessions(rows){return meetingGroups(rows).map(group=>{
  const first=firstScheduleOfBlock(schedule.find(x=>x.id===group[0].schedule_id));
  return group.find(x=>x.schedule_id===first?.id)||null;
@@ -597,11 +621,10 @@ async function loadOverview(){
       const sectionId=sessionSection.get(group[0].id),m=metrics.get(sectionId);
       if(!m)continue;
       m.sessions++;
-      const first=firstScheduleOfBlock(schedule.find(x=>x.id===group[0].schedule_id));
-      const primary=group.find(x=>x.schedule_id===first?.id);
+      const primary=group[0];
       for(const st of students){
         if(st.class_section_id!==sectionId)continue;
-        const status=(primary&&attByStudentSession.get(primary.id+'|'+st.id))||group.map(x=>attByStudentSession.get(x.id+'|'+st.id)).find(Boolean);
+        const status=attByStudentSession.get(primary.id+'|'+st.id)||group.map(x=>attByStudentSession.get(x.id+'|'+st.id)).find(Boolean);
         if(status)m[status]++;
       }
     }
@@ -651,6 +674,14 @@ async function loadOverview(){
     }
     if(!alerts.querySelector('p'))alerts.append(make('p','جميع حالات الحضور للقاءات المحفوظة مكتملة.'));
     content.append(alerts);
+    const audit=make('div',undefined,'overview-alerts');audit.append(make('h4','تدقيق تواريخ اللقاءات'));
+    for(const m of all){
+      const sec=sections.find(x=>x.section_name===m.name&&x.course_code===m.course);
+      if(!sec)continue;
+      const dates=[...new Set(overviewGroups.filter(g=>sessionSection.get(g[0].id)===sec.id).map(g=>g[0].session_date))].sort();
+      if(dates.length)audit.append(make('p','• '+m.name+': '+dates.join('، ')+' — '+m.sessions+' لقاء/لقاءات محفوظة.'));
+    }
+    content.append(audit);
     content.append(make('p','نسبة الحضور = (حاضر + متأخر + مستأذن) ÷ الحالات المحددة. الالتزام بالموعد = حاضر فقط ÷ الحالات المحددة. اكتمال التسجيل = الحالات المحددة ÷ (عدد الطلاب × اللقاءات التي لها سجل). يُسجل الحضور مرة واحدة في أول حصة من اللقاء المتصل؛ وتظل مشاركات وسلوك الحصص التالية محسوبة. لا تُحسب الحالات غير المسجلة غيابًا، ولا تتضمن الأرقام اللقاءات التي لم يُنشأ لها سجل أصلًا.','overview-note'));
     $('overviewIssue').textContent=' | تاريخ الإصدار: '+new Date().toLocaleDateString('ar-BH',{timeZone:'Asia/Bahrain'});
     $('overviewPrint').disabled=false;
