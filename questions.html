@@ -5,6 +5,9 @@
 <title>بنك الأسئلة | Python Skills Assessment</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f3f6fc;color:#182d52;font-family:Tahoma,Arial,sans-serif}header{background:#1b2d52;color:white;padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}h1{font-size:24px;margin:0}header p{font-size:12px;color:#cad6ea}a.back{background:#ffda5c;color:#17284a;text-decoration:none;padding:12px 17px;border-radius:9px;font-weight:bold}main{max-width:1200px;margin:28px auto;padding:0 18px}.panel{background:white;border-radius:16px;padding:24px;margin-bottom:22px;box-shadow:0 5px 20px #1c32500a}h2{font-size:19px;margin:0 0 20px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.field.wide{grid-column:span 3}.field.two{grid-column:span 2}label{display:block;font-weight:bold;margin-bottom:8px;font-size:14px}input,select,textarea{width:100%;padding:12px;border:1px solid #d6e0ed;border-radius:9px;background:white;color:#142b4e;font:inherit}textarea{resize:vertical;min-height:90px}textarea.code{direction:ltr;text-align:left;font-family:Consolas,monospace;white-space:pre;tab-size:4}small{display:block;color:#677992;margin-top:6px;line-height:1.7}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}button{padding:11px 18px;border:0;border-radius:9px;font-family:inherit;font-weight:bold;cursor:pointer}button:disabled{opacity:.5;cursor:wait}.primary{background:#263f75;color:white}.secondary{background:#e9eef7;color:#263f75}.danger{background:#ffe9e9;color:#9b1c1c}.notice{padding:14px 16px;border-radius:9px;margin-bottom:18px;line-height:1.7;white-space:pre-wrap}.success{background:#e7f7ed;color:#11622d}.error{background:#fff0f0;color:#a02222}.info{background:#eaf2ff;color:#234979}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:800px}th,td{padding:13px 10px;border-bottom:1px solid #e6ecf5;text-align:right;font-size:13px;vertical-align:top}th{background:#f4f7fc}td button{margin:2px;padding:8px 11px}.badge{background:#eaf0f9;padding:5px 9px;border-radius:8px;white-space:nowrap}.muted{color:#72809a}.codeview{direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:8px;border-radius:7px;font-family:Consolas,monospace;max-width:450px}.inline{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.inline input[type=checkbox]{width:auto}#loading{max-width:650px;margin:35px auto;text-align:center}@media(max-width:800px){.grid{grid-template-columns:1fr}.field.wide,.field.two{grid-column:span 1}.panel{padding:16px}}
+
+/* Claude import */
+.import-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.import-item{border:1px solid #d6e0ed;border-radius:12px;padding:16px;margin:12px 0;background:#fbfcff}.import-item textarea{margin-top:7px}.import-meta{font-size:12px;color:#63738a;margin-bottom:10px}.import-item .grid{margin-top:12px}.import-item label{margin-top:8px}.import-item input[type=checkbox]{width:auto}.import-summary{padding:12px;background:#edf4ff;border-radius:10px;line-height:1.8}.import-error{color:#a02222;white-space:pre-wrap;font-size:12px}.import-item pre{white-space:pre-wrap;direction:ltr;text-align:left}@media(max-width:800px){.import-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -29,6 +32,15 @@
 </div>
 <div class="actions"><button id="saveBtn" type="submit" class="primary">💾 حفظ السؤال</button><button type="button" id="resetBtn" class="secondary">إلغاء / سؤال جديد</button></div>
 </form></section>
+
+<section class="panel" id="claudeImportPanel"><h2>🤖 استيراد أسئلة المعلم الذكي من Claude</h2>
+<p class="muted">ارفع ملف JSON الذي أعدّه Claude. راجع كل سؤال وعدّله ثم حدّد الأسئلة التي تريد حفظها. لن تُحفظ أي أسئلة تلقائيًا، وستكون غير مفعّلة عند الاستيراد.</p>
+<div class="import-grid"><div class="field"><label for="claudeFile">ملف الأسئلة بصيغة JSON</label><input id="claudeFile" type="file" accept=".json,application/json"><small>حد أقصى 2 ميغابايت، و200 سؤال لكل ملف.</small></div><div class="field"><label for="claudeCourse">المقرر الافتراضي</label><select id="claudeCourse"><option value="TECH107">TECH107</option><option value="TECH108">TECH108</option><option value="TECH221">TECH221</option></select><small>يمكن تغيير المقرر والمهارة لكل سؤال أثناء المراجعة.</small></div></div>
+<div class="actions"><button class="secondary" type="button" id="claudeTemplate">⬇️ تنزيل نموذج JSON وتعليمات Claude</button><button class="secondary" type="button" id="claudeClear">مسح المعاينة</button></div>
+<div id="claudeSummary" class="import-summary" hidden></div><div id="claudeItems"></div>
+<div class="actions"><button class="primary" type="button" id="claudeSave" disabled>💾 حفظ الأسئلة المحددة بعد المراجعة</button></div>
+<div id="claudeProgress" class="notice info" hidden role="status"></div>
+</section>
 <section class="panel"><h2>📋 قائمة الأسئلة</h2><div class="grid"><div class="field"><label for="filterCourse">تصفية حسب المقرر</label><select id="filterCourse"><option value="">جميع المقررات</option><option value="TECH107">TECH107</option><option value="TECH108">TECH108</option><option value="TECH221">TECH221</option></select></div><div class="field"><label for="filterType">تصفية حسب النوع</label><select id="filterType"><option value="">جميع الأنواع</option><option value="multiple_choice">اختيار من متعدد</option><option value="true_false">صح أو خطأ</option><option value="predict_output">توقع الناتج</option><option value="code_ordering">ترتيب الكود</option><option value="fill_code">إكمال الكود</option><option value="write_code">كتابة الكود</option></select></div><div class="field"><label for="search">البحث في نص السؤال</label><input id="search" placeholder="اكتب كلمة للبحث"></div></div><div class="actions"><button id="refreshBtn" type="button" class="secondary">🔄 تحديث الأسئلة</button><span class="muted" id="count"></span></div><div class="tablewrap"><table><thead><tr><th>الرقم</th><th>المهارة</th><th>السؤال</th><th>النوع</th><th>الصعوبة</th><th>الدرجة</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="rows"><tr><td colspan="8" class="muted">جارٍ التحميل...</td></tr></tbody></table></div></section>
 </main>
 <script>
@@ -55,6 +67,99 @@ function startEdit(id){const q=questions.find(x=>Number(x.id)===Number(id));if(!
 async function saveQuestion(e){e.preventDefault();if(busy)return;const type=$('type').value,opts=optionValues(),answer=$('answer').value.trim();if(!Number($('skill').value)){notice('اختر مهارة أولًا.','error');return;}if(type==='multiple_choice'&&(opts.length<2||!opts.includes(answer))){notice('في الاختيار من متعدد، أدخل خيارين على الأقل واجعل الإجابة الصحيحة مطابقة لأحد الخيارات.','error');return;}if(type==='true_false'&&!['true','false'].includes(answer.toLowerCase())){notice('إجابة الصح والخطأ يجب أن تكون true أو false.','error');return;}if(type==='code_ordering'&&(opts.length<2||answer!==opts.map((_,i)=>i+1).join(','))){notice('في ترتيب الكود، أدخل سطرين على الأقل واجعل الإجابة 1,2,3... حسب عدد الأسطر.','error');return;}if(type!=='write_code'&&!answer){notice('أدخل الإجابة الصحيحة.','error');return;}const body={skill_id:Number($('skill').value),question_text:$('questionText').value.trim(),question_type:type,options:['multiple_choice','code_ordering'].includes(type)?opts:null,correct_answer:type==='write_code'?null:(type==='true_false'?answer.toLowerCase():answer),explanation:$('explanation').value.trim()||null,difficulty:$('difficulty').value,stage:Number($('stage').value),points:Number($('points').value),is_active:$('active').checked};if(!body.question_text||!Number.isInteger(body.points)||body.points<1){notice('تأكد من نص السؤال والدرجة.','error');return;}busy=true;$('saveBtn').disabled=true;try{const updating=editId!==null;await api(updating?'questions?id=eq.'+editId:'questions',{method:updating?'PATCH':'POST',headers:{Prefer:'return=minimal'},body});resetForm();await loadAll();notice(updating?'تم تعديل السؤال بنجاح.':'تمت إضافة السؤال بنجاح.','success');}catch(err){notice('تعذر حفظ السؤال: '+errorText(err),'error');}finally{busy=false;$('saveBtn').disabled=false;}}
 async function deleteQuestion(id){if(busy||!confirm('هل تريد حذف السؤال رقم '+id+' نهائيًا؟'))return;busy=true;try{await api('questions?id=eq.'+id,{method:'DELETE'});if(Number(editId)===Number(id))resetForm();await loadAll();notice('تم حذف السؤال.','success');}catch(e){notice('تعذر الحذف: '+errorText(e),'error');}finally{busy=false;}}
 $('course').addEventListener('change',skillSelect);$('type').addEventListener('change',setTypeFields);$('questionForm').addEventListener('submit',saveQuestion);$('resetBtn').addEventListener('click',resetForm);$('refreshBtn').addEventListener('click',loadAll);for(const id of ['filterCourse','filterType','search'])$(id).addEventListener('input',render);setTypeFields();verify();
+
+// استيراد Claude: جميع المدخلات تعامل كنصوص غير موثوقة ولا تستخدم innerHTML.
+const aiTypes=['multiple_choice','true_false','predict_output','code_ordering','fill_code','write_code'];
+let aiItems=[],aiSaving=false;
+const aiEl=(tag,props={},parent)=>{const el=document.createElement(tag);for(const [k,v] of Object.entries(props)){if(k==='text')el.textContent=v;else if(k==='className')el.className=v;else if(k==='value')el.value=v;else if(k==='checked')el.checked=!!v;else el.setAttribute(k,v);}if(parent)parent.appendChild(el);return el;};
+function aiField(parent,title,value,change,kind='textarea'){
+ const wrap=aiEl('div',{className:'field'},parent);aiEl('label',{text:title},wrap);
+ const el=aiEl(kind,{},wrap);if(kind==='textarea')el.rows=kind==='textarea'?3:undefined;
+ el.value=value??'';el.addEventListener('input',()=>change(el.value));return el;
+}
+function aiSelect(parent,title,choices,value,change){
+ const wrap=aiEl('div',{className:'field'},parent);aiEl('label',{text:title},wrap);const el=aiEl('select',{},wrap);
+ for(const [v,label] of choices)aiEl('option',{value:v,text:label},el);
+ el.value=value;el.addEventListener('change',()=>change(el.value));return el;
+}
+function aiNormalize(raw){
+ if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('كل سؤال يجب أن يكون كائن JSON.');
+ const type=String(raw.question_type||raw.type||'').trim();if(!aiTypes.includes(type))throw Error('نوع سؤال غير مدعوم: '+type);
+ const origin=String(raw.origin||raw.source_type||'generated').trim();if(!['original','generated'].includes(origin))throw Error('origin يجب أن يكون original أو generated.');
+ const options=raw.options==null?[]:raw.options;if(!Array.isArray(options)||options.some(v=>typeof v!=='string'))throw Error('options يجب أن تكون قائمة نصوص.');
+ const q={origin,course_code:String(raw.course_code||$('claudeCourse').value),skill_name:String(raw.skill_name||''),question_type:type,question_text:String(raw.question_text||''),options:options.join('\n'),correct_answer:raw.correct_answer==null?'':String(raw.correct_answer),explanation:String(raw.explanation||''),difficulty:String(raw.difficulty||'medium'),stage:Number(raw.stage||1),points:Number(raw.points||2),source_ref:String(raw.source_ref||''),selected:true,skill_id:''};
+ if(!q.question_text.trim())throw Error('نص السؤال فارغ.');if(!['easy','medium','hard'].includes(q.difficulty))q.difficulty='medium';
+ if(!['TECH107','TECH108','TECH221'].includes(q.course_code))q.course_code=$('claudeCourse').value;
+ if(![1,2].includes(q.stage))q.stage=1;if(!Number.isInteger(q.points)||q.points<1)q.points=2;
+ const matched=skills.find(s=>s.course_code===q.course_code&&s.skill_name.trim()===q.skill_name.trim());q.skill_id=matched?String(matched.id):'';
+ return q;
+}
+function aiValidate(q){
+ if(!q.selected)return null;
+ if(!skills.some(s=>String(s.id)===String(q.skill_id)&&s.course_code===q.course_code))return 'اختر مهارة مرتبطة بالمقرر.';
+ if(!q.question_text.trim())return 'نص السؤال مطلوب.';
+ const options=q.options.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),answer=q.correct_answer.trim();
+ if(q.question_type==='multiple_choice'&&(options.length<2||!options.includes(answer)))return 'الاختيار من متعدد: خياران على الأقل والإجابة مطابقة لأحد الخيارات.';
+ if(q.question_type==='code_ordering'&&(options.length<2||answer!==options.map((_,i)=>i+1).join(',')))return 'ترتيب الكود: الإجابة يجب أن تكون 1,2,3... حسب عدد الأسطر.';
+ if(q.question_type==='true_false'&&!['true','false'].includes(answer.toLowerCase()))return 'الصح والخطأ: الإجابة true أو false.';
+ if(q.question_type!=='write_code'&&!answer)return 'الإجابة الصحيحة مطلوبة.';
+ return null;
+}
+function aiRender(){
+ const host=$('claudeItems');host.replaceChildren();$('claudeSave').disabled=!aiItems.length||aiSaving;
+ $('claudeSummary').hidden=!aiItems.length;
+ if(!aiItems.length)return;
+ const originals=aiItems.filter(x=>x.origin==='original').length;
+ $('claudeSummary').textContent=`عدد الأسئلة: ${aiItems.length} | التمارين الأصلية: ${originals} | الأسئلة المولدة: ${aiItems.length-originals}. يجب مراجعة الإجابات والمصادر يدويًا قبل الحفظ.`;
+ aiItems.forEach((q,i)=>{
+ const item=aiEl('div',{className:'import-item'},host);
+ const head=aiEl('div',{className:'inline'},item);const check=aiEl('input',{type:'checkbox',checked:q.selected},head);check.addEventListener('change',()=>{q.selected=check.checked;aiShowErrors();});
+ aiEl('strong',{text:`السؤال ${i+1} — ${q.origin==='original'?'تمرين أصلي':'سؤال مولّد'}`},head);
+ aiEl('div',{className:'import-meta',text:'المرجع: '+(q.source_ref||'لم يُذكر — تحقق من الحقيبة')},item);
+ const grid=aiEl('div',{className:'grid'},item);
+ const course=aiSelect(grid,'المقرر',[['TECH107','TECH107'],['TECH108','TECH108'],['TECH221','TECH221']],q.course_code,v=>{q.course_code=v;q.skill_id='';aiRender();});
+ const skillOptions=[['','اختر المهارة'],...skills.filter(s=>s.course_code===q.course_code).map(s=>[String(s.id),s.skill_name])];
+ aiSelect(grid,'المهارة',skillOptions,q.skill_id,v=>{q.skill_id=v;aiShowErrors();});
+ aiSelect(grid,'نوع السؤال',aiTypes.map(v=>[v,typeNames[v]]),q.question_type,v=>{q.question_type=v;aiShowErrors();});
+ const question=aiField(item,'نص السؤال',q.question_text,v=>{q.question_text=v;aiShowErrors();});question.style.direction='ltr';question.style.textAlign='left';
+ aiField(item,'الخيارات (كل خيار بسطر، عند الحاجة)',q.options,v=>{q.options=v;aiShowErrors();});
+ const answer=aiField(item,'الإجابة الصحيحة',q.correct_answer,v=>{q.correct_answer=v;aiShowErrors();});answer.style.direction='ltr';answer.style.textAlign='left';
+ aiField(item,'الشرح / التغذية الراجعة',q.explanation,v=>q.explanation=v);
+ const settings=aiEl('div',{className:'grid'},item);
+ aiSelect(settings,'الصعوبة',[['easy','سهل'],['medium','متوسط'],['hard','صعب']],q.difficulty,v=>q.difficulty=v);
+ aiSelect(settings,'المرحلة',[['1','1'],['2','2']],String(q.stage),v=>q.stage=Number(v));
+ const points=aiField(settings,'الدرجة',String(q.points),v=>q.points=Number(v),'input');points.type='number';points.min='1';points.step='1';
+ const err=aiEl('div',{className:'import-error'},item);q._errorEl=err;
+ });aiShowErrors();
+}
+function aiShowErrors(){for(const q of aiItems){if(q._errorEl)q._errorEl.textContent=aiValidate(q)||'';}}
+$('claudeFile').addEventListener('change',async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{if(file.size>2*1024*1024)throw Error('حجم الملف يتجاوز 2 ميغابايت.');
+ const parsed=JSON.parse(await file.text());const list=Array.isArray(parsed)?parsed:parsed.questions;
+ if(!Array.isArray(list)||!list.length||list.length>200)throw Error('الملف يجب أن يحتوي على questions: قائمة من 1 إلى 200 سؤال.');
+ const normalized=list.map((x,i)=>{try{return aiNormalize(x)}catch(err){throw Error('السؤال '+(i+1)+': '+err.message)}});
+ aiItems=normalized;aiRender();$('claudeProgress').hidden=true;
+ }catch(err){aiItems=[];aiRender();$('claudeProgress').hidden=false;$('claudeProgress').className='notice error';$('claudeProgress').textContent='تعذر قراءة الملف: '+err.message;}
+});
+$('claudeClear').addEventListener('click',()=>{aiItems=[];$('claudeFile').value='';aiRender();$('claudeProgress').hidden=true;});
+$('claudeTemplate').addEventListener('click',()=>{
+ const sample={instructions:'استخدم في Claude: استخرج التمارين الأصلية من الحقيبة كما هي، ثم ولّد أسئلة جديدة من شرحها فقط. لا تستخدم معرفة خارج الملف. لا تخمّن الإجابات أو أرقام الصفحات. أخرج JSON فقط وفق هذا النموذج، وراجع كل سؤال.',questions:[{origin:'original',course_code:'TECH107',skill_name:'اسم المهارة كما في بنك الأسئلة',question_type:'multiple_choice',question_text:'نص السؤال الأصلي',options:['خيار 1','خيار 2'],correct_answer:'خيار 1',explanation:'الشرح إذا ورد أو أمكن الاستدلال عليه من الحقيبة',difficulty:'medium',stage:1,points:2,source_ref:'الصفحة أو الشريحة 3'},{origin:'generated',course_code:'TECH107',skill_name:'اسم المهارة كما في بنك الأسئلة',question_type:'true_false',question_text:'نص السؤال الجديد من شرح الحقيبة فقط',options:[],correct_answer:'true',explanation:'تعليل مستند إلى شرح الحقيبة',difficulty:'easy',stage:1,points:2,source_ref:'الصفحة أو الشريحة 4'}]};
+ const blob=new Blob([JSON.stringify(sample,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='claude_questions_template.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+$('claudeSave').addEventListener('click',async()=>{
+ if(aiSaving)return;const selected=aiItems.filter(q=>q.selected);if(!selected.length){alert('حدد سؤالًا واحدًا على الأقل.');return;}
+ const bad=selected.find(q=>aiValidate(q));if(bad){aiShowErrors();alert('توجد أسئلة محددة تحتاج تصحيحًا. راجع رسائل الخطأ أسفل الأسئلة.');return;}
+ if(!confirm(`هل تريد حفظ ${selected.length} سؤالًا غير مفعل في بنك الأسئلة؟ لن تُحذف الأسئلة الموجودة.`))return;
+ aiSaving=true;$('claudeSave').disabled=true;let saved=0;const failures=[];
+ try{for(const q of selected){const options=q.options.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+ const body={skill_id:Number(q.skill_id),question_text:q.question_text.trim(),question_type:q.question_type,options:['multiple_choice','code_ordering'].includes(q.question_type)?options:null,correct_answer:q.question_type==='write_code'?null:(q.question_type==='true_false'?q.correct_answer.trim().toLowerCase():q.correct_answer.trim()),explanation:q.explanation.trim()||null,difficulty:q.difficulty,stage:q.stage,points:q.points,is_active:false};
+ try{await api('questions',{method:'POST',headers:{Prefer:'return=minimal'},body});saved++;q.selected=false;q._saved=true;}catch(err){failures.push('السؤال '+(aiItems.indexOf(q)+1)+': '+errorText(err));}
+ }
+ await loadAll();aiItems=aiItems.filter(q=>!q._saved);aiRender();$('claudeProgress').hidden=false;$('claudeProgress').className='notice '+(failures.length?'error':'success');$('claudeProgress').textContent=`تم حفظ ${saved} سؤالًا غير مفعل. ${failures.length?'فشل '+failures.length+' سؤالًا:\n'+failures.join('\n'):'يمكنك تفعيلها لاحقًا بعد المراجعة النهائية.'}`;
+ }finally{aiSaving=false;$('claudeSave').disabled=!aiItems.length;}
+});
+
 </script>
 </body>
 </html>
